@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\rbac\Yi.Framework.Rbac.SqlSugarCore\Yi.Framework.Rbac.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\Yi.Framework.Bbs.Domain\Yi.Framework.Bbs.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

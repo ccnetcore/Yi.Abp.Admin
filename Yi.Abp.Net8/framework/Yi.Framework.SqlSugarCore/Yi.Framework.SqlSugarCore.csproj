@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\common.props" />
+
+
+  <ItemGroup>
+    <PackageReference Include="MySqlBackup.NET.MySqlConnector" Version="2.3.8" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.124" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
