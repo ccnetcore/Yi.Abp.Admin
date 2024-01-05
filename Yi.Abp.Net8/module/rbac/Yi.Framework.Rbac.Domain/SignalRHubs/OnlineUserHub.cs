@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Volo.Abp.AspNetCore.SignalR;
 using Yi.Framework.Rbac.Domain.Entities;
-using Yi.Framework.Rbac.Domain.SignalRHubs.Model;
+using Yi.Framework.Rbac.Domain.Shared.Model;
 
 namespace Yi.Framework.Rbac.Domain.SignalRHubs
 {

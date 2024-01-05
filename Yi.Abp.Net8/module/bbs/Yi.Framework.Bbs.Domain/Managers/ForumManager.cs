@@ -57,7 +57,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
             AbstractArticleImport abstractArticleImport = default;
             switch (importType)
             {
-                case ArticleImportTypeEnum.Defalut:
+                case ArticleImportTypeEnum.Default:
                     abstractArticleImport = new DefaultArticleImport();
 
                     break;
@@ -67,10 +67,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
 
                 default: abstractArticleImport = new DefaultArticleImport(); break;
             }
-
+            abstractArticleImport.SetLogger(LoggerFactory);
             var articleHandled = abstractArticleImport.Import(discussId, articleParentId, fileObjs);
 
-            //await _articleRepository.InsertManyAsync(articleHandled);
+            await _articleRepository.InsertManyAsync(articleHandled);
 
         }
     }

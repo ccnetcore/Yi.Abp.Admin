@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mapster;
+﻿using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
 using Yi.Framework.Bbs.Domain.Managers;
+using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
+using Yi.Framework.Rbac.Domain.Shared.Model;
 
 namespace Yi.Framework.Bbs.Application.Services.Analyses
 {
     public class BbsUserAnalyseService : ApplicationService, IApplicationService
     {
         private BbsUserManager _bbsUserManager;
-        public BbsUserAnalyseService(BbsUserManager bbsUserManager)
+        private IOnlineService _onlineService;
+        public BbsUserAnalyseService(BbsUserManager bbsUserManager, IOnlineService onlineService)
         {
             _bbsUserManager = bbsUserManager;
+            _onlineService = onlineService;
         }
 
         /// <summary>
@@ -52,6 +51,31 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
                 ToPageListAsync(input.SkipCount, input.MaxResultCount);
             var output = await _bbsUserManager.GetBbsUserInfoAsync(randUserIds);
             return output.Adapt<List<BbsUserGetListOutputDto>>();
+        }
+
+        /// <summary>
+        /// 用户分析
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("analyse/bbs-user")]
+        public async Task<BbsUserAnalyseGetOutput> GetUserAnalyseAsync()
+        {
+
+            var registerUser = await _bbsUserManager._userRepository._DbQueryable.CountAsync();
+
+
+            DateTime now = DateTime.Now;
+            DateTime yesterday = now.AddDays(-1);
+            DateTime startTime = new DateTime(yesterday.Year, yesterday.Month, yesterday.Day, 0, 0, 0);
+            DateTime endTime = startTime.AddHours(24);
+            var yesterdayNewUser = await _bbsUserManager._userRepository._DbQueryable
+                  .Where(x => x.CreationTime >= startTime && x.CreationTime <= endTime).CountAsync();
+
+            var userOnline = (await _onlineService.GetListAsync(new OnlineUserModel { })).TotalCount;
+
+            var output = new BbsUserAnalyseGetOutput() { OnlineNumber = userOnline, RegisterNumber = registerUser, YesterdayNewUser = yesterdayNewUser };
+
+            return output;
         }
 
     }

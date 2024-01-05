@@ -28,13 +28,27 @@ export function update(id, data) {
 }
 export function del(ids) {
   return request({
-    url: `/article/${ids}`,
+    url: `/article`,
     method: "delete",
+    params: { id: ids },
   });
 }
 export function all(discussId) {
   return request({
     url: `/article/all/discuss-id/${discussId}`,
     method: "get",
+  });
+}
+
+/**
+ *  导入文章
+ */
+export function importArticle(params, data) {
+  return request({
+    url: `/article/import`,
+    headers: { "Content-Type": "multipart/form-data" },
+    params: params,
+    data,
+    method: "post",
   });
 }

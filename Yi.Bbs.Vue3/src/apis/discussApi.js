@@ -42,8 +42,9 @@ export function update(id, data) {
 }
 export function del(ids) {
   return request({
-    url: `/discuss/${ids}`,
+    url: `/discuss`,
     method: "delete",
+    params: { id: ids },
   });
 }
 

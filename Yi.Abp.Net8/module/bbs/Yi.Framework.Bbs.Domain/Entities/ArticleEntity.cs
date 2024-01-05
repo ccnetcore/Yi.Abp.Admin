@@ -33,6 +33,11 @@ namespace Yi.Framework.Bbs.Domain.Entities
         public Guid? LastModifierId { get; set; }
 
         public DateTime? LastModificationTime { get; set; }
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public int OrderNum { get; set; } = 0;
     }
 
     public static class ArticleEntityExtensions

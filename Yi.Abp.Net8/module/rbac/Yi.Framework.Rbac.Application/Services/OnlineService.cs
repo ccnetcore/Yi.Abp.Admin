@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
+using Yi.Framework.Rbac.Domain.Shared.Model;
 using Yi.Framework.Rbac.Domain.SignalRHubs;
-using Yi.Framework.Rbac.Domain.SignalRHubs.Model;
 
 namespace Yi.Framework.Rbac.Application.Services
 {
@@ -24,7 +24,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// </summary>
         /// <param name="online"></param>
         /// <returns></returns>
-        public PagedResultDto<OnlineUserModel> GetListAsync([FromQuery] OnlineUserModel online)
+        public Task<PagedResultDto<OnlineUserModel>> GetListAsync([FromQuery] OnlineUserModel online)
         {
             var data = OnlineUserHub.clientUsers;
             IEnumerable<OnlineUserModel> dataWhere = data.AsEnumerable();
@@ -37,7 +37,7 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 dataWhere = dataWhere.Where((u) => u.UserName!.Contains(online.UserName));
             }
-            return new PagedResultDto<OnlineUserModel>() { TotalCount = data.Count, Items = dataWhere.ToList() };
+            return Task.FromResult(new PagedResultDto<OnlineUserModel>() { TotalCount = data.Count, Items = dataWhere.ToList() }) ;
         }
 
 

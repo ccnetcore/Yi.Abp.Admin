@@ -212,6 +212,13 @@ const catalogueData = ref([]);
 
 // 面包屑导航列表
 const breadcrumbsList = ref([]);
+const resultRouters = ["index", "discuss", "themeCover"];
+breadcrumbsList.value = route.matched[0].children
+  .filter((item) => resultRouters.includes(item.name))
+  .sort((a, b) => {
+    return resultRouters.indexOf(a.name) - resultRouters.indexOf(b.name);
+  });
+
 // 当前文章名称
 const currentArticle = ref("");
 
@@ -239,6 +246,8 @@ const loadDiscuss = async (isRewrite) => {
     const response = await articleGet(route.params.articleId);
     discuss.value.content = response.data.content;
   }
+  breadcrumbsList.value[1].path = "/discuss/" + discuss.value.plateId;
+  breadcrumbsList.value[1].meta.title = discuss.value.plate.name;
   ContentHander();
 };
 //加载文章及目录
@@ -362,12 +371,6 @@ onMounted(async () => {
   await loadArticleData();
 });
 
-const resultRouters = ["index", "discuss", "themeCover"];
-breadcrumbsList.value = route.matched[0].children
-  .filter((item) => resultRouters.includes(item.name))
-  .sort((a, b) => {
-    return resultRouters.indexOf(a.name) - resultRouters.indexOf(b.name);
-  });
 watch(
   () => currentArticle.value,
   (val) => {

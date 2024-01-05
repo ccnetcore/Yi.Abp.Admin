@@ -19,6 +19,6 @@ export function del(id) {
   return request({
     url: `/comment`,
     method: "delete",
-    params: {id:id},
+    params: { id: id },
   });
 }

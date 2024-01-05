@@ -63,9 +63,14 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <div class="author" @click="handleGitClick">
+      <div class="gitee" @click="handleGitClick">
         <el-tooltip effect="dark" content="在gitee找到我们" placement="bottom">
           <img src="@/assets/common/icons/gitee.png" alt="" />
+        </el-tooltip>
+      </div>
+      <div class="github" @click="handleGithubClick">
+        <el-tooltip effect="dark" content="在github找到我们" placement="bottom">
+          <img src="@/assets/common/icons/github.png" alt="" />
         </el-tooltip>
       </div>
     </div>
@@ -128,6 +133,9 @@ const isLogin = getToken("AccessToken") ? true : false;
 const handleGitClick = () => {
   window.open("https://gitee.com/ccnetcore/Yi");
 };
+const handleGithubClick = () => {
+  window.open("https://github.com/ccnetcore/Yi.Abp.Admin");
+};
 </script>
 
 <style scoped lang="scss">
@@ -141,22 +149,25 @@ const handleGitClick = () => {
 .user {
   display: flex;
   align-items: center;
-  .author {
-    cursor: pointer;
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
+
   .el-dropdown-link {
     cursor: pointer;
     display: flex;
     align-items: center;
   }
+  .gitee,
+  .github {
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    margin-left: 15px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
+
 .logo {
   cursor: pointer;
   display: flex;

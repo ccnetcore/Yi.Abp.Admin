@@ -11,7 +11,15 @@
   >
     <template #default="{ node, data }">
       <span class="custom-tree-node">
-        <span>{{ data.name }}</span>
+        <el-tooltip
+          class="box-item"
+          effect="dark"
+          :content="data.name"
+          placement="top-start"
+        >
+          <span class="title-name">{{ data.name }}</span>
+        </el-tooltip>
+
         <span>
           <a
             style="color: #409eff; margin-left: 8px"
@@ -76,5 +84,11 @@ const { isHasPermission: isRemoveArticle } = getPermission("bbs:article:del");
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  .title-name {
+    width: 100px; /* 定义容器宽度 */
+    white-space: nowrap; /* 不换行 */
+    overflow: hidden; /* 溢出部分隐藏 */
+    text-overflow: ellipsis; /* 显示省略号 */
+  }
 }
 </style>

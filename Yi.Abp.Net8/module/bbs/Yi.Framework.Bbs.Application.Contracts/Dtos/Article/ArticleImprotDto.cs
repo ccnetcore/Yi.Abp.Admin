@@ -19,6 +19,6 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Article
 
         public Guid ArticleParentId { get; set; }= Guid.Empty;
 
-        public ArticleImportTypeEnum ImportType { get; set; } = ArticleImportTypeEnum.Defalut;
+        public ArticleImportTypeEnum ImportType { get; set; } = ArticleImportTypeEnum.Default;
 }
 }

@@ -1,5 +1,6 @@
 using Volo.Abp.Application.Dtos;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
+using Yi.Framework.Bbs.Application.Contracts.Dtos.Plate;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.User;
 
@@ -37,5 +38,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public bool IsAgree { get; set; } = false;
         public List<Guid>? PermissionUserIds { get; set; }
         public BbsUserGetListOutputDto User { get; set; }
+
+        public PlateGetOutputDto Plate { get; set; }
     }
 }

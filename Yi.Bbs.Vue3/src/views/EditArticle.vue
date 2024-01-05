@@ -10,14 +10,22 @@
       >
         <el-form-item label="类型：">
           <el-radio-group v-model="radio">
-            <el-radio-button label="discuss">主题</el-radio-button>
-            <el-radio-button label="article">文章</el-radio-button>
-            <el-radio-button label="plate">板块</el-radio-button>
-            <el-radio-button label="orther">其他</el-radio-button>
+            <el-radio-button label="discuss" :disabled="artType !== 'discuss'"
+              >主题</el-radio-button
+            >
+            <el-radio-button label="article" :disabled="artType !== 'article'"
+              >文章</el-radio-button
+            >
+            <el-radio-button label="plate" :disabled="artType !== 'plate'"
+              >板块</el-radio-button
+            >
+            <el-radio-button label="orther" :disabled="artType !== 'orther'"
+              >其他</el-radio-button
+            >
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="权限：" v-if="route.query.artType == 'discuss'">
+        <el-form-item label="权限：" v-if="radio == 'discuss'">
           <el-radio-group v-model="perRadio">
             <el-radio-button label="Public">公开</el-radio-button>
             <el-radio-button label="Oneself">仅自己可见</el-radio-button>
@@ -26,13 +34,13 @@
         </el-form-item>
         <el-form-item
           label="可见用户："
-          v-if="route.query.artType == 'discuss' && perRadio == 'User'"
+          v-if="radio == 'discuss' && perRadio == 'User'"
         >
           <UserSelectInfo v-model="editForm.permissionUserIds" />
         </el-form-item>
 
         <el-form-item
-          v-if="route.query.artType == 'article'"
+          v-if="radio == 'article'"
           label="子文章名称："
           prop="name"
         >
@@ -51,7 +59,7 @@
             :codeStyle="codeStyle"
           />
         </el-form-item>
-        <el-form-item label="封面：" v-if="route.query.artType == 'discuss'">
+        <el-form-item label="封面：" v-if="radio == 'discuss'">
           <!-- 主题封面选择 -->
 
           <el-upload
@@ -81,6 +89,39 @@
           ></el-form-item
         >
       </el-form>
+      <div class="import-content" v-show="radio == 'article'">
+        <div class="text">上传类型：</div>
+        <el-select
+          v-model="currentType"
+          placeholder="请选择"
+          style="width: 120px"
+        >
+          <el-option
+            v-for="item in typeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-button
+          type="primary"
+          :icon="Download"
+          :loading="importLoading"
+          @click="handleImport"
+          class="import-btn"
+          >导入文章</el-button
+        >
+      </div>
+    </div>
+    <!-- 文件弹框 -->
+    <div>
+      <input
+        v-show="false"
+        ref="fileRef"
+        type="file"
+        multiple
+        @change="getFile"
+      />
     </div>
   </div>
 </template>
@@ -89,6 +130,7 @@ import MavonEdit from "@/components/MavonEdit.vue";
 import UserSelectInfo from "@/components/UserSelectInfo.vue";
 import { ref, reactive, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { Plus, Download } from "@element-plus/icons-vue";
 
 import {
   add as discussAdd,
@@ -100,6 +142,7 @@ import {
   add as articleAdd,
   update as articleUpdate,
   get as articleGet,
+  importArticle,
 } from "@/apis/articleApi.js";
 
 //数据定义
@@ -108,6 +151,9 @@ const router = useRouter();
 const perRadio = ref("Public");
 const radio = ref(route.query.artType);
 const codeStyle = "atom-one-dark";
+
+// 用于禁用判断
+const artType = ref(route.query.artType);
 
 //封面完整显示的url
 const fileUploadUrl = `${import.meta.env.VITE_APP_BASEAPI}/file`;
@@ -158,7 +204,7 @@ const submit = async (formEl) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       //dicuss主题处理
-      if (route.query.artType == "discuss") {
+      if (radio.value == "discuss") {
         discuss.title = editForm.title;
         discuss.types = editForm.types;
         discuss.introduction = editForm.introduction;
@@ -193,7 +239,7 @@ const submit = async (formEl) => {
       }
 
       //artcle文章处理
-      else if (route.query.artType == "article") {
+      else if (radio.value == "article") {
         //组装文章内容：需要添加的文章信息
         article.content = editForm.content;
         article.name = editForm.name;
@@ -237,11 +283,11 @@ onMounted(async () => {
   //如果是更新操作，需要先查询
   if (route.query.operType == "update") {
     //更新主题
-    if (route.query.artType == "discuss") {
+    if (radio.value == "discuss") {
       await loadDiscuss();
 
       //更新文章
-    } else if (route.query.artType == "article") {
+    } else if (radio.value == "article") {
       await loadArticle();
     }
   }
@@ -267,6 +313,51 @@ const loadArticle = async () => {
   editForm.name = res.name;
   editForm.discussId = res.discussId;
 };
+
+// 导入
+let importLoading = ref(false);
+const fileRef = ref(null);
+const handleImport = async () => {
+  fileRef.value.click();
+};
+const currentType = ref("Default");
+const typeOptions = [
+  {
+    value: "Default",
+    label: "默认",
+  },
+  {
+    value: "VuePress",
+    label: "VuePress",
+  },
+];
+const getFile = async (e) => {
+  importLoading.value = true;
+  try {
+    let formData = new FormData();
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("file", e.target.files[i]);
+    }
+    await importArticle(
+      {
+        discussId: route.query.discussId,
+        articleParentId: route.query.parentArticleId,
+        importType: currentType.value,
+      },
+      formData
+    );
+    ElMessage({
+      message: `导入成功！`,
+      type: "success",
+    });
+    importLoading.value = false;
+    const routerPer = { path: `/article/${route.query.discussId}` };
+    router.push(routerPer);
+  } catch (error) {
+    ElMessage.error(error.message);
+    importLoading.value = false;
+  }
+};
 </script>
 <style scoped>
 .submit-btn {
@@ -274,10 +365,24 @@ const loadArticle = async () => {
 }
 
 .body-div {
+  position: relative;
   min-height: 1000px;
   background-color: #fff;
   margin: 1.5rem;
   padding: 1.5rem;
+  .import-content {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    .text {
+      margin-right: 10px;
+    }
+  }
+  .import-btn {
+    margin-left: 10px;
+  }
 }
 
 .avatar-uploader >>> .el-upload {

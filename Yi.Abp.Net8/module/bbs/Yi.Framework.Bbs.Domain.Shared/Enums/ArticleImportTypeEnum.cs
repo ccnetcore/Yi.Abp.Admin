@@ -8,7 +8,7 @@ namespace Yi.Framework.Bbs.Domain.Shared.Enums
     public enum ArticleImportTypeEnum
     {
        [Description("默认导入方式")] 
-        Defalut,
+        Default,
 
         [Description("vuePresss方式")] 
         VuePress

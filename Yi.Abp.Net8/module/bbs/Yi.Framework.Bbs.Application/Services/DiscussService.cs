@@ -58,7 +58,8 @@ namespace Yi.Framework.Bbs.Application.Services
             //查询主题发布 浏览主题 事件，浏览数+1
             var item = await _forumManager._discussRepository._DbQueryable.LeftJoin<UserEntity>((discuss, user) => discuss.CreatorId == user.Id)
                 .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
-                     .Select((discuss, user, info) => new DiscussGetOutputDto
+                .LeftJoin<PlateEntity>((discuss, user, info,plate) => plate.Id == discuss.PlateId)
+                     .Select((discuss, user, info, plate) => new DiscussGetOutputDto
                      {
                          Id=discuss.Id,
                          IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null, x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
@@ -70,6 +71,15 @@ namespace Yi.Framework.Bbs.Application.Services
                              Id = user.Id,
                              Level = info.Level,
                              UserLimit = info.UserLimit
+                         },
+                         Plate=new Contracts.Dtos.Plate.PlateGetOutputDto()
+                         { 
+                         Name=plate.Name,
+                         Id=plate.Id,
+                         Code=plate.Code,
+                         Introduction=plate.Introduction,
+                         Logo=plate.Logo
+                         
                          }
                      }, true)
                      .SingleAsync(discuss => discuss.Id == id);

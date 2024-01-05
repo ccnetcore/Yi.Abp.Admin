@@ -15,7 +15,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.Repositories
 
         public async Task<List<ArticleEntity>> GetTreeAsync(Expression<Func<ArticleEntity, bool>> where)
         {
-            return await _DbQueryable.Where(where).OrderBy(x=>x.CreationTime).ToTreeAsync(x => x.Children, x => x.ParentId, Guid.Empty);
+            return await _DbQueryable.Where(where).OrderBy(x=>x.OrderNum).OrderBy(x=>x.CreationTime).ToTreeAsync(x => x.Children, x => x.ParentId, Guid.Empty);
         }
     }
 }

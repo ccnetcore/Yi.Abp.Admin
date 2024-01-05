@@ -2,7 +2,7 @@ using Serilog;
 using Serilog.Events;
 using Yi.Abp.Web;
 
-//创建日志,可使用{SourceContext}记录
+//鍒涘缓鏃ュ織,鍙娇鐢▄SourceContext}璁板綍
 Log.Logger = new LoggerConfiguration()
 .MinimumLevel.Debug()
 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -15,7 +15,7 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Yi框架-Abp.vNext，启动！");
+    Log.Information("Yi妗嗘灦-Abp.vNext锛屽惎鍔紒");
 
     var builder = WebApplication.CreateBuilder(args);
     builder.WebHost.UseUrls(builder.Configuration["App:SelfUrl"]);
@@ -28,7 +28,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Yi框架-Abp.vNext，爆炸！");
+    Log.Fatal(ex, "Yi妗嗘灦-Abp.vNext锛岀垎鐐革紒");
 }
 finally
 {

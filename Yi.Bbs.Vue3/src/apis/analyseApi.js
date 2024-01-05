@@ -38,3 +38,16 @@ export function getRankingPoints(data) {
     data,
   });
 }
+
+/**
+ * 获取用户分析
+ * @param {*} data
+ * @returns
+ */
+export function getUserAnalyse(data) {
+  return request({
+    url: "/analyse/bbs-user",
+    method: "get",
+    data,
+  });
+}
