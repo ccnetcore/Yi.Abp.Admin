@@ -7,9 +7,9 @@ namespace Yi.Framework.Rbac.Domain.Managers
 {
     public class UserManager : DomainService
     {
-        private readonly ISqlSugarRepository<UserEntity> _repository;
-        private readonly ISqlSugarRepository<UserRoleEntity> _repositoryUserRole;
-        private readonly ISqlSugarRepository<UserPostEntity> _repositoryUserPost;
+        public readonly ISqlSugarRepository<UserEntity> _repository;
+        public readonly ISqlSugarRepository<UserRoleEntity> _repositoryUserRole;
+        public readonly ISqlSugarRepository<UserPostEntity> _repositoryUserPost;
 
         private readonly IGuidGenerator _guidGenerator;
         public UserManager(ISqlSugarRepository<UserEntity> repository, ISqlSugarRepository<UserRoleEntity> repositoryUserRole, ISqlSugarRepository<UserPostEntity> repositoryUserPost, IGuidGenerator guidGenerator) =>

@@ -8,7 +8,7 @@ using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Repositories;
 
-namespace Yi.Framework.Rbac.Application.Services
+namespace Yi.Framework.Rbac.Application.Services.System
 {
     /// <summary>
     /// Dept服务实现

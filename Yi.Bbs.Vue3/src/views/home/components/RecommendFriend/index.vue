@@ -81,10 +81,12 @@ const userImageSrc = computed(() => {
   display: flex;
   justify-content: space-around;
   .left {
+    display: flex;
+    align-items: center;
     flex: 1;
     .icon {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       img {
         width: 100%;
         height: 100%;

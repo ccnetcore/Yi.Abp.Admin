@@ -11,11 +11,11 @@ namespace Yi.Framework.Rbac.Application.Services
     /// <summary>
     /// DictionaryType服务实现
     /// </summary>
-    public class DictionaryTypeService : YiCrudAppService<DictionaryTypeEntity, DictionaryTypeGetOutputDto, DictionaryTypeGetListOutputDto, Guid, DictionaryTypeGetListInputVo, DictionaryTypeCreateInputVo, DictionaryTypeUpdateInputVo>,
+    public class DictionaryTypeService : YiCrudAppService<DictionaryTypeAggregateRoot, DictionaryTypeGetOutputDto, DictionaryTypeGetListOutputDto, Guid, DictionaryTypeGetListInputVo, DictionaryTypeCreateInputVo, DictionaryTypeUpdateInputVo>,
        IDictionaryTypeService
     {
-        private ISqlSugarRepository<DictionaryTypeEntity, Guid> _repository;
-        public DictionaryTypeService(ISqlSugarRepository<DictionaryTypeEntity, Guid> repository) : base(repository)
+        private ISqlSugarRepository<DictionaryTypeAggregateRoot, Guid> _repository;
+        public DictionaryTypeService(ISqlSugarRepository<DictionaryTypeAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

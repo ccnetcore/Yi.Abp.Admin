@@ -51,12 +51,12 @@ service.interceptors.response.use(
     // 对响应错误做点什么
     if (error.message.indexOf("timeout") != -1) {
       ElMessage({
-        type: "danger",
+        type: "error",
         message: "网络超时",
       });
     } else if (error.message == "Network Error") {
       ElMessage({
-        type: "danger",
+        type: "error",
         message: "网络连接错误",
       });
     } else {
@@ -77,7 +77,7 @@ service.interceptors.response.use(
       if (status !== 200) {
         if (status >= 500) {
           ElMessage({
-            type: "danger",
+            type: "error",
             message: "网络开小差了，请稍后再试",
           });
           return Promise.reject(new Error(message));
@@ -85,7 +85,7 @@ service.interceptors.response.use(
         // 避开找不到后端接口的提醒
         if (status !== 404) {
           ElMessage({
-            type: "danger",
+            type: "error",
             message,
           });
         }

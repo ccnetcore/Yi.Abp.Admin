@@ -139,7 +139,7 @@
             <div>其他方式登录</div>
           </div>
           <div class="icon-list">
-            <div class="icon">
+            <div class="icon" @click="handleQQLogin">
               <img src="@/assets/login_images/QQ.png" alt="" />
             </div>
             <div class="icon">
@@ -302,6 +302,14 @@ onMounted(async () => {
 const handleContact = () => {
   router.push("/contact");
 };
+
+const handleQQLogin = () => {
+  window.open(
+    "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101951505&redirect_uri=https://ccnetcore.com/qq&state=true&scope=get_user_info",
+    undefined,
+    "width=500,height=500,left=50,top=50"
+  );
+};
 </script>
 <style scoped lang="scss">
 .login {
@@ -425,6 +433,7 @@ const handleContact = () => {
           display: flex;
           justify-content: center;
           .icon {
+            cursor: pointer;
             width: 25px;
             height: 25px;
             margin: 0 10px;

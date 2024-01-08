@@ -8,7 +8,6 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
 using Yi.Framework.Core.Extensions;
 using Yi.Framework.Core.Helper;
-using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Shared.OperLog;
 
 namespace Yi.Framework.Rbac.Domain.Operlog

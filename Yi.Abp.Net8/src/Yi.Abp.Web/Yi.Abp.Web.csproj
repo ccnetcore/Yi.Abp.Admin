@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\framework\Yi.Framework.AspNetCore.Authentication.OAuth\Yi.Framework.AspNetCore.Authentication.OAuth.csproj" />
     <ProjectReference Include="..\..\framework\Yi.Framework.AspNetCore\Yi.Framework.AspNetCore.csproj" />
     <ProjectReference Include="..\Yi.Abp.Application\Yi.Abp.Application.csproj" />
     <ProjectReference Include="..\Yi.Abp.SqlSugarCore\Yi.Abp.SqlSugarCore.csproj" />

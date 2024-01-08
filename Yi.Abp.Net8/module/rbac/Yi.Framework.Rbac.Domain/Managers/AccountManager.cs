@@ -1,11 +1,25 @@
-﻿using Volo.Abp;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Mapster;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using TencentCloud.Tdmq.V20200217.Models;
+using Volo.Abp;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Security.Claims;
 using Yi.Framework.Core.Helper;
 using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Dtos;
+using Yi.Framework.Rbac.Domain.Shared.Etos;
+using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Rbac.Domain.Managers
@@ -14,13 +28,87 @@ namespace Yi.Framework.Rbac.Domain.Managers
     /// <summary>
     /// 用户领域服务
     /// </summary>
-    public class AccountManager : DomainService
+    public class AccountManager : DomainService, IAccountManager
     {
-        private readonly ISqlSugarRepository<UserEntity> _repository;
-        public AccountManager(ISqlSugarRepository<UserEntity> repository)
+        private readonly IUserRepository _repository;
+        private readonly ILocalEventBus _localEventBus;
+        private readonly JwtOptions _jwtOptions;
+        private IHttpContextAccessor _httpContextAccessor;
+        private UserManager _userManager;
+        private ISqlSugarRepository<RoleEntity> _roleRepository;
+        public AccountManager(IUserRepository repository
+            , IHttpContextAccessor httpContextAccessor
+            , IOptions<JwtOptions> jwtOptions
+            , ILocalEventBus localEventBus
+            , UserManager userManager
+            , ISqlSugarRepository<RoleEntity> roleRepository)
         {
             _repository = repository;
+            _httpContextAccessor= httpContextAccessor;
+            _jwtOptions = jwtOptions.Value;
+            _localEventBus=localEventBus;
+            _userManager=userManager;
+            _roleRepository=roleRepository;
         }
+
+        /// <summary>
+        /// 根据用户id获取token
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="UserFriendlyException"></exception>
+        public async Task<string> GetTokenByUserIdAsync(Guid userId)
+        {
+            //获取用户信息
+            var userInfo = await _repository.GetUserAllInfoAsync(userId);
+
+            //判断用户状态
+            if (userInfo.User.State == false)
+            {
+                throw new UserFriendlyException(UserConst.State_Is_State);
+            }
+
+            if (userInfo.RoleCodes.Count == 0)
+            {
+                throw new UserFriendlyException(UserConst.No_Role);
+            }
+            //这里抛出一个登录的事件
+            if (_httpContextAccessor.HttpContext is not null)
+            {
+                var loginEntity = new LoginLogEntity().GetInfoByHttpContext(_httpContextAccessor.HttpContext);
+                var loginEto = loginEntity.Adapt<LoginEventArgs>();
+                loginEto.UserName = userInfo.User.UserName;
+                loginEto.UserId = userInfo.User.Id;
+                await _localEventBus.PublishAsync(loginEto);
+            }
+            //将用户信息添加到缓存中，需要考虑的是更改了用户、角色、菜单等整个体系都需要将缓存进行刷新，看具体业务进行选择
+
+            var accessToken = CreateToken(this.UserInfoToClaim(userInfo));
+            return accessToken;
+        }
+
+        /// <summary>
+        /// 创建令牌
+        /// </summary>
+        /// <param name="kvs"></param>
+        /// <returns></returns>
+        private string CreateToken(List<KeyValuePair<string, string>> kvs)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecurityKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var claims = kvs.Select(x => new Claim(x.Key, x.Value.ToString())).ToList();
+            var token = new JwtSecurityToken(
+               issuer: _jwtOptions.Issuer,
+               audience: _jwtOptions.Audience,
+               claims: claims,
+               expires: DateTime.Now.AddSeconds(_jwtOptions.ExpiresMinuteTime),
+               notBefore: DateTime.Now,
+               signingCredentials: creds);
+            string returnToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return returnToken;
+        }
+
 
         /// <summary>
         /// 登录效验
@@ -144,6 +232,31 @@ namespace Yi.Framework.Rbac.Domain.Managers
             user.Password = password;
             user.BuildPassword();
             return await _repository.UpdateAsync(user);
+        }
+
+
+        public async Task RegisterAsync(string userName,string password,long phone)
+        {
+            //输入的用户名与电话号码都不能在数据库中存在
+            UserEntity user = new();
+            var isExist = await _repository.IsAnyAsync(x => x.UserName == userName || x.Phone == phone);
+            if (isExist)
+            {
+                throw new UserFriendlyException("用户已存在，注册失败");
+            }
+
+            var newUser = new UserEntity(userName, password, phone);
+
+            var entity = await _repository.InsertReturnEntityAsync(newUser);
+            //赋上一个初始角色
+            var role = await _roleRepository.GetFirstAsync(x => x.RoleCode == UserConst.DefaultRoleCode);
+            if (role is not null)
+            {
+                await _userManager.GiveUserSetRoleAsync(new List<Guid> { entity.Id }, new List<Guid> { role.Id });
+            }
+
+            await _localEventBus.PublishAsync(new UserCreateEventArgs(entity.Id));
+
         }
     }
 

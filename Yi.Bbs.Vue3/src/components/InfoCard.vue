@@ -44,7 +44,7 @@ const height = ref(props.height + "px");
 }
 
 .item {
-  margin: 0.5rem 0;
+  margin: 1rem 0;
 }
 
 .box-card {

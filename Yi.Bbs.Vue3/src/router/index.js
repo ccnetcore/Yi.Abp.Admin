@@ -31,6 +31,14 @@ const router = createRouter({
           path: "/register",
           component: () => import("../views/Register.vue"),
         },
+        {
+          name: "qq",
+          path: "/qq",
+          component: () => import("../views/qqAuth/index.vue"),
+          meta: {
+            title: "QQ授权",
+          },
+        },
       ],
     },
     {
@@ -55,7 +63,7 @@ const router = createRouter({
         {
           name: "discuss",
           path: "/discuss/:plateId?/:isPublish?",
-          component: () => import("../views/Discuss.vue"),
+          component: () => import("../views/discuss/index.vue"),
           meta: {
             title: "板块",
           },

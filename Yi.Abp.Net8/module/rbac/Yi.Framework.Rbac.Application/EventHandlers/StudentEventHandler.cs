@@ -3,7 +3,7 @@ using Volo.Abp.Domain.Entities.Events;
 using Volo.Abp.EventBus;
 using Yi.Framework.Rbac.Domain.Entities;
 
-namespace Yi.Framework.Rbac.Domain.EventHandlers
+namespace Yi.Framework.Rbac.Application.EventHandlers
 {
     public class StudentEventHandler : ILocalEventHandler<EntityCreatedEventData<StudentEntity>>, ITransientDependency
     {

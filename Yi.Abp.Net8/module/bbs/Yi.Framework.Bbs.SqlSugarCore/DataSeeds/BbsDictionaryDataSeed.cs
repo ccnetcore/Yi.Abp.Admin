@@ -15,8 +15,8 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
     public class BbsDictionaryDataSeed : IDataSeedContributor, ITransientDependency
     {
         private ISqlSugarRepository<DictionaryEntity> _repository;
-        private ISqlSugarRepository<DictionaryTypeEntity> _typeRepository;
-        public BbsDictionaryDataSeed(ISqlSugarRepository<DictionaryEntity> repository, ISqlSugarRepository<DictionaryTypeEntity> typeRepository) {
+        private ISqlSugarRepository<DictionaryTypeAggregateRoot> _typeRepository;
+        public BbsDictionaryDataSeed(ISqlSugarRepository<DictionaryEntity> repository, ISqlSugarRepository<DictionaryTypeAggregateRoot> typeRepository) {
             _repository=repository;
             _typeRepository=typeRepository;
 
@@ -194,10 +194,10 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             return entities;
         }
 
-        public List<DictionaryTypeEntity> GetSeedDictionaryTypeData()
+        public List<DictionaryTypeAggregateRoot> GetSeedDictionaryTypeData()
         {
-            List<DictionaryTypeEntity> entities = new List<DictionaryTypeEntity>();
-            DictionaryTypeEntity dict1 = new DictionaryTypeEntity()
+            List<DictionaryTypeAggregateRoot> entities = new List<DictionaryTypeAggregateRoot>();
+            DictionaryTypeAggregateRoot dict1 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "BBS类型标签",

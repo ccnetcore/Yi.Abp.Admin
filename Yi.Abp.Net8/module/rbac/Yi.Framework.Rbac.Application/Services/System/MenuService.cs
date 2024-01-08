@@ -7,7 +7,7 @@ using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
-namespace Yi.Framework.Rbac.Application.Services
+namespace Yi.Framework.Rbac.Application.Services.System
 {
     /// <summary>
     /// Menu服务实现
@@ -30,7 +30,7 @@ namespace Yi.Framework.Rbac.Application.Services
                         .WhereIF(input.State is not null, x => x.State == input.State)
                         .OrderByDescending(x => x.OrderNum)
                         .ToListAsync();
-                          //.ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
+            //.ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
             return new PagedResultDto<MenuGetListOutputDto>(total, await MapToGetListOutputDtosAsync(entities));
         }
 

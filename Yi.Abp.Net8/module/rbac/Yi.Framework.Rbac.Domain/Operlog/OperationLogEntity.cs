@@ -3,7 +3,7 @@ using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Shared.OperLog;
 
-namespace Yi.Framework.Rbac.Domain.Entities
+namespace Yi.Framework.Rbac.Domain.Operlog
 {
     /// <summary>
     /// 操作日志表

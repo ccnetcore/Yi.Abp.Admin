@@ -1,7 +1,7 @@
 <template>
   <div class="point-box">
     <div class="left">
-      <div class="icon"><img :src="userImageSrc" alt="" /></div>
+      <UserInfoCard :userInfo="pointsData" :iconUrl="userImageSrc" />
     </div>
     <div class="center">
       <div class="top">
@@ -36,6 +36,7 @@
 
 <script setup name="PointsRanking">
 import { defineProps, computed } from "vue";
+import UserInfoCard from "@/components/UserInfoCard/index.vue";
 
 const props = defineProps({
   pointsData: {
@@ -43,6 +44,8 @@ const props = defineProps({
     default: () => [],
   },
 });
+
+const pointsData = computed(() => props.pointsData);
 
 const statusTypeList = [
   {
@@ -66,10 +69,10 @@ const getStatusInfo = (type) => {
   return statusTypeList.filter((item) => item.value === type)[0];
 };
 
-const userLimit = computed(() => getStatusInfo(props.pointsData.userLimit));
+const userLimit = computed(() => getStatusInfo(pointsData.value.userLimit));
 const userImageSrc = computed(() => {
-  if (props.pointsData.icon) {
-    return import.meta.env.VITE_APP_BASEAPI + "/file/" + props.pointsData.icon;
+  if (pointsData.value.icon) {
+    return import.meta.env.VITE_APP_BASEAPI + "/file/" + pointsData.value.icon;
   } else {
     return "acquiesce.png";
   }

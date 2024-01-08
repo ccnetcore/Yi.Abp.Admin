@@ -84,6 +84,7 @@ import useUserStore from "@/stores/user.js";
 import useConfigStore from "@/stores/config";
 import useAuths from "@/hooks/useAuths";
 import { Session } from "@/utils/storage";
+import signalR from "@/utils/signalR";
 
 const { getToken, clearStorage } = useAuths();
 const configStore = useConfigStore();
@@ -103,6 +104,7 @@ const logout = async () => {
   }).then(async () => {
     //异步
     await userStore.logOut();
+    await signalR.close();
     //删除成功后，跳转到主页
     router.push("/login");
     ElMessage({

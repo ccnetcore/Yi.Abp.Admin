@@ -47,28 +47,10 @@
         </div>
       </el-form>
     </div>
-
-    <el-tabs v-model="activeName" @tab-change="handleClick">
-      <el-tab-pane label="最新" name="new"> </el-tab-pane>
-      <el-tab-pane label="推荐" name="suggest"> </el-tab-pane>
-      <el-tab-pane label="最热" name="host"> </el-tab-pane>
-    </el-tabs>
-
-    <el-collapse class="collapse-list" style="background-color: #f0f2f5">
-      <el-collapse-item>
-        <template #title>
-          <div class="collapse-top">
-            已置顶主题<el-icon class="header-icon">
-              <info-filled />
-            </el-icon>
-          </div>
-        </template>
-        <div class="div-item" v-for="i in topDiscussList">
-          <DisscussCard :discuss="i" badge="置顶" />
-        </div>
-      </el-collapse-item>
-    </el-collapse>
-    <el-divider v-show="topDiscussList.length > 0" />
+    <Tabs v-model="activeName" :tabList="tabList" @tab-change="handleClick" />
+    <div class="div-item" v-for="i in topDiscussList">
+      <DisscussCard :discuss="i" badge="置顶" />
+    </div>
     <template v-if="isDiscussFinished">
       <div class="div-item" v-for="i in discussList">
         <DisscussCard :discuss="i" />
@@ -113,12 +95,13 @@ import { getPermission } from "@/utils/auth";
 import useAuths from "@/hooks/useAuths";
 import { Session } from "@/utils/storage";
 import Skeleton from "@/components/Skeleton/index.vue";
+import Tabs from "./components/tabs.vue";
 
 const { getToken, clearStorage } = useAuths();
 //数据定义
 const route = useRoute();
 const router = useRouter();
-const activeName = ref("new");
+const activeName = ref("suggest");
 //主题内容
 const discussList = ref([]);
 const isDiscussFinished = ref(false);
@@ -133,7 +116,7 @@ const query = reactive({
   type: activeName.value,
 });
 
-const handleClick = async (tab, event) => {
+const handleClick = async (item) => {
   query.type = activeName.value;
   await loadDiscussList();
 };
@@ -212,6 +195,12 @@ watch(
   },
   { immediate: true }
 );
+
+const tabList = ref([
+  { label: "全部文章", name: "suggest", position: "left" },
+  { label: "最新", name: "new", position: "right" },
+  { label: "最热", name: "host", position: "right" },
+]);
 </script>
 <style scoped lang="scss">
 .discuss-box {
@@ -234,6 +223,10 @@ watch(
     background-color: #ffffff;
     padding: 1rem;
     margin: 1rem 0rem;
+  }
+
+  .header-tab {
+    margin-bottom: 1rem;
   }
   .collapse-top {
     padding-left: 2rem;
@@ -278,6 +271,7 @@ watch(
     margin: 0.5rem 0;
   }
 }
+
 /* 禁用状态下的样式 */
 .el-button.el-button--disabled {
   opacity: 0.6;

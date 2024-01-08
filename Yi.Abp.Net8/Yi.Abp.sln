@@ -70,7 +70,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Bbs.SqlSugarCo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "audit-logging", "audit-logging", "{73CCF2C4-B9FD-44AB-8D4B-0A421805B094}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.AuditLogging.SqlSugarCore", "module\audit-logging\Yi.AuditLogging.SqlSugarCore\Yi.AuditLogging.SqlSugarCore.csproj", "{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.AuditLogging.SqlSugarCore", "module\audit-logging\Yi.AuditLogging.SqlSugarCore\Yi.AuditLogging.SqlSugarCore.csproj", "{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AspNetCore.Authentication.OAuth", "framework\Yi.Framework.AspNetCore.Authentication.OAuth\Yi.Framework.AspNetCore.Authentication.OAuth.csproj", "{791AC2FA-50D3-4408-8D68-31DA72F608BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -174,6 +176,10 @@ Global
 		{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +212,7 @@ Global
 		{6C86BA71-9F87-4E2C-B467-2950D77DCDFA} = {E902A945-4F41-4E96-A0DA-9F66CDA22261}
 		{73CCF2C4-B9FD-44AB-8D4B-0A421805B094} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
 		{48806510-8E18-4E1E-9BAF-5B97E88C5FC3} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
+		{791AC2FA-50D3-4408-8D68-31DA72F608BE} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

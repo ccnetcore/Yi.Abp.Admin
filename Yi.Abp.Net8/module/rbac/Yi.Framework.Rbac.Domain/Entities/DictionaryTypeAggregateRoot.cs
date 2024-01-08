@@ -1,13 +1,14 @@
 ﻿using SqlSugar;
 using Volo.Abp;
 using Volo.Abp.Auditing;
+using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Yi.Framework.Core.Data;
 
 namespace Yi.Framework.Rbac.Domain.Entities
 {
     [SugarTable("DictionaryType")]
-    public class DictionaryTypeEntity : Entity<Guid>, IAuditedObject, ISoftDelete, IOrderNum
+    public class DictionaryTypeAggregateRoot : AggregateRoot<Guid>, IAuditedObject, ISoftDelete, IOrderNum
     {
         /// <summary>
         /// 主键
@@ -55,5 +56,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
         public Guid? LastModifierId { get; set; }
 
         public DateTime? LastModificationTime { get; set; }
+        [SugarColumn(IsIgnore = true)]
+        public override ExtraPropertyDictionary ExtraProperties { get; protected set; }
     }
 }

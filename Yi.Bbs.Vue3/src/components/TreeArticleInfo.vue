@@ -15,7 +15,7 @@
           class="box-item"
           effect="dark"
           :content="data.name"
-          placement="top-start"
+          placement="right"
         >
           <span class="title-name">{{ data.name }}</span>
         </el-tooltip>
@@ -78,14 +78,14 @@ const { isHasPermission: isRemoveArticle } = getPermission("bbs:article:del");
 </script>
 <style scoped>
 .custom-tree-node {
+  width: 100%;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-  padding-right: 8px;
   .title-name {
-    width: 100px; /* 定义容器宽度 */
+    width: 100%; /* 定义容器宽度 */
     white-space: nowrap; /* 不换行 */
     overflow: hidden; /* 溢出部分隐藏 */
     text-overflow: ellipsis; /* 显示省略号 */

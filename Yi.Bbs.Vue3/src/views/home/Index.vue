@@ -62,7 +62,7 @@
               <div class="content">
                 <div class="name"></div>
                 <div class="content-box top">
-                  <div class="count">{{ userAnalyseInfo.onlineNumber }}</div>
+                  <div class="count">{{ onlineNumber }}</div>
                 </div>
               </div>
             </div>
@@ -199,6 +199,7 @@ import RecommendFriend from "./components/RecommendFriend/index.vue";
 import ThemeData from "./components/RecommendTheme/index.vue";
 import Skeleton from "@/components/Skeleton/index.vue";
 import useUserStore from "@/stores/user";
+import useSocketStore from "@/stores/socket";
 import { storeToRefs } from "pinia";
 import signalR from "@/utils/signalR";
 
@@ -218,6 +219,7 @@ const isThemeFinished = ref([]);
 const allDiscussList = ref([]);
 const isAllDiscussFinished = ref(false);
 const userAnalyseInfo = ref({});
+const onlineNumber = ref(0);
 
 const items = [{ user: "用户1" }, { user: "用户2" }, { user: "用户3" }];
 //主题查询参数
@@ -258,21 +260,19 @@ onMounted(async () => {
   isAllDiscussFinished.value = allDiscussConfig.isFinish;
   allDiscussList.value = allDiscussData.items;
   const { data: userAnalyseInfoData } = await getUserAnalyse();
+  onlineNumber.value = userAnalyseInfoData.onlineNumber;
   userAnalyseInfo.value = userAnalyseInfoData;
   // 实时人数
-  // await signalR.init(`main`);
-  // nextTick(() => {
-  //   // 初始化主题样式
-  //   handleThemeStyle(useSettingsStore().theme);
-  // });
+  await signalR.init(`main`);
 });
 
 //这里还需要监视token的变化，重新进行signalr连接
-watch();
-// () => token.value,
-// async (newValue, oldValue) => {
-//   await signalR.init(`main`);
-// }
+watch(
+  () => token.value,
+  async (newValue, oldValue) => {
+    await signalR.init(`main`);
+  }
+);
 
 const weekXAxis = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 // 访问统计
@@ -290,6 +290,15 @@ const statisOptions = computed(() => {
     },
   };
 });
+
+// 推送的实时人数获取
+const currentOnlineNum = computed(() => useSocketStore().getOnlineNum());
+watch(
+  () => currentOnlineNum.value,
+  (val) => {
+    onlineNumber.value = val;
+  }
+);
 </script>
 <style scoped lang="scss">
 .home-box {
@@ -375,7 +384,6 @@ const statisOptions = computed(() => {
       .text {
         width: 60px;
         position: absolute;
-        padding: 0 5px;
         top: -10px;
         left: 50%;
         transform: translateX(-50%);

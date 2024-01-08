@@ -1,15 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Lazy.Captcha.Core;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SqlSugar;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
@@ -27,7 +22,6 @@ using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Caches;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Dtos;
-using Yi.Framework.Rbac.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
@@ -36,8 +30,6 @@ namespace Yi.Framework.Rbac.Application.Services
 
     public class AccountService : ApplicationService, IAccountService
     {
-        private readonly ILocalEventBus _localEventBus;
-        private readonly JwtOptions _jwtOptions;
         private IDistributedCache<CaptchaPhoneCacheItem, CaptchaPhoneCacheKey> _phoneCache;
         private readonly ICaptcha _captcha;
         private readonly IGuidGenerator _guidGenerator;
@@ -45,45 +37,30 @@ namespace Yi.Framework.Rbac.Application.Services
         private readonly IAliyunManger _aliyunManger;
         public AccountService(IUserRepository userRepository,
             ICurrentUser currentUser,
-            AccountManager accountManager,
+            IAccountManager accountManager,
             ISqlSugarRepository<MenuEntity> menuRepository,
-            IHttpContextAccessor httpContextAccessor,
-            ILocalEventBus localEventBus,
-            IOptions<JwtOptions> jwtOptions,
             IDistributedCache<CaptchaPhoneCacheItem, CaptchaPhoneCacheKey> phoneCache,
             ICaptcha captcha,
             IGuidGenerator guidGenerator,
             IOptions<RbacOptions> options,
-            IAliyunManger aliyunManger,
-            ISqlSugarRepository<RoleEntity> roleRepository,
-            UserManager userManager)
+            IAliyunManger aliyunManger)
         {
             _userRepository = userRepository;
             _currentUser = currentUser;
             _accountManager = accountManager;
             _menuRepository = menuRepository;
-            _httpContextAccessor = httpContextAccessor;
-            _localEventBus = localEventBus;
-            _jwtOptions = jwtOptions.Value;
             _phoneCache = phoneCache;
             _captcha = captcha;
             _guidGenerator = guidGenerator;
             _rbacOptions = options.Value;
             _aliyunManger = aliyunManger;
-            _roleRepository = roleRepository;
-            _userManager = userManager;
         }
 
 
         private IUserRepository _userRepository;
         private ICurrentUser _currentUser;
-        private AccountManager _accountManager;
+        private IAccountManager _accountManager;
         private ISqlSugarRepository<MenuEntity> _menuRepository;
-        private IUserService _userService;
-        private UserManager _userManager;
-        private ISqlSugarRepository<RoleEntity> _roleRepository;
-        private IHttpContextAccessor _httpContextAccessor;
-
         /// <summary>
         /// 效验图片登录验证码,无需和账号绑定
         /// </summary>
@@ -117,57 +94,14 @@ namespace Yi.Framework.Rbac.Application.Services
             ValidationImageCaptcha(input);
 
             UserEntity user = new();
-            //登录成功
+            //效验
             await _accountManager.LoginValidationAsync(input.UserName, input.Password, x => user = x);
 
-            //获取用户信息
-            var userInfo = await _userRepository.GetUserAllInfoAsync(user.Id);
-
-            //判断用户状态
-            if (userInfo.User.State == false)
-            {
-                throw new UserFriendlyException(UserConst.State_Is_State);
-            }
-
-            if (userInfo.RoleCodes.Count == 0)
-            {
-                throw new UserFriendlyException(UserConst.No_Role);
-            }
-            //这里抛出一个登录的事件
-            var loginEntity = new LoginLogEntity().GetInfoByHttpContext(_httpContextAccessor.HttpContext);
-            var loginEto = loginEntity.Adapt<LoginEventArgs>();
-            loginEto.UserName = input.UserName;
-            loginEto.UserId = userInfo.User.Id;
-            await _localEventBus.PublishAsync(loginEto);
-            //将用户信息添加到缓存中，需要考虑的是更改了用户、角色、菜单等整个体系都需要将缓存进行刷新，看具体业务进行选择
+            //获取token
+            var accessToken = await _accountManager.GetTokenByUserIdAsync(user.Id);
 
 
-
-            //创建token
-            var accessToken = CreateToken(_accountManager.UserInfoToClaim(userInfo));
             return new { Token = accessToken };
-        }
-
-        /// <summary>
-        /// 创建令牌
-        /// </summary>
-        /// <param name="kvs"></param>
-        /// <returns></returns>
-        private string CreateToken(List<KeyValuePair<string, string>> kvs)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecurityKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var claims = kvs.Select(x => new Claim(x.Key, x.Value.ToString())).ToList();
-            var token = new JwtSecurityToken(
-               issuer: _jwtOptions.Issuer,
-               audience: _jwtOptions.Audience,
-               claims: claims,
-               expires: DateTime.Now.AddSeconds(_jwtOptions.ExpiresMinuteTime),
-               notBefore: DateTime.Now,
-               signingCredentials: creds);
-            string returnToken = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return returnToken;
         }
 
 
@@ -267,7 +201,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <returns></returns>
         [AllowAnonymous]
         [UnitOfWork]
-        public async Task<object> PostRegisterAsync(RegisterDto input)
+        public async Task PostRegisterAsync(RegisterDto input)
         {
             if (_rbacOptions.EnableRegister == false)
             {
@@ -295,27 +229,8 @@ namespace Yi.Framework.Rbac.Application.Services
             await ValidationPhoneCaptchaAsync(input);
 
 
-
-            //输入的用户名与电话号码都不能在数据库中存在
-            UserEntity user = new();
-            var isExist = await _userRepository.IsAnyAsync(x => x.UserName == input.UserName || x.Phone == input.Phone);
-            if (isExist)
-            {
-                throw new UserFriendlyException("用户已存在，注册失败");
-            }
-
-            var newUser = new UserEntity(input.UserName, input.Password, input.Phone);
-
-            var entity = await _userRepository.InsertReturnEntityAsync(newUser);
-            //赋上一个初始角色
-            var role = await _roleRepository.GetFirstAsync(x => x.RoleCode == UserConst.DefaultRoleCode);
-            if (role is not null)
-            {
-                await _userManager.GiveUserSetRoleAsync(new List<Guid> { entity.Id }, new List<Guid> { role.Id });
-            }
-
-            await _localEventBus.PublishAsync(new UserCreateEventArgs(entity.Id));
-            return true;
+            //注册领域逻辑
+            await _accountManager.RegisterAsync(input.UserName, input.Password, input.Phone);
         }
 
 
@@ -334,16 +249,14 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 throw new UserFriendlyException("用户未登录");
             }
-            //此处从缓存中获取即可
+            //此处从缓存中获取也行
             //var data = _cacheManager.Get<UserRoleMenuDto>($"Yi:UserInfo:{userId}");
-            await Console.Out.WriteLineAsync(userId.ToString() + "99999999");
             var data = await _userRepository.GetUserAllInfoAsync(userId ?? Guid.Empty);
             //系统用户数据被重置，老前端访问重新授权
             if (data is null)
             {
                 throw new AbpAuthorizationException();
             }
-
             data.Menus.Clear();
             return data;
         }
@@ -382,6 +295,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <returns></returns>
         public Task<bool> PostLogout()
         {
+            //Jwt去中心化登出，只需用记录日志即可
             return Task.FromResult(true);
         }
 

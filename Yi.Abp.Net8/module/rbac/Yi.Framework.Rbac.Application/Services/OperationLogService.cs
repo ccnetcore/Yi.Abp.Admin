@@ -4,7 +4,7 @@ using Volo.Abp.Application.Dtos;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.OperLog;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
-using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Operlog;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Rbac.Application.Services

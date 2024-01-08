@@ -14,10 +14,6 @@ const socketStore = defineStore("socket", {
       this.onlineNum = value;
     },
   },
-  persist: {
-    key: "onlineInfo",
-    storage: window.sessionStorage,
-  },
 });
 
 export default socketStore;

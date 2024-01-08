@@ -8,8 +8,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 {
     public class DictionaryTypeDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<DictionaryTypeEntity> _repository;
-        public DictionaryTypeDataSeed(ISqlSugarRepository<DictionaryTypeEntity> repository)
+        private ISqlSugarRepository<DictionaryTypeAggregateRoot> _repository;
+        public DictionaryTypeDataSeed(ISqlSugarRepository<DictionaryTypeAggregateRoot> repository)
         {
             _repository = repository;
         }
@@ -20,10 +20,10 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<DictionaryTypeEntity> GetSeedData()
+        public List<DictionaryTypeAggregateRoot> GetSeedData()
         {
-            List<DictionaryTypeEntity> entities = new List<DictionaryTypeEntity>();
-            DictionaryTypeEntity dict1 = new DictionaryTypeEntity()
+            List<DictionaryTypeAggregateRoot> entities = new List<DictionaryTypeAggregateRoot>();
+            DictionaryTypeAggregateRoot dict1 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "用户性别",
@@ -35,7 +35,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict1);
 
-            DictionaryTypeEntity dict2 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict2 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "菜单状态",
@@ -47,7 +47,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict2);
 
-            DictionaryTypeEntity dict3 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict3 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "系统开关",
@@ -59,7 +59,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict3);
 
-            DictionaryTypeEntity dict4 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict4 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "任务状态",
@@ -71,7 +71,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict4);
 
-            DictionaryTypeEntity dict5 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict5 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "任务分组",
@@ -83,7 +83,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict5);
 
-            DictionaryTypeEntity dict6 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict6 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "系统是否",
@@ -95,7 +95,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict6);
 
-            DictionaryTypeEntity dict7 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict7 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "通知类型",
@@ -106,7 +106,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 State = true
             };
             entities.Add(dict7);
-            DictionaryTypeEntity dict8 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict8 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "通知状态",
@@ -118,7 +118,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict8);
 
-            DictionaryTypeEntity dict9 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict9 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "操作类型",
@@ -131,7 +131,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(dict9);
 
 
-            DictionaryTypeEntity dict10 = new DictionaryTypeEntity()
+            DictionaryTypeAggregateRoot dict10 = new DictionaryTypeAggregateRoot()
             {
 
                 DictName = "系统状态",

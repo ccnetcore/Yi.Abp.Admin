@@ -19,15 +19,17 @@
                   >添加子文章</el-button
                 >
                 <!--目录在这里 -->
-                <TreeArticleInfo
-                  :data="articleData"
-                  @remove="delArticle"
-                  @update="updateArticle"
-                  @create="addNextArticle"
-                  @handleNodeClick="handleNodeClick"
-                  :currentNodeKey="currentNodeKey"
-                  :isArticleUser="isArticleUser"
-                />
+                <el-scrollbar height="410px">
+                  <TreeArticleInfo
+                    :data="articleData"
+                    @remove="delArticle"
+                    @update="updateArticle"
+                    @create="addNextArticle"
+                    @handleNodeClick="handleNodeClick"
+                    :currentNodeKey="currentNodeKey"
+                    :isArticleUser="isArticleUser"
+                  />
+                </el-scrollbar>
               </template>
             </InfoCard>
           </el-col>
