@@ -61,6 +61,9 @@
             <el-tab-pane label="修改密码" name="resetPwd">
               <resetPwd />
             </el-tab-pane>
+            <el-tab-pane label="账号设置" name="accountSetting">
+              <accountSet />
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-col>
@@ -72,6 +75,7 @@
 import userAvatar from "./UserAvatar.vue";
 import userInfo from "./UserInfo.vue";
 import resetPwd from "./ResetPwd.vue";
+import accountSet from "./AccountSetting.vue";
 import { getUserProfile } from "@/apis/userApi.js";
 import { onMounted, ref, reactive } from "vue";
 

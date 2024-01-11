@@ -198,12 +198,12 @@ import PointsRanking from "./components/PointsRanking/index.vue";
 import RecommendFriend from "./components/RecommendFriend/index.vue";
 import ThemeData from "./components/RecommendTheme/index.vue";
 import Skeleton from "@/components/Skeleton/index.vue";
-import useUserStore from "@/stores/user";
 import useSocketStore from "@/stores/socket";
-import { storeToRefs } from "pinia";
 import signalR from "@/utils/signalR";
+import useAuths from "@/hooks/useAuths";
 
-const { token } = storeToRefs(useUserStore());
+const { getToken } = useAuths();
+const token = getToken();
 
 const plateList = ref([]);
 const discussList = ref([]);
@@ -215,7 +215,7 @@ const isPointFinished = ref(false);
 const friendList = ref([]);
 const isFriendFinished = ref(false);
 const themeList = ref([]);
-const isThemeFinished = ref([]);
+const isThemeFinished = ref(false);
 const allDiscussList = ref([]);
 const isAllDiscussFinished = ref(false);
 const userAnalyseInfo = ref({});
@@ -262,17 +262,7 @@ onMounted(async () => {
   const { data: userAnalyseInfoData } = await getUserAnalyse();
   onlineNumber.value = userAnalyseInfoData.onlineNumber;
   userAnalyseInfo.value = userAnalyseInfoData;
-  // 实时人数
-  await signalR.init(`main`);
 });
-
-//这里还需要监视token的变化，重新进行signalr连接
-watch(
-  () => token.value,
-  async (newValue, oldValue) => {
-    await signalR.init(`main`);
-  }
-);
 
 const weekXAxis = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 // 访问统计
@@ -297,7 +287,18 @@ watch(
   () => currentOnlineNum.value,
   (val) => {
     onlineNumber.value = val;
-  }
+  },
+  { deep: true }
+);
+
+watch(
+  () => token,
+  async (val) => {
+    if (val) {
+      await signalR.init(`main`);
+    }
+  },
+  { immediate: true }
 );
 </script>
 <style scoped lang="scss">

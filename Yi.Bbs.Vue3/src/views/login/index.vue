@@ -140,10 +140,10 @@
           </div>
           <div class="icon-list">
             <div class="icon" @click="handleQQLogin">
-              <img src="@/assets/login_images/QQ.png" alt="" />
+              <img src="@/assets/login_images/qq-setting.png" alt="" />
             </div>
-            <div class="icon">
-              <img src="@/assets/login_images/WeChat.png" alt="" />
+            <div class="icon" @click="handleGiteeLogin">
+              <img src="@/assets/login_images/gitee-setting.png" alt="" />
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ import useUserStore from "@/stores/user";
 import useConfigStore from "@/stores/config";
 
 const configStore = useConfigStore();
-const { loginFun, registerFun } = useAuths();
+const { loginFun, registerFun, loginSuccess } = useAuths();
 const router = useRouter();
 const route = useRoute();
 const loginFormRef = ref();
@@ -305,11 +305,28 @@ const handleContact = () => {
 
 const handleQQLogin = () => {
   window.open(
-    "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101951505&redirect_uri=https://ccnetcore.com/qq&state=true&scope=get_user_info",
+    "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=102087446&redirect_uri=https://ccnetcore.com/auth/qq&state=0&scope=get_user_info",
     undefined,
     "width=500,height=500,left=50,top=50"
   );
 };
+
+const handleGiteeLogin = () => {
+  window.open(
+    "https://gitee.com/oauth/authorize?client_id=949f3519969adc5cfe82c209b71300e8e0868e8536f3d7f59195c8f1e5b72502&redirect_uri=https%3A%2F%2Fccnetcore.com%2Fauth%2Fgitee&state=0&response_type=code",
+    undefined,
+    "width=500,height=500,left=50,top=50"
+  );
+};
+
+window.addEventListener("message", async (e) => {
+  const { authData, type } = e.data;
+  console.log(authData, "传到登录页的值");
+  if (authData) {
+    await loginSuccess({ data: JSON.parse(authData) });
+    window.close();
+  }
+});
 </script>
 <style scoped lang="scss">
 .login {

@@ -72,7 +72,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "audit-logging", "audit-logg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.AuditLogging.SqlSugarCore", "module\audit-logging\Yi.AuditLogging.SqlSugarCore\Yi.AuditLogging.SqlSugarCore.csproj", "{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AspNetCore.Authentication.OAuth", "framework\Yi.Framework.AspNetCore.Authentication.OAuth\Yi.Framework.AspNetCore.Authentication.OAuth.csproj", "{791AC2FA-50D3-4408-8D68-31DA72F608BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.AspNetCore.Authentication.OAuth", "framework\Yi.Framework.AspNetCore.Authentication.OAuth\Yi.Framework.AspNetCore.Authentication.OAuth.csproj", "{791AC2FA-50D3-4408-8D68-31DA72F608BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{01300F0F-686E-47B3-821D-12424177867B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Web", "sample\Acme.BookStore.Web\Acme.BookStore.Web.csproj", "{576DBC97-4E5D-4444-B65C-F41649A5F8E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Domain.Shared", "sample\Acme.BookStore.Domain.Shared\Acme.BookStore.Domain.Shared.csproj", "{D7F8BD42-F6A2-4F0A-9212-391B5185A99D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Domain", "sample\Acme.BookStore.Domain\Acme.BookStore.Domain.csproj", "{B615847F-8568-41D1-8B7E-63D61AE69F3D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Application.Contracts", "sample\Acme.BookStore.Application.Contracts\Acme.BookStore.Application.Contracts.csproj", "{20827DB5-5CDE-491A-82E8-3CAB82618C1E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Application", "sample\Acme.BookStore.Application\Acme.BookStore.Application.csproj", "{320273B6-7AE3-42DA-9675-D9AD4928A289}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.SqlSugarCore", "sample\Acme.BookStore.SqlSugarCore\Acme.BookStore.SqlSugarCore.csproj", "{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,6 +194,30 @@ Global
 		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{791AC2FA-50D3-4408-8D68-31DA72F608BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{576DBC97-4E5D-4444-B65C-F41649A5F8E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{576DBC97-4E5D-4444-B65C-F41649A5F8E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{576DBC97-4E5D-4444-B65C-F41649A5F8E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{576DBC97-4E5D-4444-B65C-F41649A5F8E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F8BD42-F6A2-4F0A-9212-391B5185A99D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F8BD42-F6A2-4F0A-9212-391B5185A99D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F8BD42-F6A2-4F0A-9212-391B5185A99D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F8BD42-F6A2-4F0A-9212-391B5185A99D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B615847F-8568-41D1-8B7E-63D61AE69F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B615847F-8568-41D1-8B7E-63D61AE69F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B615847F-8568-41D1-8B7E-63D61AE69F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B615847F-8568-41D1-8B7E-63D61AE69F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20827DB5-5CDE-491A-82E8-3CAB82618C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20827DB5-5CDE-491A-82E8-3CAB82618C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20827DB5-5CDE-491A-82E8-3CAB82618C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20827DB5-5CDE-491A-82E8-3CAB82618C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{320273B6-7AE3-42DA-9675-D9AD4928A289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{320273B6-7AE3-42DA-9675-D9AD4928A289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{320273B6-7AE3-42DA-9675-D9AD4928A289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{320273B6-7AE3-42DA-9675-D9AD4928A289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -213,6 +251,12 @@ Global
 		{73CCF2C4-B9FD-44AB-8D4B-0A421805B094} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
 		{48806510-8E18-4E1E-9BAF-5B97E88C5FC3} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
 		{791AC2FA-50D3-4408-8D68-31DA72F608BE} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
+		{576DBC97-4E5D-4444-B65C-F41649A5F8E0} = {01300F0F-686E-47B3-821D-12424177867B}
+		{D7F8BD42-F6A2-4F0A-9212-391B5185A99D} = {01300F0F-686E-47B3-821D-12424177867B}
+		{B615847F-8568-41D1-8B7E-63D61AE69F3D} = {01300F0F-686E-47B3-821D-12424177867B}
+		{20827DB5-5CDE-491A-82E8-3CAB82618C1E} = {01300F0F-686E-47B3-821D-12424177867B}
+		{320273B6-7AE3-42DA-9675-D9AD4928A289} = {01300F0F-686E-47B3-821D-12424177867B}
+		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7} = {01300F0F-686E-47B3-821D-12424177867B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

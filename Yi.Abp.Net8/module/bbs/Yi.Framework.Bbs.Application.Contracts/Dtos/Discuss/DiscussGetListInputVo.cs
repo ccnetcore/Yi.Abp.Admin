@@ -10,7 +10,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public Guid? PlateId { get; set; }
 
         //默认查询非置顶
-        public bool IsTop { get; set; } = false;
+        public bool? IsTop { get; set; } 
 
 
         //查询方式

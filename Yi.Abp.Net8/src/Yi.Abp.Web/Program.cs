@@ -6,11 +6,12 @@ using Yi.Abp.Web;
 Log.Logger = new LoggerConfiguration()
 .MinimumLevel.Debug()
 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-.MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics",LogEventLevel.Error)
+.MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Error)
 .MinimumLevel.Override("Quartz", LogEventLevel.Warning)
 .Enrich.FromLogContext()
-.WriteTo.Async(c => c.File("logs/log-.txt", rollingInterval: RollingInterval.Day))
-.WriteTo.Async(c => c.Console())
+.WriteTo.Async(c => c.File("logs/all/log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Debug))
+.WriteTo.Async(c => c.File("logs/error/errorlog-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Error))
+.WriteTo.Async(c => c.Console(restrictedToMinimumLevel: LogEventLevel.Information))
 .CreateLogger();
 
 try

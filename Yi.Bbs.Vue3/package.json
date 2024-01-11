@@ -12,6 +12,7 @@
     "@element-plus/icons-vue": "^2.1.0",
     "@microsoft/signalr": "^8.0.0",
     "axios": "^1.3.4",
+    "dayjs": "^1.11.10",
     "echarts": "^5.4.2",
     "element-plus": "^2.2.32",
     "highlight": "^0.2.4",

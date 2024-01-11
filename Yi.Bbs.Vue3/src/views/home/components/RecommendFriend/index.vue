@@ -1,7 +1,7 @@
 <template>
   <div class="friend-box">
     <div class="left">
-      <div class="icon"><img :src="userImageSrc" alt="" /></div>
+      <UserInfoCard :userInfo="friendData" :iconUrl="userImageSrc" />
     </div>
     <div class="center">
       <div class="top">
@@ -34,6 +34,7 @@
 
 <script setup name="RecommendFriend">
 import { defineProps, computed } from "vue";
+import UserInfoCard from "@/components/UserInfoCard/index.vue";
 
 const props = defineProps({
   friendData: {

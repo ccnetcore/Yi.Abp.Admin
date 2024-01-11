@@ -1,10 +1,12 @@
-﻿using Volo.Abp.Modularity;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Modularity;
 using Yi.Abp.Domain;
 using Yi.Abp.SqlSugarCore;
 using Yi.Framework.Bbs.SqlSugarCore;
 using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.SqlSugarCore;
 using Yi.Framework.SqlSugarCore;
+using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Abp.SqlsugarCore
 {
@@ -22,6 +24,8 @@ namespace Yi.Abp.SqlsugarCore
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             context.Services.AddYiDbContext<YiDbContext>();
+            //默认不开放，可根据项目需要是否Db直接对外开放
+            //context.Services.AddTransient(x => x.GetRequiredService<ISqlSugarDbContext>().SqlSugarClient);
         }
     }
 }

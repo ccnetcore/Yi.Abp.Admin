@@ -164,5 +164,6 @@ export default function useAuths(opt) {
     logoutFun,
     clearStorage,
     registerFun,
+    loginSuccess,
   };
 }

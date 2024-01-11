@@ -46,7 +46,10 @@ namespace Yi.Framework.SqlSugarCore.Uow
             var unitOfWork = UnitOfWorkManager.Current;
             if (unitOfWork == null)
             {
-                throw new AbpException("A DbContext can only be created inside a unit of work!");
+                UnitOfWorkManager.Begin(true);
+                unitOfWork=UnitOfWorkManager.Current;
+                //取消工作单元强制性
+                //throw new AbpException("A DbContext can only be created inside a unit of work!");
             }
             //var sss= unitOfWork.ServiceProvider.GetRequiredService<TDbContext>();
             //Console.WriteLine("反户的:"+sss.SqlSugarClient.ContextID);

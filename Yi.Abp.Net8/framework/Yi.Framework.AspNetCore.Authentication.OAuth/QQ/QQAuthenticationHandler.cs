@@ -26,8 +26,7 @@ namespace Yi.Framework.AspNetCore.Authentication.OAuth.QQ
                 new KeyValuePair<string, string?>("redirect_uri",Options.RedirectUri),
                 new KeyValuePair<string, string?>("fmt","json"),
                 new KeyValuePair<string, string?>("need_openid","1"),
-                new KeyValuePair<string, string?>("code",code),
-                new KeyValuePair<string, string?>("state","true"),
+                new KeyValuePair<string, string?>("code",code)
             };
             var tokenModel = await SendHttpRequestAsync<QQAuthticationcationTokenResponse>(QQAuthenticationDefaults.TokenEndpoint, tokenQueryKv);
 

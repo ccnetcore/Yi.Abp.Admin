@@ -40,7 +40,7 @@ namespace Yi.Framework.Rbac.Application.Services.Authentication
         /// <returns></returns>
         /// <exception cref="UserFriendlyException"></exception>
         [HttpGet("auth/oauth/login/{scheme}")]
-        public async Task<string> AuthOauthLoginAsync([FromRoute] string scheme, [FromQuery] string code)
+        public async Task<object> AuthOauthLoginAsync([FromRoute] string scheme, [FromQuery] string code)
         {
             (var openId, var _) = await GetOpenIdAndNameAsync(scheme);
             var authEntity = await _repository.GetAsync(x => x.OpenId == openId && x.AuthType == scheme);
@@ -50,7 +50,7 @@ namespace Yi.Framework.Rbac.Application.Services.Authentication
                 throw new UserFriendlyException("第三方登录失败，请先注册后，在个人中心进行绑定该第三方后使用");
             }
             var accessToken = await _accountManager.GetTokenByUserIdAsync(authEntity.UserId);
-            return accessToken;
+            return new { token= accessToken };
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Yi.Framework.Rbac.Application.Services.Authentication
         {
             (var openId, var name) = await GetOpenIdAndNameAsync(scheme);
             var userId = CurrentUser.Id;
-            var authEntityAny = await _repository.AnyAsync(x => x.OpenId == openId && x.AuthType == scheme);
+            var authEntityAny = await _repository.IsAnyAsync(x => x.OpenId == openId && x.AuthType == scheme);
             if (authEntityAny)
             {
                 throw new UserFriendlyException("绑定失败，该第三方账号已被注册");

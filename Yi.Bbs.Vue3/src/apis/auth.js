@@ -73,3 +73,58 @@ export function getLoginCode() {
     method: "get",
   });
 }
+
+/**
+ * 第三方账号登录
+ * @param {*} params 参数
+ * @param {*} scheme 类型
+ * @returns
+ */
+export function authOtherLogin(params, scheme) {
+  return request({
+    url: `/auth/oauth/login/${scheme}`,
+    method: "get",
+    params: params,
+  });
+}
+
+/**
+ * 第三方账号绑定
+ * @param {*} params 参数
+ * @param {*} scheme 类型
+ * @returns
+ */
+export function authOtherBind(params, scheme) {
+  return request({
+    url: `/auth/oauth/bind/${scheme}`,
+    method: "post",
+    params: params,
+  });
+}
+
+/**
+ * 第三方账号绑定
+ * @param {*} params 参数
+ * @param {*} scheme 类型
+ * @returns
+ */
+export function getOtherAuthInfo(params) {
+  return request({
+    url: `auth/account`,
+    method: "get",
+    params: params,
+  });
+}
+
+/**
+ * 删除第三方授权
+ * @param {*} ids
+ * @returns
+ */
+export function delOtherAuth(ids) {
+  return request({
+    url: `/auth`,
+    method: "delete",
+    params: { id: ids },
+  });
+}

@@ -87,7 +87,7 @@
 
 <script setup>
 import DisscussCard from "@/components/DisscussCard.vue";
-import { getList, getTopList } from "@/apis/discussApi.js";
+import { getList } from "@/apis/discussApi.js";
 import { ref, reactive, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BottomInfo from "@/components/BottomInfo.vue";
@@ -96,6 +96,7 @@ import useAuths from "@/hooks/useAuths";
 import { Session } from "@/utils/storage";
 import Skeleton from "@/components/Skeleton/index.vue";
 import Tabs from "./components/tabs.vue";
+import { cloneDeep } from "lodash";
 
 const { getToken, clearStorage } = useAuths();
 //数据定义
@@ -112,6 +113,7 @@ const query = reactive({
   skipCount: 1,
   maxResultCount: 10,
   title: "",
+  isTop: false,
   plateId: route.params.plateId,
   type: activeName.value,
 });
@@ -147,7 +149,9 @@ const loadDiscussList = async () => {
   total.value = Number(response.data.totalCount);
 
   //全查，无需参数
-  const topResponse = await getTopList();
+  const topParams = cloneDeep(query);
+  topParams.isTop = true;
+  const topResponse = await getList(topParams);
   topDiscussList.value = topResponse.data.items;
 };
 

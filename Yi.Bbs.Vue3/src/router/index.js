@@ -32,11 +32,11 @@ const router = createRouter({
           component: () => import("../views/Register.vue"),
         },
         {
-          name: "qq",
-          path: "/qq",
-          component: () => import("../views/qqAuth/index.vue"),
+          name: "auth",
+          path: "/auth/:type",
+          component: () => import("../views/Auth/index.vue"),
           meta: {
-            title: "QQ授权",
+            title: "授权",
           },
         },
       ],

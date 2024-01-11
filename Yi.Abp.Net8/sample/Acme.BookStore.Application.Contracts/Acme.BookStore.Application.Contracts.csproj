@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\framework\Yi.Framework.Ddd.Application.Contracts\Yi.Framework.Ddd.Application.Contracts.csproj" />
+    <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.Application.Contracts\Yi.Framework.Bbs.Application.Contracts.csproj" />
+    <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Application.Contracts\Yi.Framework.Rbac.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Acme.BookStore.Domain.Shared\Acme.BookStore.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
