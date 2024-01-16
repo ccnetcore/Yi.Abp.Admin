@@ -14,13 +14,13 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Task
 
         public JobTypeEnum Type { get; set; }
 
-        public string Cron { get; set; }
+        public string? Cron { get; set; }
 
-        public int Millisecond { get; set; }
+        public int? Millisecond { get; set; }
 
         public bool Concurrent { get; set; }
 
-        //public Dictionary<string, object>? Properties { get; set; }
+       // public Dictionary<string, object>? Properties { get; set; }
 
         public string? Description { get; set; }
     }

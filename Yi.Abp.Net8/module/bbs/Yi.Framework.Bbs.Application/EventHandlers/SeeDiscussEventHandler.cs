@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.EventBus;
-using Yi.Framework.Bbs.Domain.Entities;
+using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Shared.Etos;
 
-namespace Yi.Framework.Bbs.Domain.EventHandlers
+namespace Yi.Framework.Bbs.Application.EventHandlers
 {
     public class SeeDiscussEventHandler : ILocalEventHandler<SeeDiscussEventArgs>, ITransientDependency
     {

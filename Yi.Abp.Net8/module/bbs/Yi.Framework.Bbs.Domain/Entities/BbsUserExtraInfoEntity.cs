@@ -13,6 +13,7 @@ namespace Yi.Framework.Bbs.Domain.Entities
     /// 评论表
     /// </summary>
     [SugarTable("BbsUserExtraInfo")]
+    [SugarIndex($"index_{nameof(UserId)}", nameof(UserId), OrderByType.Asc)]
     public class BbsUserExtraInfoEntity : Entity<Guid>
     {
         public BbsUserExtraInfoEntity() { }
@@ -28,14 +29,26 @@ namespace Yi.Framework.Bbs.Domain.Entities
         public Guid UserId { get; set; }
 
         /// <summary>
+        /// 用户限制
+        /// </summary>
+        public UserLimitEnum UserLimit { get; set; } = UserLimitEnum.Normal;
+
+
+        /// <summary>
         /// 用户等级
         /// </summary>
         public int Level { get; set; } = 1;
 
         /// <summary>
-        /// 用户限制
+        /// 钱钱
         /// </summary>
-        public UserLimitEnum UserLimit { get; set; } = UserLimitEnum.Normal;
+        public decimal Money { get; set; } = 0m;
+
+
+        /// <summary>
+        /// 经验
+        /// </summary>
+        public long Experience { get; set; } = 0;
     }
 
 }

@@ -30,6 +30,7 @@ const useUserStore = defineStore("user", {
           .then((response) => {
             const res = response.data;
             setToken(res.token);
+   
             this.token = res.token;
             resolve(response);
           })
@@ -119,6 +120,10 @@ const useUserStore = defineStore("user", {
       this.codeImageURL = "data:image/jpg;base64," + data.img;
       this.codeUUid = data.uuid;
     },
+    updateToken(token)
+    {
+      this.token = token;
+    }
   },
   persist: {
     key: "userInfo",

@@ -124,7 +124,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <param name="str_handset"></param>
         private async Task ValidationPhone(string str_handset)
         {
-            var res = Regex.IsMatch(str_handset, "^(0\\d{2,3}-?\\d{7,8}(-\\d{3,5}){0,1})|(((13[0-9])|(15([0-3]|[5-9]))|(18[0-9])|(17[0-9])|(14[0-9]))\\d{8})$");
+            var res = Regex.IsMatch(str_handset, @"^\d{11}$");
             if (res == false)
             {
                 throw new UserFriendlyException("手机号码格式错误！请检查");

@@ -6,7 +6,7 @@ using Volo.Abp.Uow;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
-namespace Yi.Framework.Rbac.Application.Jobs
+namespace Yi.Abp.Application.Jobs
 {
     /// <summary>
     /// 定时任务

@@ -45,7 +45,7 @@
     <div class="line"></div>
     <div class="bottom">
       <div class="header">
-        <div class="score">积分：3005</div>
+        <div class="score">钱钱：{{ userInfo.money }}</div>
         <div class="status">
           <span>状态：</span>
           <span> {{ getStatusInfo(userInfo.userLimit) }}</span>

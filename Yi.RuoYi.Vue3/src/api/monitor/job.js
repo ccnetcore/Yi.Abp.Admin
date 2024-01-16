@@ -36,10 +36,11 @@ export function updateJob(jobId,data) {
 }
 
 // 删除定时任务调度
-export function delJob(jobId) {
+export function delJob(ids) {
   return request({
-    url: '/task/' + jobId,
-    method: 'delete'
+    url: '/task',
+    method: 'delete',
+    params:{id:ids}
   })
 }
 

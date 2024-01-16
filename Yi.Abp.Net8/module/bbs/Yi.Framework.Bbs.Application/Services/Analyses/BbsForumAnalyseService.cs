@@ -5,6 +5,7 @@ using Volo.Abp.Application.Services;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss;
 using Yi.Framework.Bbs.Domain.Entities;
+using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Managers;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Domain.Entities;

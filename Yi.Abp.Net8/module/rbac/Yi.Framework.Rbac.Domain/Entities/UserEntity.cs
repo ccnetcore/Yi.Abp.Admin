@@ -12,6 +12,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
     /// 用户表
     /// </summary>
     [SugarTable("User")]
+    [SugarIndex($"index_{nameof(UserName)}", nameof(UserName), OrderByType.Asc)]
     public class UserEntity : Entity<Guid>, ISoftDelete, IAuditedObject, IOrderNum, IState
     {
         public UserEntity()

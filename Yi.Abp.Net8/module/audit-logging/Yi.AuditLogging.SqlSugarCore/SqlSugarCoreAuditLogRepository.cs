@@ -4,15 +4,16 @@ using System.Net;
 using Mapster;
 using SqlSugar;
 using Volo.Abp.Auditing;
+using Volo.Abp.AuditLogging;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Yi.AuditLogging.SqlSugarCore.Entities;
 using Yi.Framework.SqlSugarCore.Repositories;
 
-namespace Volo.Abp.AuditLogging.EntityFrameworkCore;
+namespace Yi.AuditLogging.SqlSugarCore;
 
-public class SqlSugarCoreAuditLogRepository : SqlSugarObjectRepository<AuditLog, Guid>,IAuditLogRepository
+public class SqlSugarCoreAuditLogRepository : SqlSugarObjectRepository<AuditLog, Guid>, IAuditLogRepository
 {
     public virtual async Task<List<AuditLog>> GetListAsync(
         string sorting = null,
@@ -52,7 +53,7 @@ public class SqlSugarCoreAuditLogRepository : SqlSugarObjectRepository<AuditLog,
         );
 
         var auditLogs = await query
-            .OrderBy(sorting.IsNullOrWhiteSpace() ? (nameof(AuditLog.ExecutionTime) + " DESC") : sorting)
+            .OrderBy(sorting.IsNullOrWhiteSpace() ? nameof(AuditLog.ExecutionTime) + " DESC" : sorting)
             .ToPageListAsync(skipCount, maxResultCount, cancellationToken);
 
         return auditLogs.Adapt<List<AuditLog>>();
@@ -138,7 +139,7 @@ public class SqlSugarCoreAuditLogRepository : SqlSugarObjectRepository<AuditLog,
             .Where(a => a.ExecutionTime < endDate.AddDays(1) && a.ExecutionTime > startDate)
             .OrderBy(t => t.ExecutionTime)
             .GroupBy(t => new { t.ExecutionTime.Date })
-            .Select(g => new { Day =SqlFunc.AggregateMin(g.ExecutionTime), avgExecutionTime = SqlFunc.AggregateAvg( g.ExecutionDuration) })
+            .Select(g => new { Day = SqlFunc.AggregateMin(g.ExecutionTime), avgExecutionTime = SqlFunc.AggregateAvg(g.ExecutionDuration) })
             .ToListAsync(cancellationToken);
 
         return result.ToDictionary(element => element.Day.ClearTime(), element => (double)element.avgExecutionTime);
@@ -176,7 +177,7 @@ public class SqlSugarCoreAuditLogRepository : SqlSugarObjectRepository<AuditLog,
     {
         var query = await GetEntityChangeListQueryAsync(auditLogId, startTime, endTime, changeType, entityId, entityTypeFullName, includeDetails);
 
-        return await query.OrderBy(sorting.IsNullOrWhiteSpace() ? (nameof(EntityChange.ChangeTime) + " DESC") : sorting)
+        return await query.OrderBy(sorting.IsNullOrWhiteSpace() ? nameof(EntityChange.ChangeTime) + " DESC" : sorting)
             .ToPageListAsync(skipCount, maxResultCount, cancellationToken);
     }
 

@@ -12,8 +12,8 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Yi.Framework.Core.Enums;
 using Yi.Framework.Core.Helper;
+using Yi.Framework.Rbac.Application.Contracts.Dtos.FileManager;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
-using Yi.Framework.Rbac.Application.FileManger;
 using Yi.Framework.Rbac.Domain.Entities;
 
 namespace Yi.Framework.Rbac.Application.Services

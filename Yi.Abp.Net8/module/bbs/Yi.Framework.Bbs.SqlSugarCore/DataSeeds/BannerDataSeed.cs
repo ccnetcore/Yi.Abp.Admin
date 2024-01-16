@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
-using Yi.Framework.Bbs.Domain.Entities;
+using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.SqlSugarCore.Abstractions;
 

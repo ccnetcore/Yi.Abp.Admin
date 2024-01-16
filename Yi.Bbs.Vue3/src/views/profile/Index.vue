@@ -61,7 +61,7 @@
             <el-tab-pane label="修改密码" name="resetPwd">
               <resetPwd />
             </el-tab-pane>
-            <el-tab-pane label="账号设置" name="accountSetting">
+            <el-tab-pane label="第三方快捷登录" name="accountSetting">
               <accountSet />
             </el-tab-pane>
           </el-tabs>

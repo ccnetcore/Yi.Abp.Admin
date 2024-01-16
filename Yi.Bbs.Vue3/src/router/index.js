@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Layout from "../layout/Index.vue";
 import NotFound from "../views/error/404.vue";
 import LoginLayout from "../layout/LoginLayout.vue";
+import SignInLayout from "../layout/signIn/index.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -94,6 +95,22 @@ const router = createRouter({
           component: () => import("../views/contact/index.vue"),
           meta: {
             title: "联系我们",
+          },
+        },
+      ],
+    },
+    {
+      path: "/sign",
+      name: "signInLayout",
+      component: SignInLayout,
+      redirect: "/sign/everyday",
+      children: [
+        {
+          name: "everyday",
+          path: "everyday",
+          component: () => import("../views/signIn/index.vue"),
+          meta: {
+            title: "每日签到",
           },
         },
       ],

@@ -19,5 +19,16 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser
         /// 用户限制
         /// </summary>
         public UserLimitEnum UserLimit { get; set; }
+
+        /// <summary>
+        /// 钱钱
+        /// </summary>
+        public decimal Money { get; set; }
+
+
+        /// <summary>
+        /// 经验
+        /// </summary>
+        public long Experience { get; set; }
     }
 }

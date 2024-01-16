@@ -4,6 +4,7 @@ using SqlSugar;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
+using Yi.Framework.Bbs.Domain.Entities;
 using Yi.Framework.Bbs.Domain.Managers;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
@@ -29,7 +30,7 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
         public async Task<List<BbsUserGetListOutputDto>> GetRandomUserAsync([FromQuery] PagedResultRequestDto input)
         {
             var randUserIds = await _bbsUserManager._userRepository._DbQueryable
-                .Where(x => x.UserName != UserConst.Admin)
+               //.Where(x => x.UserName != UserConst.Admin)
                 .OrderBy(x => SqlFunc.GetRandom())
                 .Select(x => x.Id).
                 ToPageListAsync(input.SkipCount, input.MaxResultCount);
@@ -38,19 +39,20 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
         }
 
         /// <summary>
-        /// 积分排行榜
+        /// 积分钱钱排行榜
         /// </summary>
         /// <returns></returns>
         [HttpGet("analyse/bbs-user/integral-top")]
         public async Task<List<BbsUserGetListOutputDto>> GetIntegralTopUserAsync([FromQuery] PagedResultRequestDto input)
         {
             var randUserIds = await _bbsUserManager._userRepository._DbQueryable
-                .Where(x => x.UserName != UserConst.Admin)
-                .OrderBy(x => SqlFunc.GetRandom())
-                .Select(x => x.Id).
+               // .Where(user => user.UserName != UserConst.Admin)
+                .LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id==info.UserId)
+                .OrderByDescending((user, info)=>info.Money)
+                .Select((user, info) => user.Id).
                 ToPageListAsync(input.SkipCount, input.MaxResultCount);
             var output = await _bbsUserManager.GetBbsUserInfoAsync(randUserIds);
-            return output.Adapt<List<BbsUserGetListOutputDto>>();
+            return output.OrderByDescending(x=>x.Money).ToList().Adapt<List<BbsUserGetListOutputDto>>();
         }
 
         /// <summary>

@@ -39,8 +39,7 @@
 
   <div v-for="item in commentList" :key="item.id" class="comment1">
     <AvatarInfo :userInfo="item.createUser" />
-    <div class="content">
-      {{ item.content }}
+    <div class="content" v-html="item.content">
     </div>
     <span class="time"> {{ item.creationTime }} </span>
     <span class="pointer"
@@ -90,8 +89,7 @@
           回复@{{ children.commentedUser.nick }}</span
         >
       </div>
-      <div class="content">
-        {{ children.content }}
+      <div class="content" v-html="children.content">
       </div>
       <span class="time">{{ children.creationTime }} </span>
       <span class="pointer">
@@ -188,8 +186,12 @@ const loadComment = async () => {
   form.content = "";
   const response = await getListByDiscussId(route.params.discussId, query);
   commentList.value = response.data.items;
+//处理换行问题
+
+commentList.value.forEach(x=>x.content=x.content.replace(/\n/g, "<br/>"))
   total.value = response.data.total;
 };
+
 const addTopComment = async () => {
   form.parentId = "00000000-0000-0000-0000-000000000000";
   form.rootId = "00000000-0000-0000-0000-000000000000";

@@ -86,7 +86,7 @@ import useAuths from "@/hooks/useAuths";
 import { Session } from "@/utils/storage";
 import signalR from "@/utils/signalR";
 
-const { getToken, clearStorage } = useAuths();
+const { isLogin, clearStorage } = useAuths();
 const configStore = useConfigStore();
 const router = useRouter();
 const route = useRoute();
@@ -129,8 +129,6 @@ const search = () => {
   searchText.value = "";
   router.push(routerPer);
 };
-
-const isLogin = getToken("AccessToken") ? true : false;
 
 const handleGitClick = () => {
   window.open("https://gitee.com/ccnetcore/Yi");

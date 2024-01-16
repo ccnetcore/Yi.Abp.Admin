@@ -36,7 +36,6 @@ export default {
         connection.state === signalR.HubConnectionState.Disconnected
       );
       // 建议用户重新刷新浏览器
-      await this.start();
     });
 
     connection.onreconnected(() => {
@@ -54,6 +53,7 @@ export default {
     try {
       var that = this;
       await this.SR.stop();
+      this.SR={};
     } catch {}
   },
 

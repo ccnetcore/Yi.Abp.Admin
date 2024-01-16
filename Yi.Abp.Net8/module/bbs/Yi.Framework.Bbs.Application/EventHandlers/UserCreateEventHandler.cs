@@ -5,7 +5,7 @@ using Yi.Framework.Bbs.Domain.Entities;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Domain.Shared.Etos;
 
-namespace Yi.Framework.Rbac.Application.EventHandlers
+namespace Yi.Framework.Bbs.Application.EventHandlers
 {
     public class UserCreateEventHandler : ILocalEventHandler<UserCreateEventArgs>, ITransientDependency
     {
@@ -19,7 +19,7 @@ namespace Yi.Framework.Rbac.Application.EventHandlers
             //创建主表
             var bbsUser = new BbsUserExtraInfoEntity(eventData.UserId)
             {
-            
+
             };
             await _repository.InsertAsync(bbsUser);
         }

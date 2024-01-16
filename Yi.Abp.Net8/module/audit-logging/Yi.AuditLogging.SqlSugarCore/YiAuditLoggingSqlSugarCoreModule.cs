@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Volo.Abp.AuditLogging;
-using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.Modularity;
 using Yi.Framework.SqlSugarCore;
 

@@ -110,6 +110,7 @@ const Init = () => {
     userInfo.nick = props.userInfo.nick;
     userInfo.role = props.userInfo.role;
     userInfo.id = props.userInfo.id;
+    userInfo.money=props.userInfo.money;
     userInfo.level = props.userInfo.level;
     userInfo.userLimit = props.userInfo.userLimit;
     iconUrl.value = iconUrlHandler(userInfo.icon);

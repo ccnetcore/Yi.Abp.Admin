@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Volo.Abp.DependencyInjection;
-using Yi.Framework.Bbs.Domain.Entities;
+using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Repositories;
 using Yi.Framework.SqlSugarCore.Abstractions;
 using Yi.Framework.SqlSugarCore.Repositories;

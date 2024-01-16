@@ -103,7 +103,7 @@
 <el-table-column label="Job参数" align="center" prop="properties" :show-overflow-tooltip="true" /> 
    
                <el-table-column label="是否并行" align="center" prop="concurrent" :show-overflow-tooltip="true" /> 
-                   <el-table-column label="最后更新时间" align="center" prop="updatedTime" :show-overflow-tooltip="true" /> 
+                   <el-table-column label="最后执行时间" align="center" prop="lastRunTime" :show-overflow-tooltip="true" /> 
    
                    <el-table-column label="状态" align="center" prop="status" :show-overflow-tooltip="true" /> 
                 <el-table-column label="描述" align="center" prop="description" :show-overflow-tooltip="true" /> 
@@ -151,14 +151,14 @@
                      v-hasPermi="['monitor:job:query']"
                   ></el-button>
                </el-tooltip>
-               <el-tooltip content="调度日志" placement="top">
+               <!-- <el-tooltip content="调度日志" placement="top">
                   <el-button
                      type="text"
                      icon="Operation"
                      @click="handleJobLog(scope.row)"
                      v-hasPermi="['monitor:job:query']"
                   ></el-button>
-               </el-tooltip>
+               </el-tooltip> -->
             </template>
          </el-table-column>
       </el-table>
@@ -248,7 +248,7 @@
 
 
                </el-col>
-               <el-col v-show="form.type==0" :span="24">
+               <el-col v-show="form.type=='Cron'" :span="24">
                   <el-form-item label="cron表达式" prop="cron">
                      <el-input v-model="form.cron" placeholder="请输入cron执行表达式">
                         <template #append>
@@ -260,7 +260,7 @@
                      </el-input>
                   </el-form-item>
                </el-col>
-                     <el-col v-show="form.type==1" :span="24">
+                     <el-col v-show="form.type=='Millisecond'" :span="24">
                   <el-form-item label="定时毫秒间隔" prop="millisecond">
                      <el-input v-model="form.millisecond" placeholder="请输入毫秒间隔">
                      </el-input>
@@ -269,8 +269,8 @@
                <el-col :span="24">
                   <el-form-item label="执行策略" prop="type">
                      <el-radio-group v-model="form.type">
-                        <el-radio-button :label=0>Cron表达式</el-radio-button>
-                        <el-radio-button :label=1>简单毫秒间隔</el-radio-button>
+                        <el-radio-button label="Cron">Cron表达式</el-radio-button>
+                        <el-radio-button label="Millisecond">简单毫秒间隔</el-radio-button>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
@@ -293,7 +293,7 @@
                      </el-radio-group>
                   </el-form-item>
                </el-col> -->
-
+  
 
                           <el-col :span="24">
                   <el-form-item label="描述" prop="description">
@@ -335,10 +335,7 @@
                   <el-form-item label="已执行次数：">{{ form.numberOfRuns }}</el-form-item>
                </el-col>
                <el-col :span="12">
-                  <el-form-item label="任务状态：">
-                     <div v-if="form.status == 0">正常</div>
-                     <div v-else-if="form.status == 1">失败</div>
-                  </el-form-item>
+                  <el-form-item label="任务状态：">{{ form.status }}</el-form-item>
                </el-col>
                <el-col :span="12">
                   <el-form-item label="是否并发：">
@@ -427,6 +424,7 @@ function cancel() {
 /** 表单重置 */
 function reset() {
   form.value = {
+   oldJobId:undefined,
     jobId: undefined,
     groupName: undefined,
     type: undefined,
@@ -525,8 +523,10 @@ function handleUpdate(row) {
   reset();
   IsAdd.value=false;
   const jobId = row.jobId || ids.value;
+
   getJob(jobId).then(response => {
     form.value = response.data;
+    form.value.oldJobId=jobId;
     open.value = true;
     title.value = "修改任务";
   });
@@ -545,7 +545,7 @@ function submitForm() {
         });
       } else {
 
-        updateJob(form.value.jobId,form.value).then(response => {
+        updateJob(form.value.oldJobId,form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();

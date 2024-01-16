@@ -25,7 +25,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
         {
             return await _userRepository._DbQueryable.LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id ,Icon=user.Icon,Level=info.Level,UserLimit=info.UserLimit}, true)
+                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id ,Icon=user.Icon,Level=info.Level,UserLimit=info.UserLimit,
+                         Money = info.Money,
+                         Experience = info.Experience
+                     }, true)
                      .FirstAsync(user => user.Id==userId);
         }
 
@@ -34,7 +37,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
             return await _userRepository._DbQueryable
                      .Where(user => userIds.Contains(user.Id))
                 .LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id , Icon = user.Icon , Level = info.Level, UserLimit = info.UserLimit },true)
+                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id , Icon = user.Icon , Level = info.Level, UserLimit = info.UserLimit,
+                         Money = info.Money,
+                         Experience = info.Experience
+                     },true)
                 
                      .ToListAsync();
         }
@@ -67,6 +73,18 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// 用户限制
         /// </summary>
         public UserLimitEnum UserLimit { get; set; }
+
+
+        /// <summary>
+        /// 钱钱
+        /// </summary>
+        public decimal Money { get; set; }
+
+
+        /// <summary>
+        /// 经验
+        /// </summary>
+        public long Experience { get; set; }
 
     }
 }

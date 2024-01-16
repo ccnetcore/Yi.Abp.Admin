@@ -57,7 +57,7 @@
         /// 作业更新时间
         /// </summary>
 
-        public DateTime? UpdatedTime { get; internal set; }
+        public DateTime? LastRunTime { get; internal set; }
 
         /// <summary>
         /// 标记其他作业正在执行

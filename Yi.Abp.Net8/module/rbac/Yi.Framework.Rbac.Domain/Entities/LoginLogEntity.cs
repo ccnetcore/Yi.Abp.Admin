@@ -9,6 +9,7 @@ using Yi.Framework.Core.Extensions;
 namespace Yi.Framework.Rbac.Domain.Entities
 {
     [SugarTable("LoginLog")]
+    [SugarIndex($"index_{nameof(LoginUser)}", nameof(LoginUser), OrderByType.Asc)]
     public class LoginLogEntity : Entity<Guid>, ICreationAuditedObject
     {
         [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]

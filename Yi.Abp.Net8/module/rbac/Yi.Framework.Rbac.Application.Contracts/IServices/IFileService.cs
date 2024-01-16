@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Volo.Abp.Application.Services;
-using Yi.Framework.Rbac.Application.FileManger;
+using Yi.Framework.Rbac.Application.Contracts.Dtos.FileManager;
 
 namespace Yi.Framework.Rbac.Application.Contracts.IServices
 {

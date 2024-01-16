@@ -66,6 +66,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
 
                           .LeftJoin<DeptEntity>((user, dept) => user.DeptId == dept.Id)
+                          .OrderByDescending(user => user.CreationTime)
                           .Select((user, dept) => new UserGetListOutputDto(), true)
                           .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
 

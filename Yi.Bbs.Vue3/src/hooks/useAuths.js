@@ -2,18 +2,22 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import useUserStore from "@/stores/user";
 import router from "@/router";
 import { Session, Local } from "@/utils/storage";
+import{computed} from 'vue'
 import {
   userLogin,
   getUserDetailInfo,
   userLogout,
   userRegister,
 } from "@/apis/auth";
-
 const TokenKey = "AccessToken";
 export const AUTH_MENUS = "AUTH_MENUS";
 export const AUTH_USER = "AUTH_USER";
 
+
 export default function useAuths(opt) {
+
+
+
   const defaultOpt = {
     loginUrl: "/login", // 登录页跳转url 默认: /login
     loginReUrl: "", // 登录页登陆成功后带重定向redirect=的跳转url 默认为空
@@ -28,8 +32,13 @@ export default function useAuths(opt) {
 
   // 获取token
   const getToken = () => {
-    return Local.get(TokenKey);
+   var token= Local.get(TokenKey);
+    return token;
   };
+
+const isLogin=computed(()=>{
+  return getToken()? true : false
+});
 
   // 存储token到cookies
   const setToken = (token) => {
@@ -37,12 +46,7 @@ export default function useAuths(opt) {
       return false;
     }
     Local.set(TokenKey, token);
-    return true;
-  };
-
-  // 删除token
-  const removeToken = () => {
-    Local.remove(TokenKey);
+   
     return true;
   };
 
@@ -50,7 +54,8 @@ export default function useAuths(opt) {
   const logoutFun = async () => {
     let flag = true;
     try {
-      await userLogout().then((res) => {
+       await userLogout().then((res) => {
+        useUserStore().updateToken(null);
         ElMessage({
           message: "退出成功",
           type: "info",
@@ -68,6 +73,7 @@ export default function useAuths(opt) {
         }
       )
         .then(() => {
+          useUserStore().updateToken(null);
           return true;
         })
         .catch(() => {
@@ -75,6 +81,7 @@ export default function useAuths(opt) {
           return false;
         });
     }
+
     if (flag) {
       clearStorage();
     }
@@ -85,12 +92,14 @@ export default function useAuths(opt) {
     Session.clear();
     Local.clear();
     removeToken();
+
   };
 
   // 用户名密码登录
   const loginFun = async (params) => {
     try {
       const res = await userLogin(params);
+
       ElMessage({
         message: `您好${params.userName}，登录成功！`,
         type: "success",
@@ -117,11 +126,21 @@ export default function useAuths(opt) {
     }
   };
 
+
+  // 删除token
+  const removeToken = () => {
+   // console.log("token发生改变22清除清除")
+    Local.remove(TokenKey);
+    return true;
+  };
+
+
   // 登录成功之后的操作
   const loginSuccess = async (res) => {
     const { token } = res.data;
 
     setToken(token);
+    useUserStore().updateToken(token);
     try {
       // 存储用户信息
       await useUserStore().getInfo(); // 用户信息
@@ -141,6 +160,9 @@ export default function useAuths(opt) {
       return false;
     }
   };
+
+
+
 
   // 注册
   const registerFun = async (params) => {
@@ -165,5 +187,6 @@ export default function useAuths(opt) {
     clearStorage,
     registerFun,
     loginSuccess,
+    isLogin
   };
 }
