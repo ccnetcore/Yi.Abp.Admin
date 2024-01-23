@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.IdentityModel.Tokens;
@@ -7,12 +6,14 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
+using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.Modularity;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using Yi.Abp.Application;
 using Yi.Abp.SqlsugarCore;
@@ -31,8 +32,9 @@ namespace Yi.Abp.Web
     [DependsOn(
         typeof(YiAbpSqlSugarCoreModule),
         typeof(YiAbpApplicationModule),
-      
 
+
+        typeof(AbpAspNetCoreMultiTenancyModule),
         typeof(AbpAspNetCoreMvcModule),
         typeof(AbpAutofacModule),
         typeof(AbpSwashbuckleModule),
@@ -105,7 +107,13 @@ namespace Yi.Abp.Web
                 });
             });
 
-           
+            //配置多租户
+            Configure<AbpTenantResolveOptions>(options =>
+            {
+                //基于cookie jwt不好用，有坑
+                options.TenantResolvers.RemoveAll(x => x.Name == CookieTenantResolveContributor.ContributorName);
+            });
+
             //jwt鉴权
             var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
             context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -143,7 +151,7 @@ namespace Yi.Abp.Web
             .AddGitee(options =>
             {
                 configuration.GetSection("OAuth:Gitee").Bind(options);
-            });     
+            });
 
             //授权
             context.Services.AddAuthorization();
@@ -165,6 +173,9 @@ namespace Yi.Abp.Web
 
             //鉴权
             app.UseAuthentication();
+
+            //多租户
+            app.UseMultiTenancy();
 
             //swagger
             app.UseYiSwagger();

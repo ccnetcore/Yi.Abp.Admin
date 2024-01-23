@@ -7,6 +7,7 @@ using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.SqlSugarCore;
 using Yi.Framework.SqlSugarCore;
 using Yi.Framework.SqlSugarCore.Abstractions;
+using Yi.Framework.TenantManagement.SqlSugarCore;
 
 namespace Yi.Abp.SqlsugarCore
 {
@@ -16,6 +17,7 @@ namespace Yi.Abp.SqlsugarCore
         typeof(YiFrameworkRbacSqlSugarCoreModule),
         typeof(YiFrameworkBbsSqlSugarCoreModule),
 
+        typeof(YiFrameworkTenantManagementSqlSugarCoreModule),
         typeof(YiFrameworkMapsterModule),
         typeof(YiFrameworkSqlSugarCoreModule)
         )]

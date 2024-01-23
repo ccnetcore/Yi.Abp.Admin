@@ -1,6 +1,6 @@
 <template>
   <mavon-editor ref='md' v-model="text" :subfield="true" :codeStyle="props.codeStyle" :ishljs="true"
-    :style="{ minHeight: props.height, maxHeight: '100%' }" class="edit" @imgAdd="imgAdd">
+    :style="{ minHeight: props.height, maxHeight: '100%' }" class="edit" @imgAdd="imgAdd" @change="change">
  
     <!-- 引用视频链接的自定义按钮 -->
     <template v-slot:left-toolbar-after>
@@ -13,34 +13,17 @@
 
 
       <el-dropdown :hide-on-click='false'>
-        <el-button aria-hidden="true" class="op-icon fa" title="表情包">
+
+        
+     <el-button aria-hidden="true" class="op-icon fa" title="表情包">
           😊
         </el-button>
         <template #dropdown>
-          <el-dropdown-menu >
-            <el-dropdown-item>
-              <table border="1">
-                <tr>
-                  <td @click="text+='😊'">😊</td>
-                  <td>😊</td>
-                  <td>😊</td>
-                </tr>
-                <tr>
-                  <td>😊</td>
-                  <td>😊</td>
-                  <td>😊</td>
-                </tr>
-                <tr>
-                  <td>😊</td>
-                  <td>😊</td>
-                  <td>😊</td>
-                </tr>
-              </table>
 
-            </el-dropdown-item>
-
-          </el-dropdown-menu>
-        </template>
+           
+              <EmojiPanel @onSelect="onSelectEmoji"/>
+        
+        </template> 
       </el-dropdown>
 
 
@@ -94,6 +77,7 @@ import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import { ref, computed, watch, onMounted } from 'vue';
 import { upload } from '@/apis/fileApi'
+import EmojiPanel from '@/components/EmojiPanel.vue'
 
 const md = ref(null);
 const props = defineProps(['height', 'modelValue', "codeStyle"])
@@ -138,6 +122,19 @@ const imgAdd = async (pos, $file) => {
   md.value.$img2Url(pos, url);
 
 }
+
+//选择表情包
+const onSelectEmoji=(emoji)=>{
+  console.log(emoji.i,"emoji");
+  text.value+=emoji.i
+}
+
+const change=(value,render)=>{
+
+
+}
+
+
 </script>
 
 

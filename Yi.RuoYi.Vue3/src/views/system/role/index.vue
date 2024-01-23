@@ -74,10 +74,10 @@
             <el-button type="text" icon="CircleCheck" @click="handleDataScope(scope.row)"
               v-hasPermi="['system:role:edit']"></el-button>
           </el-tooltip>
-          <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
+          <!-- <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
             <el-button type="text" icon="User" @click="handleAuthUser(scope.row)" v-hasPermi="['system:role:edit']">
             </el-button>
-          </el-tooltip>
+          </el-tooltip> -->
         </template>
       </el-table-column>
     </el-table>
@@ -149,7 +149,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据权限" v-show="form.dataScope == 1">
+        <el-form-item label="数据权限" v-show="form.dataScope == 'CUSTOM'">
           <el-checkbox v-model="deptExpand" @change="handleCheckedTreeExpand($event, 'dept')">展开/折叠</el-checkbox>
           <el-checkbox v-model="deptNodeAll" @change="handleCheckedTreeNodeAll($event, 'dept')">全选/全不选</el-checkbox>
           <el-checkbox v-model="form.deptCheckStrictly" @change="handleCheckedTreeConnect($event, 'dept')">父子联动

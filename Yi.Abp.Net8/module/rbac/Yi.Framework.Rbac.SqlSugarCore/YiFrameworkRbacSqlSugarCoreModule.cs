@@ -15,7 +15,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            context.Services.AddYiDbContext<YiRbacDbContext>();
+            context.Services.TryAddYiDbContext<YiRbacDbContext>();
         }
     }
 }

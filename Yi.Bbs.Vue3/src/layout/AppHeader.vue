@@ -117,7 +117,7 @@ const enterIndex = () => {
   router.push("/index");
 };
 const enterProfile = () => {
-  router.push("/profile");
+  router.push(`/profile/${userStore.userName}`);
 };
 const toLogin = () => {
   clearStorage();

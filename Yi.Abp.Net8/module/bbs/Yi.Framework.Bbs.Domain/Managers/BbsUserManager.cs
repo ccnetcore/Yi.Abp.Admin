@@ -25,7 +25,11 @@ namespace Yi.Framework.Bbs.Domain.Managers
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
         {
             return await _userRepository._DbQueryable.LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id ,Icon=user.Icon,Level=info.Level,UserLimit=info.UserLimit,
+                     .Select((user, info) => new BbsUserInfoDto { 
+                         Id = user.Id ,
+                         Icon=user.Icon,
+                         Level=info.Level,
+                         UserLimit=info.UserLimit,
                          Money = info.Money,
                          Experience = info.Experience
                      }, true)

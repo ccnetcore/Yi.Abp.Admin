@@ -9,6 +9,7 @@
           <el-col
             :span="8"
             v-for="i in plateList"
+            :key="i.id"
             class="plate"
             :style="{
               'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
@@ -23,7 +24,7 @@
             />
           </el-col>
           <template v-if="isDiscussFinished">
-            <el-col :span="24" v-for="i in discussList">
+            <el-col :span="24" v-for="i in discussList" :key="i.id">
               <DisscussCard :discuss="i" />
             </el-col>
           </template>
@@ -31,7 +32,7 @@
             <Skeleton :isBorder="true" />
           </template>
           <template v-if="isAllDiscussFinished">
-            <el-col :span="24" v-for="i in allDiscussList">
+            <el-col :span="24" v-for="i in allDiscussList" :key="i.id">
               <DisscussCard :discuss="i" />
             </el-col>
           </template>
@@ -44,7 +45,7 @@
         <el-row class="right-div">
           <el-col :span="24">
             <el-carousel trigger="click" height="150px">
-              <el-carousel-item v-for="item in bannerList">
+              <el-carousel-item v-for="item in bannerList" :key="item.id">
                 <div class="carousel-font" :style="{ color: item.color }">
                   {{ item.name }}
                 </div>
@@ -268,7 +269,7 @@ onMounted(async () => {
     await getAllDiscussList({
       Type: 0,
       skipCount: 1,
-      maxResultCount: 5,
+      maxResultCount: 30,
     });
   isAllDiscussFinished.value = allDiscussConfig.isFinish;
   allDiscussList.value = allDiscussData.items;

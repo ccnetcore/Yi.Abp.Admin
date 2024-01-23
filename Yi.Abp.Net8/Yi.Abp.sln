@@ -70,7 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Bbs.SqlSugarCo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "audit-logging", "audit-logging", "{73CCF2C4-B9FD-44AB-8D4B-0A421805B094}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.AuditLogging.SqlSugarCore", "module\audit-logging\Yi.AuditLogging.SqlSugarCore\Yi.AuditLogging.SqlSugarCore.csproj", "{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.AuditLogging.SqlSugarCore", "module\audit-logging\Yi.Framework.AuditLogging.SqlSugarCore\Yi.Framework.AuditLogging.SqlSugarCore.csproj", "{48806510-8E18-4E1E-9BAF-5B97E88C5FC3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.AspNetCore.Authentication.OAuth", "framework\Yi.Framework.AspNetCore.Authentication.OAuth\Yi.Framework.AspNetCore.Authentication.OAuth.csproj", "{791AC2FA-50D3-4408-8D68-31DA72F608BE}"
 EndProject
@@ -87,6 +87,18 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.Application", "sample\Acme.BookStore.Application\Acme.BookStore.Application.csproj", "{320273B6-7AE3-42DA-9675-D9AD4928A289}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Acme.BookStore.SqlSugarCore", "sample\Acme.BookStore.SqlSugarCore\Acme.BookStore.SqlSugarCore.csproj", "{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Test", "test\Yi.Abp.Test\Yi.Abp.Test.csproj", "{68627BC2-F049-4C69-AD17-81DF9478E8CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tenant-management", "tenant-management", "{499A8C71-7892-42D0-A77E-48756E1EFF16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManagement.SqlSugarCore", "module\tenant-management\Yi.Framework.TenantManagement.SqlSugarCore\Yi.Framework.TenantManagement.SqlSugarCore.csproj", "{FA5BBAA1-08DC-472F-BB2C-5314E59D1556}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManagement.Domain", "module\tenant-management\Yi.Framework.TenantManagement.Domain\Yi.Framework.TenantManagement.Domain.csproj", "{54D8E2BC-591C-4344-A58E-874D49C00B41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AuditLogging.Domain", "module\audit-logging\Yi.Framework.AuditLogging.Domain\Yi.Framework.AuditLogging.Domain.csproj", "{EFD13211-17B5-400A-B99A-9F6F4E520C1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AuditLogging.Domain.Shared", "module\audit-logging\Yi.Framework.AuditLogging.Domain.Shared\Yi.Framework.AuditLogging.Domain.Shared.csproj", "{9C8C3C53-3DCE-4516-867E-228858E61B26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -218,6 +230,26 @@ Global
 		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68627BC2-F049-4C69-AD17-81DF9478E8CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68627BC2-F049-4C69-AD17-81DF9478E8CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68627BC2-F049-4C69-AD17-81DF9478E8CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68627BC2-F049-4C69-AD17-81DF9478E8CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA5BBAA1-08DC-472F-BB2C-5314E59D1556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA5BBAA1-08DC-472F-BB2C-5314E59D1556}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA5BBAA1-08DC-472F-BB2C-5314E59D1556}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA5BBAA1-08DC-472F-BB2C-5314E59D1556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D8E2BC-591C-4344-A58E-874D49C00B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54D8E2BC-591C-4344-A58E-874D49C00B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54D8E2BC-591C-4344-A58E-874D49C00B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D8E2BC-591C-4344-A58E-874D49C00B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD13211-17B5-400A-B99A-9F6F4E520C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD13211-17B5-400A-B99A-9F6F4E520C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD13211-17B5-400A-B99A-9F6F4E520C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD13211-17B5-400A-B99A-9F6F4E520C1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -257,6 +289,12 @@ Global
 		{20827DB5-5CDE-491A-82E8-3CAB82618C1E} = {01300F0F-686E-47B3-821D-12424177867B}
 		{320273B6-7AE3-42DA-9675-D9AD4928A289} = {01300F0F-686E-47B3-821D-12424177867B}
 		{70CCBD89-C0A1-4AC8-9AFA-C86C356DFDD7} = {01300F0F-686E-47B3-821D-12424177867B}
+		{68627BC2-F049-4C69-AD17-81DF9478E8CE} = {0D10EEF2-FBAE-4C72-B816-A52823FC299B}
+		{499A8C71-7892-42D0-A77E-48756E1EFF16} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
+		{FA5BBAA1-08DC-472F-BB2C-5314E59D1556} = {499A8C71-7892-42D0-A77E-48756E1EFF16}
+		{54D8E2BC-591C-4344-A58E-874D49C00B41} = {499A8C71-7892-42D0-A77E-48756E1EFF16}
+		{EFD13211-17B5-400A-B99A-9F6F4E520C1E} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
+		{9C8C3C53-3DCE-4516-867E-228858E61B26} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

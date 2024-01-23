@@ -24,7 +24,7 @@ namespace Yi.Framework.Rbac.Domain.Shared.Model
         /// <summary>
         /// 用户id
         /// </summary>
-        public long? UserId { get; set; }
+        public Guid? UserId { get; set; }
         public string? UserName { get; set; }
         public DateTime LoginTime { get; set; }
         public string? Ipaddr { get; set; }

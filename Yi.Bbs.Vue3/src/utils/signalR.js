@@ -26,7 +26,6 @@ export default {
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    console.log(connection, "connection");
 
     this.SR = connection;
     // 断线重连
@@ -62,7 +61,6 @@ export default {
 
     try {
       //使用async和await 或 promise的then 和catch 处理来自服务端的异常
-      console.log(this.SR, "执行连接");
       await this.SR.start();
       //console.assert(this.SR.state === signalR.HubConnectionState.Connected);
       //console.log('signalR 连接成功了', this.SR.state);

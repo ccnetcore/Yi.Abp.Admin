@@ -15,7 +15,7 @@ export const AUTH_USER = "AUTH_USER";
 
 
 export default function useAuths(opt) {
-
+ 
 
 
   const defaultOpt = {
@@ -39,6 +39,10 @@ export default function useAuths(opt) {
 const isLogin=computed(()=>{
   return getToken()? true : false
 });
+
+const currentUserInfo=computed(()=>{
+  return useUserStore();
+}); 
 
   // 存储token到cookies
   const setToken = (token) => {
@@ -187,6 +191,7 @@ const isLogin=computed(()=>{
     clearStorage,
     registerFun,
     loginSuccess,
-    isLogin
+    isLogin,
+    currentUserInfo
   };
 }

@@ -11,7 +11,7 @@ Log.Logger = new LoggerConfiguration()
 .Enrich.FromLogContext()
 .WriteTo.Async(c => c.File("logs/all/log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Debug))
 .WriteTo.Async(c => c.File("logs/error/errorlog-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Error))
-.WriteTo.Async(c => c.Console(restrictedToMinimumLevel: LogEventLevel.Information))
+.WriteTo.Async(c => c.Console())
 .CreateLogger();
 
 try

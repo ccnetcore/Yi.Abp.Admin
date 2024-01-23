@@ -27,6 +27,7 @@
     "vue": "^3.2.47",
     "vue-cropper": "1.0.3",
     "vue-router": "^4.1.6",
+    "vue3-emoji-picker": "^1.1.8",
     "yarm": "^0.4.0",
     "yarn": "^1.22.21"
   },

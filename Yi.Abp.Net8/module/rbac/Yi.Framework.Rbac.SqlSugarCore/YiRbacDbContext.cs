@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using SqlSugar;
+﻿using SqlSugar;
 using Volo.Abp.DependencyInjection;
+using Yi.Framework.Rbac.Domain.Authorization;
+using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Extensions;
+using Yi.Framework.Rbac.Domain.Shared.Consts;
+using Yi.Framework.Rbac.Domain.Shared.Enums;
 using Yi.Framework.SqlSugarCore;
 
 namespace Yi.Framework.Rbac.SqlSugarCore
@@ -11,34 +15,79 @@ namespace Yi.Framework.Rbac.SqlSugarCore
         {
         }
 
-        protected override void CustomDataFilter()
+        protected override void CustomDataFilter(ISqlSugarClient sqlSugarClient)
         {
-            base.CustomDataFilter();
+            if (DataFilter.IsEnabled<IDataPermission>())
+            {
+                DataPermissionFilter(sqlSugarClient);
+            }
+   
+
+            base.CustomDataFilter(sqlSugarClient);
         }
 
-        protected override void DataExecuted(object oldValue, DataAfterModel entityInfo)
-        {
-            base.DataExecuted(oldValue, entityInfo);
-        }
 
-        protected override void DataExecuting(object oldValue, DataFilterModel entityInfo)
+        /// <summary>
+        /// 数据权限过滤
+        /// </summary>
+        protected void DataPermissionFilter(ISqlSugarClient sqlSugarClient)
         {
-            base.DataExecuting(oldValue, entityInfo);
-        }
+            //获取当前用户的信息
+            if (CurrentUser.Id == null) return;
+            //管理员不过滤
+            if (CurrentUser.UserName.Equals(UserConst.Admin) || CurrentUser.Roles.Any(f => f.Equals(UserConst.AdminRolesCode))) return;
+            var expUser = Expressionable.Create<UserEntity>();
+            var expRole = Expressionable.Create<RoleEntity>();
 
-        protected override void OnLogExecuting(string sql, SugarParameter[] pars)
-        {
-            base.OnLogExecuting(sql,pars);
-        }
 
-        protected override void OnLogExecuted(string sql, SugarParameter[] pars)
-        {
-            base.OnLogExecuted(sql, pars);
-        }
+            var roleInfo = CurrentUser.GetRoleInfo();
 
-        protected override void OnSqlSugarClientConfig(ISqlSugarClient sqlSugarClient)
-        {
-            base.OnSqlSugarClientConfig(sqlSugarClient);
+            //如果无岗位，或者无角色，只能看自己的数据
+            if (/*CurrentUser.GetDeptId() is null ||*/ roleInfo is null)
+            {
+                expUser.Or(it => it.Id == CurrentUser.Id);
+                expRole.Or(it => roleInfo.Select(x => x.Id).Contains(it.Id));
+            }
+            else
+            {
+                foreach (var role in roleInfo.OrderBy(f => f.DataScope))
+                {
+                    var dataScope = role.DataScope;
+                    if (DataScopeEnum.ALL.Equals(dataScope))//所有权限
+                    {
+                        break;
+                    }
+                    else if (DataScopeEnum.CUSTOM.Equals(dataScope))//自定数据权限
+                    {
+                        //" OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {} ) ", deptAlias, role.getRoleId()));
+
+                        expUser.Or(it => SqlFunc.Subqueryable<RoleDeptEntity>().Where(f => f.DeptId == it.DeptId && f.RoleId == role.Id).Any());
+                    }
+                    else if (DataScopeEnum.DEPT.Equals(dataScope))//本部门数据
+                    {
+                        expUser.Or(it => it.DeptId == CurrentUser.GetDeptId());
+                    }
+                    else if (DataScopeEnum.DEPT_FOLLOW.Equals(dataScope))//本部门及以下数据
+                    {
+                        //SQl  OR {}.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = {} or find_in_set( {} , ancestors ) )
+                        var allChildDepts = sqlSugarClient.Queryable<DeptEntity>().ToChildList(it => it.ParentId, CurrentUser.GetDeptId());
+
+                        expUser.Or(it => allChildDepts.Select(f => f.Id).ToList().Contains(it.DeptId ?? Guid.Empty));
+                    }
+                    else if (DataScopeEnum.USER.Equals(dataScope))//仅本人数据
+                    {
+                        expUser.Or(it => it.Id == CurrentUser.Id);
+                        expRole.Or(it => roleInfo.Select(x => x.Id).Contains(it.Id));
+
+                    }
+                }
+
+            }
+
+
+
+            sqlSugarClient.QueryFilter.AddTableFilter(expUser.ToExpression());
+            sqlSugarClient.QueryFilter.AddTableFilter(expRole.ToExpression());
         }
     }
 }

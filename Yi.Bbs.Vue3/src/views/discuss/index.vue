@@ -48,11 +48,11 @@
       </el-form>
     </div>
     <Tabs v-model="activeName" :tabList="tabList" @tab-change="handleClick" />
-    <div class="div-item" v-for="i in topDiscussList">
+    <div class="div-item" v-for="i in topDiscussList" :key="i.id">
       <DisscussCard :discuss="i" badge="置顶" />
     </div>
     <template v-if="isDiscussFinished">
-      <div class="div-item" v-for="i in discussList">
+      <div class="div-item" v-for="i in discussList" :key="i.id">
         <DisscussCard :discuss="i" />
       </div>
     </template>
@@ -102,7 +102,7 @@ const { getToken, clearStorage } = useAuths();
 //数据定义
 const route = useRoute();
 const router = useRouter();
-const activeName = ref("suggest");
+const activeName = ref("new");
 //主题内容
 const discussList = ref([]);
 const isDiscussFinished = ref(false);
@@ -203,6 +203,7 @@ watch(
 const tabList = ref([
   { label: "全部文章", name: "suggest", position: "left" },
   { label: "最新", name: "new", position: "right" },
+  { label: "推荐", name: "suggest", position: "right" },
   { label: "最热", name: "host", position: "right" },
 ]);
 </script>

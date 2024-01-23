@@ -9,12 +9,12 @@
     v-if="!props.isSelf"
   >
     <template #reference>
-      <el-avatar :size="30" :src="iconUrl" />
+      <el-avatar :size="30" :src="iconUrl"  />
     </template>
     <div class="top">
       <div class="left">
         <div class="image">
-          <img :src="iconUrl" alt="" />
+          <img :src="iconUrl" alt="" @click="gotoProfile(userInfo.userName)" style="cursor: pointer;" />
         </div>
       </div>
       <div class="right">
@@ -64,7 +64,7 @@
 
 <script setup name="UserInfoCard">
 import { computed, defineProps } from "vue";
-
+import { useRouter } from "vue-router";
 const props = defineProps({
   // 用户信息
   userInfo: {
@@ -77,9 +77,8 @@ const props = defineProps({
     default: () => "",
   },
 });
-
+const router = useRouter();
 const userInfo = computed(() => props.userInfo);
-
 const statusTypeList = [
   {
     label: "正常",
@@ -100,6 +99,11 @@ const statusTypeList = [
 const getStatusInfo = (type) => {
   return statusTypeList.filter((item) => item.value === type)[0]?.label;
 };
+
+const gotoProfile=(userName)=>{
+  router.push(`/profile/${userName}`);
+
+}
 </script>
 
 <style scoped lang="scss">

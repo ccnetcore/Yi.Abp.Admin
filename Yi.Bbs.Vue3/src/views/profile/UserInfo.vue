@@ -4,21 +4,21 @@
       <el-input v-model="user.userName" disabled />
     </el-form-item>
     <el-form-item label="用户昵称" prop="nick">
-      <el-input v-model="user.nick" maxlength="30" />
+      <el-input v-model="user.nick" maxlength="30" :disabled="isDisable"/>
     </el-form-item>
     <el-form-item label="手机号码" prop="phone">
-      <el-input v-model="user.phone" maxlength="11" />
+      <el-input v-model="user.phone" maxlength="11" :disabled="isDisable" />
     </el-form-item>
     <el-form-item label="邮箱" prop="email">
-      <el-input v-model="user.email" maxlength="50" />
+      <el-input v-model="user.email" maxlength="50" :disabled="isDisable" />
     </el-form-item>
     <el-form-item label="性别">
-      <el-radio-group v-model="user.sex">
+      <el-radio-group v-model="user.sex" :disabled="isDisable">
         <el-radio :label="'Male'">男</el-radio>
         <el-radio :label="'Woman'">女</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item>
+    <el-form-item v-show="!isDisable">
       <el-button type="primary" @click="submit">保存</el-button>
       <el-button type="danger" @click="close">关闭</el-button>
     </el-form-item>
@@ -36,6 +36,10 @@ const props = defineProps({
   user: {
     type: Object,
   },
+  isDisable:{
+    type:Boolean,
+    default:true
+  }
 });
 
 const userRef = ref(null);

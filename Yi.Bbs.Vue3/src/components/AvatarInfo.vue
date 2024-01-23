@@ -34,7 +34,7 @@
       </div>
       <div class="info" v-if="!props.isSelf">
         <el-tag class="ml-2" type="warning">V8</el-tag>
-        <el-tag class="ml-2" type="danger">会员</el-tag>
+        <el-tag class="ml-2" type="danger">核心</el-tag>
       </div>
       <el-button
         v-if="props.showWatching"
@@ -73,6 +73,7 @@ const userInfo = reactive({
   id: "",
   level: "",
   userLimit: "",
+  userName:""
 });
 const iconUrl = ref("/acquiesce.png");
 const iconUrlHandler = (icon) => {
@@ -113,6 +114,7 @@ const Init = () => {
     userInfo.money=props.userInfo.money;
     userInfo.level = props.userInfo.level;
     userInfo.userLimit = props.userInfo.userLimit;
+    userInfo.userName= props.userInfo.userName;
     iconUrl.value = iconUrlHandler(userInfo.icon);
   }
 

@@ -16,6 +16,12 @@ namespace Yi.Framework.SqlSugarCore
             service.Replace(new ServiceDescriptor(typeof(ISqlSugarDbContext), typeof(DbContext), ServiceLifetime.Scoped));
             return service;
         }
+        public static IServiceCollection TryAddYiDbContext<DbContext>(this IServiceCollection service) where DbContext : class, ISqlSugarDbContext
+        {
+            service.TryAdd(new ServiceDescriptor(typeof(ISqlSugarDbContext), typeof(DbContext), ServiceLifetime.Scoped));
+            return service;
+        }
+
 
         public static IServiceCollection AddYiDbContext<DbContext>(this IServiceCollection service,Action<DbConnOptions> options) where DbContext : class, ISqlSugarDbContext
         {

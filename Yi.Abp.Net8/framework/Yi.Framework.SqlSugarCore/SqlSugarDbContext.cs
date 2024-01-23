@@ -22,7 +22,7 @@ namespace Yi.Framework.SqlSugarCore
         /// <summary>
         /// SqlSugar 客户端
         /// </summary>
-        public ISqlSugarClient SqlSugarClient { get; }
+        public ISqlSugarClient SqlSugarClient { get; private set; }
         public ICurrentUser CurrentUser => LazyServiceProvider.GetRequiredService<ICurrentUser>();
 
         private IAbpLazyServiceProvider LazyServiceProvider { get; }
@@ -36,66 +36,25 @@ namespace Yi.Framework.SqlSugarCore
         protected virtual bool IsSoftDeleteFilterEnabled => DataFilter?.IsEnabled<ISoftDelete>() ?? false;
 
         public IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
-        protected DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
+        public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
 
+
+        public void SetSqlSugarClient(ISqlSugarClient sqlSugarClient)
+        {
+            SqlSugarClient = sqlSugarClient;
+        }
         public SqlSugarDbContext(IAbpLazyServiceProvider lazyServiceProvider)
         {
             LazyServiceProvider = lazyServiceProvider;
-            var dbConnOptions = Options;
-            #region 组装options
-            if (dbConnOptions.DbType is null)
-            {
-                throw new ArgumentException("DbType配置为空");
-            }
-            var slavaConFig = new List<SlaveConnectionConfig>();
-            if (dbConnOptions.EnabledReadWrite)
-            {
-                if (dbConnOptions.ReadUrl is null)
-                {
-                    throw new ArgumentException("读写分离为空");
-                }
-
-                var readCon = dbConnOptions.ReadUrl;
-
-                readCon.ForEach(s =>
-                {
-                    //如果是动态saas分库，这里的连接串都不能写死，需要动态添加，这里只配置共享库的连接
-                    slavaConFig.Add(new SlaveConnectionConfig() { ConnectionString = s });
-                });
-            }
-            #endregion
-            SqlSugarClient = new SqlSugarClient(new ConnectionConfig()
-            {
-                //准备添加分表分库
-                DbType = dbConnOptions.DbType ?? DbType.Sqlite,
-                ConnectionString = dbConnOptions.Url,
-                IsAutoCloseConnection = true,
-                SlaveConnectionConfigs = slavaConFig,
-                //设置codefirst非空值判断
-                ConfigureExternalServices = new ConfigureExternalServices
-                {
-                    EntityService = (c, p) =>
-                    {
-                        if (new NullabilityInfoContext()
-                        .Create(c).WriteState is NullabilityState.Nullable)
-                        {
-                            p.IsNullable = true;
-                        }
-
-                        EntityService(c,p);
-                    }
-                }
-            },
-         db =>
-         {
-
-             db.Aop.DataExecuting = DataExecuting;
-             db.Aop.DataExecuted = DataExecuted;
-             db.Aop.OnLogExecuting = OnLogExecuting;
-             db.Aop.OnLogExecuted = OnLogExecuted;
-             //扩展
-             OnSqlSugarClientConfig(db);
-         });
+            var connectionCreator = LazyServiceProvider.LazyGetRequiredService<ISqlSugarDbConnectionCreator>();
+            connectionCreator.OnSqlSugarClientConfig = OnSqlSugarClientConfig;
+            connectionCreator.EntityService = EntityService;
+            connectionCreator.DataExecuting = DataExecuting;
+            connectionCreator.DataExecuted = DataExecuted;
+            connectionCreator.OnLogExecuting = OnLogExecuting;
+            connectionCreator.OnLogExecuted = OnLogExecuted;
+            SqlSugarClient = new SqlSugarClient(connectionCreator.Build());
+            connectionCreator.SetDbAop(SqlSugarClient);
         }
 
         /// <summary>
@@ -113,9 +72,9 @@ namespace Yi.Framework.SqlSugarCore
             {
                 sqlSugarClient.QueryFilter.AddTableFilter<IMultiTenant>(u => u.TenantId == GuidGenerator.Create());
             }
-            CustomDataFilter();
+            CustomDataFilter(sqlSugarClient);
         }
-        protected virtual void CustomDataFilter()
+        protected virtual void CustomDataFilter(ISqlSugarClient sqlSugarClient)
         {
 
         }
@@ -243,14 +202,14 @@ namespace Yi.Framework.SqlSugarCore
         /// <param name="property"></param>
         /// <param name="column"></param>
         protected virtual void EntityService(PropertyInfo property, EntityColumnInfo column)
-        { 
-        
+        {
+
         }
 
         public void BackupDataBase()
         {
             string directoryName = "database_backup";
-            string fileName = DateTime.Now.ToString($"yyyyMMdd_HHmmss")+ $"_{SqlSugarClient.Ado.Connection.Database}";
+            string fileName = DateTime.Now.ToString($"yyyyMMdd_HHmmss") + $"_{SqlSugarClient.Ado.Connection.Database}";
             if (!Directory.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
@@ -259,7 +218,7 @@ namespace Yi.Framework.SqlSugarCore
             {
                 case DbType.MySql:
                     //MySql
-                    SqlSugarClient.DbMaintenance.BackupDataBase(SqlSugarClient.Ado.Connection.Database, $"{Path.Combine(directoryName, fileName) }.sql");//mysql 只支持.net core
+                    SqlSugarClient.DbMaintenance.BackupDataBase(SqlSugarClient.Ado.Connection.Database, $"{Path.Combine(directoryName, fileName)}.sql");//mysql 只支持.net core
                     break;
 
 

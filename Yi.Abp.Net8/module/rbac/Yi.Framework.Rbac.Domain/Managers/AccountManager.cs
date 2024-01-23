@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using TencentCloud.Tdmq.V20200217.Models;
 using Volo.Abp;
 using Volo.Abp.Domain.Entities;
@@ -19,6 +20,7 @@ using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Dtos;
 using Yi.Framework.Rbac.Domain.Shared.Etos;
+using Yi.Framework.Rbac.Domain.Shared.Model;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
@@ -44,11 +46,11 @@ namespace Yi.Framework.Rbac.Domain.Managers
             , ISqlSugarRepository<RoleEntity> roleRepository)
         {
             _repository = repository;
-            _httpContextAccessor= httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
             _jwtOptions = jwtOptions.Value;
-            _localEventBus=localEventBus;
-            _userManager=userManager;
-            _roleRepository=roleRepository;
+            _localEventBus = localEventBus;
+            _userManager = userManager;
+            _roleRepository = roleRepository;
         }
 
         /// <summary>
@@ -164,24 +166,28 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public List<KeyValuePair<string, string>> UserInfoToClaim(UserRoleMenuDto dto)
         {
             var claims = new List<KeyValuePair<string, string>>();
-            AddToClaim(claims,AbpClaimTypes.UserId, dto.User.Id.ToString());
-            AddToClaim(claims,AbpClaimTypes.UserName, dto.User.UserName);
+            AddToClaim(claims, AbpClaimTypes.UserId, dto.User.Id.ToString());
+            AddToClaim(claims, AbpClaimTypes.UserName, dto.User.UserName);
             if (dto.User.DeptId is not null)
             {
-                AddToClaim(claims,TokenTypeConst.DeptId, dto.User.DeptId.ToString());
+                AddToClaim(claims, TokenTypeConst.DeptId, dto.User.DeptId.ToString());
             }
             if (dto.User.Email is not null)
             {
-                AddToClaim(claims,AbpClaimTypes.Email, dto.User.Email);
+                AddToClaim(claims, AbpClaimTypes.Email, dto.User.Email);
             }
             if (dto.User.Phone is not null)
             {
-                AddToClaim(claims,AbpClaimTypes.PhoneNumber, dto.User.Phone.ToString());
+                AddToClaim(claims, AbpClaimTypes.PhoneNumber, dto.User.Phone.ToString());
+            }
+            if (dto.Roles.Count > 0)
+            {
+                AddToClaim(claims, TokenTypeConst.RoleInfo, JsonConvert.SerializeObject(dto.Roles.Select(x => new RoleTokenInfoModel { Id = x.Id, DataScope = x.DataScope })));
             }
             if (UserConst.Admin.Equals(dto.User.UserName))
             {
-                AddToClaim(claims,TokenTypeConst.Permission, UserConst.AdminPermissionCode);
-                AddToClaim(claims,TokenTypeConst.Roles, UserConst.AdminRolesCode);
+                AddToClaim(claims, TokenTypeConst.Permission, UserConst.AdminPermissionCode);
+                AddToClaim(claims, TokenTypeConst.Roles, UserConst.AdminRolesCode);
             }
             else
             {
@@ -235,7 +241,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         }
 
 
-        public async Task RegisterAsync(string userName,string password,long phone)
+        public async Task RegisterAsync(string userName, string password, long phone)
         {
             //输入的用户名与电话号码都不能在数据库中存在
             UserEntity user = new();

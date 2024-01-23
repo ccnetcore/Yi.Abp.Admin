@@ -34,7 +34,7 @@ onMounted(async () => {
 watch(
   () => token,
    (val,oldValue) => {
-    console.log("token发生改变");
+   //console.log("token发生改变");
     if (val) {
       signalR.close();
       signalR.init(`main`);

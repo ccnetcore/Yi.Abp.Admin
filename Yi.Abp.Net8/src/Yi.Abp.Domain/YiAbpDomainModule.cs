@@ -5,13 +5,14 @@ using Yi.Abp.Domain.Shared;
 using Yi.Framework.Bbs.Domain;
 using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.Domain;
+using Yi.Framework.TenantManagement.Domain;
 
 namespace Yi.Abp.Domain
 {
     [DependsOn(
         typeof(YiAbpDomainSharedModule),
        
-
+        typeof(YiFrameworkTenantManagementDomainModule),
         typeof(YiFrameworkRbacDomainModule),
         typeof(YiFrameworkBbsDomainModule),
 

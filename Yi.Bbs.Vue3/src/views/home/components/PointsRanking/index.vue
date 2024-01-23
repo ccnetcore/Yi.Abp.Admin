@@ -5,11 +5,12 @@
     </div>
     <div class="center">
       <div class="top">
-        <el-tag effect="light" :type="userLimit.type">
+    
+        <!-- <el-tag effect="light" :type="userLimit.type">
           {{ userLimit.label }}
-        </el-tag>
+        </el-tag> -->
         <el-tag effect="light" type="success"
-          >等级{{ pointsData.level }}</el-tag
+          >{{pointsData.money }} 钱钱</el-tag
         >
       </div>
       <div class="bottom">

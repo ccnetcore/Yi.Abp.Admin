@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
+using Yi.Framework.Rbac.Application.SignalRHubs;
 using Yi.Framework.Rbac.Domain.Shared.Model;
-using Yi.Framework.Rbac.Domain.SignalRHubs;
 
 namespace Yi.Framework.Rbac.Application.Services
 {

@@ -9,6 +9,7 @@ export function listUser(query) {
   });
 }
 
+
 // 查询用户详细
 export function getUser(userId) {
   return request({
@@ -72,6 +73,15 @@ export function getUserProfile() {
     method: "get",
   });
 }
+
+// 查询bbs个人信息
+export function getBbsUserProfile(userName) {
+  return request({
+    url: `/bbs-user/${userName}`,
+    method: "get",
+  });
+}
+
 
 // 修改用户个人信息
 export function updateUserProfile(data) {

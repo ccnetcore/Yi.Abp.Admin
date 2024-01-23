@@ -78,7 +78,7 @@ const router = createRouter({
         },
         {
           name: "profile",
-          path: "/profile",
+          path: "/profile/:userName",
           component: () => import("../views/profile/Index.vue"),
         },
         {

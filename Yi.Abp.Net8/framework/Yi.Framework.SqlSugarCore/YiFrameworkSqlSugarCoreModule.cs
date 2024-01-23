@@ -51,6 +51,9 @@ namespace Yi.Framework.SqlSugarCore
             var service = context.ServiceProvider;
             var options = service.GetRequiredService<IOptions<DbConnOptions>>().Value;
 
+
+            //Todo：准备支持多租户种子数据及CodeFirst
+
             if (options.EnabledCodeFirst)
             {
                 CodeFirst(service);
@@ -73,7 +76,10 @@ namespace Yi.Framework.SqlSugarCore
             List<Type> types = new List<Type>();
             foreach (var module in moduleContainer.Modules)
             {
-                types.AddRange(module.Assembly.GetTypes().Where(x => x.GetCustomAttribute<SugarTable>() != null).Where(x => x.GetCustomAttribute<SplitTableAttribute>() is null));
+                types.AddRange(module.Assembly.GetTypes()
+                    .Where(x => x.GetCustomAttribute<IgnoreCodeFirstAttribute>() == null)
+                    .Where(x => x.GetCustomAttribute<SugarTable>() != null)
+                    .Where(x => x.GetCustomAttribute<SplitTableAttribute>() is null));
             }
             if (types.Count > 0)
             {

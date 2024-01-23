@@ -80,7 +80,7 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
                     [scheme] = new string[0]
                 });
 
-
+                options.OperationFilter<AddRequiredHeaderParameter>();
                 options.SchemaFilter<EnumSchemaFilter>();
             }
         );
@@ -133,5 +133,24 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
             return attributes.Length > 0 ? attributes[0].Description : null;
         }
 
+    }
+
+
+    public class AddRequiredHeaderParameter : IOperationFilter
+    {
+        public static string HeaderKey { get; set; } = "__tenant";
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            if (operation.Parameters == null)
+                operation.Parameters = new List<OpenApiParameter>();
+            operation.Parameters.Add(new OpenApiParameter
+            {
+                Name = HeaderKey,
+                In = ParameterLocation.Header,
+                Required = false,
+                AllowEmptyValue = true,
+                Description="租户id或者租户名称（可空为默认租户）"
+            });
+        }
     }
 }
