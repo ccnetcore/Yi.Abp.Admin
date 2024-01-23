@@ -51,22 +51,22 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         #region Abp模块
 
-        public async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = true, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity?> FindAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = true, CancellationToken cancellationToken = default)
         {
             return await GetFirstAsync(predicate);
         }
 
-        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = true, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = true, CancellationToken cancellationToken = default)
         {
             return await GetFirstAsync(predicate);
         }
 
-        public async Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteAsync(Expression<Func<TEntity, bool>> predicate, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await this.DeleteAsync(predicate);
         }
 
-        public async Task DeleteDirectAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteDirectAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
         {
             await this.DeleteAsync(predicate);
         }
@@ -96,53 +96,53 @@ namespace Yi.Framework.SqlSugarCore.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = false, CancellationToken cancellationToken = default)
+        public virtual async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate, bool includeDetails = false, CancellationToken cancellationToken = default)
         {
             return await GetListAsync(predicate);
         }
 
-        public async Task<TEntity> InsertAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> InsertAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             return await InsertReturnEntityAsync(entity);
         }
 
-        public async Task InsertManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task InsertManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await InsertRangeAsync(entities.ToList());
         }
 
-        public async Task<TEntity> UpdateAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> UpdateAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await UpdateAsync(entity);
             return entity;
         }
 
-        public async Task UpdateManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task UpdateManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await UpdateRangeAsync(entities.ToList());
         }
 
-        public async Task DeleteAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteAsync(TEntity entity, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await DeleteAsync(entity);
         }
 
-        public async Task DeleteManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteManyAsync(IEnumerable<TEntity> entities, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await DeleteAsync(entities.ToList());
         }
 
-        public async Task<List<TEntity>> GetListAsync(bool includeDetails = false, CancellationToken cancellationToken = default)
+        public virtual async Task<List<TEntity>> GetListAsync(bool includeDetails = false, CancellationToken cancellationToken = default)
         {
             return await GetListAsync();
         }
 
-        public async Task<long> GetCountAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<long> GetCountAsync(CancellationToken cancellationToken = default)
         {
             return await this.CountAsync();
         }
 
-        public async Task<List<TEntity>> GetPagedListAsync(int skipCount, int maxResultCount, string sorting, bool includeDetails = false, CancellationToken cancellationToken = default)
+        public virtual async Task<List<TEntity>> GetPagedListAsync(int skipCount, int maxResultCount, string sorting, bool includeDetails = false, CancellationToken cancellationToken = default)
         {
             return await GetPageListAsync(_ => true, skipCount, maxResultCount);
         }
@@ -150,69 +150,69 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
 
         #region 内置DB快捷操作
-        public async Task<IDeleteable<TEntity>> AsDeleteable()
+        public virtual async Task<IDeleteable<TEntity>> AsDeleteable()
         {
             return (await GetDbSimpleClientAsync()).AsDeleteable();
         }
 
-        public async Task<IInsertable<TEntity>> AsInsertable(List<TEntity> insertObjs)
+        public virtual async Task<IInsertable<TEntity>> AsInsertable(List<TEntity> insertObjs)
         {
             return (await GetDbSimpleClientAsync()).AsInsertable(insertObjs);
         }
 
-        public async Task<IInsertable<TEntity>> AsInsertable(TEntity insertObj)
+        public virtual async Task<IInsertable<TEntity>> AsInsertable(TEntity insertObj)
         {
             return (await GetDbSimpleClientAsync()).AsInsertable(insertObj);
         }
 
-        public async Task<IInsertable<TEntity>> AsInsertable(TEntity[] insertObjs)
+        public virtual async Task<IInsertable<TEntity>> AsInsertable(TEntity[] insertObjs)
         {
             return (await GetDbSimpleClientAsync()).AsInsertable(insertObjs);
         }
 
-        public async Task<ISugarQueryable<TEntity>> AsQueryable()
+        public virtual async Task<ISugarQueryable<TEntity>> AsQueryable()
         {
             return (await GetDbSimpleClientAsync()).AsQueryable();
         }
 
-        public async Task<ISqlSugarClient> AsSugarClient()
+        public virtual async Task<ISqlSugarClient> AsSugarClient()
         {
             return (await GetDbSimpleClientAsync()).AsSugarClient();
         }
 
-        public async Task<ITenant> AsTenant()
+        public virtual async Task<ITenant> AsTenant()
         {
             return (await GetDbSimpleClientAsync()).AsTenant();
         }
 
-        public async Task<IUpdateable<TEntity>> AsUpdateable(List<TEntity> updateObjs)
+        public virtual async Task<IUpdateable<TEntity>> AsUpdateable(List<TEntity> updateObjs)
         {
             return (await GetDbSimpleClientAsync()).AsUpdateable(updateObjs);
         }
 
-        public async Task<IUpdateable<TEntity>> AsUpdateable(TEntity updateObj)
+        public virtual async Task<IUpdateable<TEntity>> AsUpdateable(TEntity updateObj)
         {
             return (await GetDbSimpleClientAsync()).AsUpdateable(updateObj);
         }
 
-        public async Task<IUpdateable<TEntity>> AsUpdateable()
+        public virtual async Task<IUpdateable<TEntity>> AsUpdateable()
         {
             return (await GetDbSimpleClientAsync()).AsUpdateable();
         }
 
-        public async Task<IUpdateable<TEntity>> AsUpdateable(TEntity[] updateObjs)
+        public virtual async Task<IUpdateable<TEntity>> AsUpdateable(TEntity[] updateObjs)
         {
             return (await GetDbSimpleClientAsync()).AsUpdateable(updateObjs);
         }
         #endregion
 
         #region SimpleClient模块
-        public async Task<int> CountAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<int> CountAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).CountAsync(whereExpression);
         }
 
-        public async Task<bool> DeleteAsync(TEntity deleteObj)
+        public virtual async Task<bool> DeleteAsync(TEntity deleteObj)
         {
             if (deleteObj is ISoftDelete)
             {
@@ -226,7 +226,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         }
 
-        public async Task<bool> DeleteAsync(List<TEntity> deleteObjs)
+        public virtual async Task<bool> DeleteAsync(List<TEntity> deleteObjs)
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
@@ -239,7 +239,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
             }
         }
 
-        public async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<bool> DeleteAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
@@ -252,7 +252,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         }
 
-        public async Task<bool> DeleteByIdAsync(dynamic id)
+        public virtual async Task<bool> DeleteByIdAsync(dynamic id)
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
@@ -267,7 +267,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
             }
         }
 
-        public async Task<bool> DeleteByIdsAsync(dynamic[] ids)
+        public virtual async Task<bool> DeleteByIdsAsync(dynamic[] ids)
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
@@ -288,101 +288,101 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         }
 
-        public async Task<TEntity> GetByIdAsync(dynamic id)
+        public virtual async Task<TEntity> GetByIdAsync(dynamic id)
         {
             return await (await GetDbSimpleClientAsync()).GetByIdAsync(id);
         }
 
 
 
-        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).GetFirstAsync(whereExpression);
         }
 
-        public async Task<List<TEntity>> GetListAsync()
+        public virtual async Task<List<TEntity>> GetListAsync()
         {
             return await (await GetDbSimpleClientAsync()).GetListAsync();
         }
 
-        public async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).GetListAsync(whereExpression);
         }
 
-        public async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize)
+        public virtual async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize)
         {
             return await (await GetDbSimpleClientAsync()).GetPageListAsync(whereExpression, new PageModel() { PageIndex = pageNum, PageSize = pageSize });
         }
 
-        public async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize, Expression<Func<TEntity, object>>? orderByExpression = null, OrderByType orderByType = OrderByType.Asc)
+        public virtual async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize, Expression<Func<TEntity, object>>? orderByExpression = null, OrderByType orderByType = OrderByType.Asc)
         {
             return await (await GetDbSimpleClientAsync()).GetPageListAsync(whereExpression, new PageModel { PageIndex = pageNum, PageSize = pageSize }, orderByExpression, orderByType);
         }
 
-        public async Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).GetSingleAsync(whereExpression);
         }
 
-        public async Task<bool> InsertAsync(TEntity insertObj)
+        public virtual async Task<bool> InsertAsync(TEntity insertObj)
         {
             return await (await GetDbSimpleClientAsync()).InsertAsync(insertObj);
         }
 
-        public async Task<bool> InsertOrUpdateAsync(TEntity data)
+        public virtual async Task<bool> InsertOrUpdateAsync(TEntity data)
         {
             return await (await GetDbSimpleClientAsync()).InsertOrUpdateAsync(data);
         }
 
-        public async Task<bool> InsertOrUpdateAsync(List<TEntity> datas)
+        public virtual async Task<bool> InsertOrUpdateAsync(List<TEntity> datas)
         {
             return await (await GetDbSimpleClientAsync()).InsertOrUpdateAsync(datas);
         }
 
-        public async Task<bool> InsertRangeAsync(List<TEntity> insertObjs)
+        public virtual async Task<bool> InsertRangeAsync(List<TEntity> insertObjs)
         {
             return await (await GetDbSimpleClientAsync()).InsertRangeAsync(insertObjs);
         }
 
-        public async Task<long> InsertReturnBigIdentityAsync(TEntity insertObj)
+        public virtual async Task<long> InsertReturnBigIdentityAsync(TEntity insertObj)
         {
             return await (await GetDbSimpleClientAsync()).InsertReturnBigIdentityAsync(insertObj);
         }
 
-        public async Task<TEntity> InsertReturnEntityAsync(TEntity insertObj)
+        public virtual async Task<TEntity> InsertReturnEntityAsync(TEntity insertObj)
         {
             return await (await GetDbSimpleClientAsync()).InsertReturnEntityAsync(insertObj);
         }
 
-        public async Task<int> InsertReturnIdentityAsync(TEntity insertObj)
+        public virtual async Task<int> InsertReturnIdentityAsync(TEntity insertObj)
         {
             return await (await GetDbSimpleClientAsync()).InsertReturnIdentityAsync(insertObj);
         }
 
-        public async Task<long> InsertReturnSnowflakeIdAsync(TEntity insertObj)
+        public virtual async Task<long> InsertReturnSnowflakeIdAsync(TEntity insertObj)
         {
             return await (await GetDbSimpleClientAsync()).InsertReturnSnowflakeIdAsync(insertObj);
         }
 
-        public async Task<bool> IsAnyAsync(Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<bool> IsAnyAsync(Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).IsAnyAsync(whereExpression);
         }
 
-        public async Task<bool> UpdateAsync(TEntity updateObj)
+        public virtual async Task<bool> UpdateAsync(TEntity updateObj)
         {
             return await (await GetDbSimpleClientAsync()).UpdateAsync(updateObj);
         }
 
-        public async Task<bool> UpdateAsync(Expression<Func<TEntity, TEntity>> columns, Expression<Func<TEntity, bool>> whereExpression)
+        public virtual async Task<bool> UpdateAsync(Expression<Func<TEntity, TEntity>> columns, Expression<Func<TEntity, bool>> whereExpression)
         {
             return await (await GetDbSimpleClientAsync()).UpdateAsync(columns, whereExpression);
         }
 
 
 
-        public async Task<bool> UpdateRangeAsync(List<TEntity> updateObjs)
+        public virtual async Task<bool> UpdateRangeAsync(List<TEntity> updateObjs)
         {
             return await (await GetDbSimpleClientAsync()).UpdateRangeAsync(updateObjs);
         }
@@ -396,22 +396,22 @@ namespace Yi.Framework.SqlSugarCore.Repositories
         {
         }
 
-        public async Task DeleteAsync(TKey id, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteAsync(TKey id, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await DeleteByIdAsync(id);
         }
 
-        public async Task DeleteManyAsync(IEnumerable<TKey> ids, bool autoSave = false, CancellationToken cancellationToken = default)
+        public virtual async Task DeleteManyAsync(IEnumerable<TKey> ids, bool autoSave = false, CancellationToken cancellationToken = default)
         {
             await DeleteByIdsAsync(ids.Select(x => (object)x).ToArray());
         }
 
-        public async Task<TEntity?> FindAsync(TKey id, bool includeDetails = true, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity?> FindAsync(TKey id, bool includeDetails = true, CancellationToken cancellationToken = default)
         {
             return await GetByIdAsync(id);
         }
 
-        public async Task<TEntity> GetAsync(TKey id, bool includeDetails = true, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetAsync(TKey id, bool includeDetails = true, CancellationToken cancellationToken = default)
         {
             return await GetByIdAsync(id);
         }

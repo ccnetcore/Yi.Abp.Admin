@@ -2,6 +2,7 @@
 using Volo.Abp.Modularity;
 using Yi.Abp.Domain;
 using Yi.Abp.SqlSugarCore;
+using Yi.AuditLogging.SqlSugarCore;
 using Yi.Framework.Bbs.SqlSugarCore;
 using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.SqlSugarCore;
@@ -17,6 +18,7 @@ namespace Yi.Abp.SqlsugarCore
         typeof(YiFrameworkRbacSqlSugarCoreModule),
         typeof(YiFrameworkBbsSqlSugarCoreModule),
 
+        typeof(YiFrameworkAuditLoggingSqlSugarCoreModule),
         typeof(YiFrameworkTenantManagementSqlSugarCoreModule),
         typeof(YiFrameworkMapsterModule),
         typeof(YiFrameworkSqlSugarCoreModule)

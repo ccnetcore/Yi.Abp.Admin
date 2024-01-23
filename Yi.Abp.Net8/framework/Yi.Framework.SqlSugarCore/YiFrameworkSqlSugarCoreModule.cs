@@ -36,8 +36,6 @@ namespace Yi.Framework.SqlSugarCore
             service.AddTransient(typeof(ISqlSugarRepository<>), typeof(SqlSugarRepository<>));
             service.AddTransient(typeof(ISqlSugarRepository<,>), typeof(SqlSugarRepository<,>));
 
-            service.AddTransient<IAuditingStore, SqlSugarLogAuditingStore>();
-
             service.AddTransient(typeof(ISugarDbContextProvider<>), typeof(UnitOfWorkSqlsugarDbContextProvider<>));
 
 
