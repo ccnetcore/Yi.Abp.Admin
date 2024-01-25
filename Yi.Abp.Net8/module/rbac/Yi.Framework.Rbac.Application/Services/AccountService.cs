@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -10,7 +9,6 @@ using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
-using Volo.Abp.EventBus.Local;
 using Volo.Abp.Guids;
 using Volo.Abp.Uow;
 using Volo.Abp.Users;
@@ -43,7 +41,7 @@ namespace Yi.Framework.Rbac.Application.Services
             ICaptcha captcha,
             IGuidGenerator guidGenerator,
             IOptions<RbacOptions> options,
-            IAliyunManger aliyunManger)
+            IAliyunManger aliyunManger  )
         {
             _userRepository = userRepository;
             _currentUser = currentUser;
@@ -64,6 +62,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <summary>
         /// 效验图片登录验证码,无需和账号绑定
         /// </summary>
+        [AllowAnonymous]
         private void ValidationImageCaptcha(LoginInputVo input)
         {
             if (_rbacOptions.EnableCaptcha)
@@ -83,6 +82,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<object> PostLoginAsync(LoginInputVo input)
         {
             if (string.IsNullOrEmpty(input.Password) || string.IsNullOrEmpty(input.UserName))
@@ -99,11 +99,24 @@ namespace Yi.Framework.Rbac.Application.Services
 
             //获取token
             var accessToken = await _accountManager.GetTokenByUserIdAsync(user.Id);
+            var refreshToken = _accountManager.CreateRefreshToken(user.Id);
 
-
-            return new { Token = accessToken };
+            return new { Token = accessToken, RefreshToken = refreshToken };
         }
 
+        /// <summary>
+        /// 刷新token
+        /// </summary>
+        /// <param name="refresh_token"></param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = TokenTypeConst.Refresh)]
+        public async Task<object> PostRefreshAsync([FromQuery] string refresh_token)
+        {
+                var userId = CurrentUser.Id.Value;
+                var accessToken = await _accountManager.GetTokenByUserIdAsync(userId);
+                var refreshToken = _accountManager.CreateRefreshToken(userId);
+                return new { Token = accessToken, RefreshToken = refreshToken };
+        }
 
         /// <summary>
         /// 生成验证码

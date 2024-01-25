@@ -25,5 +25,9 @@ namespace Yi.Framework.Rbac.Domain.Shared.Consts
         public const string Permission = nameof(Permission);
 
         public const string RoleInfo=nameof(RoleInfo);
+
+        public const string Refresh=nameof(Refresh);
+
+      
     }
 }

@@ -16,7 +16,7 @@ namespace Yi.Framework.Rbac.Domain.Shared
         {
             var configuration = context.Services.GetConfiguration();
             Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
-
+            Configure<RefreshJwtOptions>(configuration.GetSection(nameof(RefreshJwtOptions)));
             Configure<RbacOptions>(configuration.GetSection(nameof(RbacOptions)));
         }
     }

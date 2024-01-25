@@ -25,6 +25,8 @@ using Yi.Framework.AspNetCore.Microsoft.AspNetCore.Builder;
 using Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection;
 using Yi.Framework.Bbs.Application;
 using Yi.Framework.Rbac.Application;
+using Yi.Framework.Rbac.Domain.Authorization;
+using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 
 namespace Yi.Abp.Web
@@ -118,19 +120,17 @@ namespace Yi.Abp.Web
 
             //jwt鉴权
             var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+            var refreshJwtOptions = configuration.GetSection(nameof(RefreshJwtOptions)).Get<RefreshJwtOptions>();
+
             context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ClockSkew = TimeSpan.Zero,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtOptions.Issuer,
                     ValidAudience = jwtOptions.Audience,
-                    RequireExpirationTime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecurityKey))
                 };
                 options.Events = new JwtBearerEvents
@@ -145,6 +145,37 @@ namespace Yi.Abp.Web
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddJwtBearer(TokenTypeConst.Refresh, options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = refreshJwtOptions.Issuer,
+                    ValidAudience = refreshJwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshJwtOptions.SecurityKey))
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var refresh_token = context.Request.Headers["refresh_token"];
+                        if (!string.IsNullOrEmpty(refresh_token))
+                        {
+                            context.Token = refresh_token;
+                            return Task.CompletedTask;
+                        }
+                        var refreshToken = context.Request.Query["refresh_token"];
+                        if (!string.IsNullOrEmpty(refreshToken))
+                        {
+                            context.Token = refreshToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
             })
             .AddQQ(options =>
             {
@@ -172,6 +203,9 @@ namespace Yi.Abp.Web
 
             //跨域
             app.UseCors(DefaultCorsPolicyName);
+
+            //无感token，先刷新再鉴权
+            app.UseRefreshToken();
 
             //鉴权
             app.UseAuthentication();

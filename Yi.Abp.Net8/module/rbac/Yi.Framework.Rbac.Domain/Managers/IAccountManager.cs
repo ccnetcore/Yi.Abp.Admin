@@ -10,6 +10,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
 {
     public interface IAccountManager : IDomainService
     {
+        string CreateRefreshToken(Guid userId);
         Task<string> GetTokenByUserIdAsync(Guid userId);
         Task LoginValidationAsync(string userName, string password, Action<UserEntity> userAction = null);
         Task RegisterAsync(string userName, string password, long phone);

@@ -21,7 +21,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore
             {
                 DataPermissionFilter(sqlSugarClient);
             }
-   
+
 
             base.CustomDataFilter(sqlSugarClient);
         }
@@ -33,7 +33,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore
         protected void DataPermissionFilter(ISqlSugarClient sqlSugarClient)
         {
             //获取当前用户的信息
-            if (CurrentUser.Id == null) return;
+            if (CurrentUser.Id == null || CurrentUser.IsRefreshToken()) return;
             //管理员不过滤
             if (CurrentUser.UserName.Equals(UserConst.Admin) || CurrentUser.Roles.Any(f => f.Equals(UserConst.AdminRolesCode))) return;
             var expUser = Expressionable.Create<UserEntity>();
