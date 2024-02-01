@@ -30,5 +30,10 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser
         /// 经验
         /// </summary>
         public long Experience { get; set; }
+
+        /// <summary>
+        /// 用户等级名称
+        /// </summary>
+        public string LevelName { get; set; }
     }
 }

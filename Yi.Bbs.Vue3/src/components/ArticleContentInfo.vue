@@ -37,7 +37,7 @@ watch(props,(n,o)=>{
     );
     //需要注意代码块样式
     outputHtml.value = marked(n.code).replace(/<pre>/g, "<pre class='hljs'>")
-})
+},{immediate:true,deep:true})
 
 </script>
 

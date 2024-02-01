@@ -49,6 +49,22 @@ namespace Yi.Framework.Bbs.Domain.Entities
         /// 经验
         /// </summary>
         public long Experience { get; set; } = 0;
+
+        /// <summary>
+        /// 发表主题数
+        /// </summary>
+        public int DiscussNumber { get; set; }
+
+        /// <summary>
+        /// 发表主题数
+        /// </summary>
+        public int CommentNumber { get; set; }
+
+
+        /// <summary>
+        /// 被点赞数
+        /// </summary>
+        public int AgreeNumber { get; set; }
     }
 
 }

@@ -78,11 +78,9 @@
                 <div class="user-nick-left">{{ state.user.nick }} 
                 
                   <el-tag effect="light" type="success"
-          >{{state.user.level }} 等级</el-tag
+          >{{state.user.level }}-{{state.user.levelName}} 等级</el-tag
         >
-        <el-tag effect="light" type="success">
-          {{ state.user.userLimit }} 限制
-        </el-tag>
+        <UserLimitTag :userLimit="state.user.userLimit"/>
 
         <el-tag effect="light" type="success"
           >{{state.user.money }} 钱钱</el-tag
@@ -95,8 +93,7 @@
               </div>
 
               <div class="user-remark">
-                <span>100</span> 总访问 | <span>200</span> 排名 |
-                <span>36</span> 主题 | <span>836</span> 好友
+                <span>{{ state.user.agreeNumber }}</span> 点赞 | <span>{{ state.user.discussNumber }}</span> 主题 | <span>{{ state.user.commentNumber }}</span> 评论
           
               </div>
               <el-divider />
@@ -160,7 +157,7 @@
       </el-col>
       <el-col :span="19" class="div-bottom-right">
         <div  class="div-bottom-right-content">
-          <div v-for="(item,index) in discussList" :key="index">
+          <div v-for="item in discussList" :key="item.id">
             <DisscussCard :discuss="item" />
           </div>
 
@@ -204,6 +201,7 @@ import { useRoute } from "vue-router";
 import useAuths from "@/hooks/useAuths";
 const { isLogin } = useAuths();
 import useUserStore from "@/stores/user";
+import UserLimitTag from "@/components/UserLimitTag.vue";
 const route = useRoute();
 const userStore=useUserStore();
 const activeTab = ref("userinfo");

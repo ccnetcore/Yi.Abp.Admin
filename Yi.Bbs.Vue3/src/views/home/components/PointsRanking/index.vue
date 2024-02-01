@@ -5,13 +5,12 @@
     </div>
     <div class="center">
       <div class="top">
-    
-        <!-- <el-tag effect="light" :type="userLimit.type">
-          {{ userLimit.label }}
-        </el-tag> -->
         <el-tag effect="light" type="success"
           >{{pointsData.money }} 钱钱</el-tag
         >
+
+        
+        <UserLimitTag :userLimit="pointsData.userLimit" />
       </div>
       <div class="bottom">
         <div class="name">
@@ -38,7 +37,7 @@
 <script setup name="PointsRanking">
 import { defineProps, computed } from "vue";
 import UserInfoCard from "@/components/UserInfoCard/index.vue";
-
+import UserLimitTag from "@/components/UserLimitTag.vue";
 const props = defineProps({
   pointsData: {
     type: Array,
@@ -48,29 +47,6 @@ const props = defineProps({
 
 const pointsData = computed(() => props.pointsData);
 
-const statusTypeList = [
-  {
-    label: "正常",
-    value: "Normal",
-    type: "success",
-  },
-  {
-    label: "危险",
-    value: "Dangerous",
-    type: "warning",
-  },
-  {
-    label: "已禁止",
-    value: "Ban",
-    type: "danger",
-  },
-];
-
-const getStatusInfo = (type) => {
-  return statusTypeList.filter((item) => item.value === type)[0];
-};
-
-const userLimit = computed(() => getStatusInfo(pointsData.value.userLimit));
 const userImageSrc = computed(() => {
   if (pointsData.value.icon) {
     return import.meta.env.VITE_APP_BASEAPI + "/file/" + pointsData.value.icon;

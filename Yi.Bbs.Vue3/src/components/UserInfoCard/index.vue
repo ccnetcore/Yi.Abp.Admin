@@ -22,7 +22,7 @@
           <div class="name">{{ userInfo.nick }}</div>
           <div class="level">
             <el-tag effect="light" type="success" v-if="userInfo.level"
-              >等级{{ userInfo.level }}</el-tag
+              >{{ userInfo.level }}-{{ userInfo.levelName }} 等级</el-tag
             >
           </div>
         </div>
@@ -48,7 +48,7 @@
         <div class="score">钱钱：{{ userInfo.money }}</div>
         <div class="status">
           <span>状态：</span>
-          <span> {{ getStatusInfo(userInfo.userLimit) }}</span>
+          <UserLimitTag :userLimit="userInfo.userLimit"/>
         </div>
       </div>
       <div class="hobby">
@@ -65,6 +65,7 @@
 <script setup name="UserInfoCard">
 import { computed, defineProps } from "vue";
 import { useRouter } from "vue-router";
+import UserLimitTag from "../UserLimitTag.vue";
 const props = defineProps({
   // 用户信息
   userInfo: {
@@ -79,26 +80,6 @@ const props = defineProps({
 });
 const router = useRouter();
 const userInfo = computed(() => props.userInfo);
-const statusTypeList = [
-  {
-    label: "正常",
-    value: "Normal",
-    type: "success",
-  },
-  {
-    label: "危险",
-    value: "Dangerous",
-    type: "warning",
-  },
-  {
-    label: "已禁止",
-    value: "Ban",
-    type: "danger",
-  },
-];
-const getStatusInfo = (type) => {
-  return statusTypeList.filter((item) => item.value === type)[0]?.label;
-};
 
 const gotoProfile=(userName)=>{
   router.push(`/profile/${userName}`);

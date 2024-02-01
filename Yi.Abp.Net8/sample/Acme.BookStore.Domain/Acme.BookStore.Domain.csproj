@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Managers\" />
     <Folder Include="Repositories\" />
+	  <Folder Include="EventHandlers\" />
   </ItemGroup>
 
 </Project>

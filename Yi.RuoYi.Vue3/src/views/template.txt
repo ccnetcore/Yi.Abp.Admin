@@ -1,12 +1,13 @@
 
 <template>
-    <!-- <div>
+
+    <div class="app-container">
+        <!-- <div>
 该文件为通用Crud模板文件，按照规范只需要 替换以下变量即可，
 @Name@ ： 实体中文名称
 @per:per@ ：crud权限编码
 @api@ : api文件路径,例如：webfirst/tableApi
     </div> -->
-    <div class="app-container">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
             <el-form-item label="@Name@名称" prop="name">
                 <el-input v-model="queryParams.name" placeholder="请输入@Name@名称" clearable style="width: 240px"

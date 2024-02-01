@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Volo.Abp.Caching;
 using Volo.Abp.Domain.Services;
 using Yi.Framework.Bbs.Domain.Entities;
+using Yi.Framework.Bbs.Domain.Shared.Caches;
+using Yi.Framework.Bbs.Domain.Shared.Consts;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Shared.Enums;
@@ -16,37 +14,60 @@ namespace Yi.Framework.Bbs.Domain.Managers
     {
         public ISqlSugarRepository<UserEntity> _userRepository;
         public ISqlSugarRepository<BbsUserExtraInfoEntity> _bbsUserInfoRepository;
-        public BbsUserManager(ISqlSugarRepository<UserEntity> userRepository, ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository)
+        public Dictionary<int,LevelCacheItem> _levelCacheDic;
+        public BbsUserManager(ISqlSugarRepository<UserEntity> userRepository,
+            ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository,
+            IDistributedCache<List<LevelCacheItem>> levelCache
+            )
         {
             _userRepository = userRepository;
             _bbsUserInfoRepository = bbsUserInfoRepository;
+            _levelCacheDic = levelCache.Get(LevelConst.LevelCacheKey).ToDictionary(x => x.CurrentLevel);
         }
 
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
         {
-            return await _userRepository._DbQueryable.LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto { 
-                         Id = user.Id ,
-                         Icon=user.Icon,
-                         Level=info.Level,
-                         UserLimit=info.UserLimit,
+            var userInfo = await _userRepository._DbQueryable.LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
+                     .Select((user, info) => new BbsUserInfoDto
+                     {
+                         Id = user.Id,
+                         Icon = user.Icon,
+                         Level = info.Level,
+                         UserLimit = info.UserLimit,
                          Money = info.Money,
-                         Experience = info.Experience
+                         Experience = info.Experience,
+                         AgreeNumber = info.AgreeNumber,
+                         CommentNumber = info.CommentNumber,
+                         DiscussNumber = info.DiscussNumber
                      }, true)
-                     .FirstAsync(user => user.Id==userId);
+                     .FirstAsync(user => user.Id == userId);
+
+            userInfo.LevelName = _levelCacheDic[userInfo.Level].Name;
+            return userInfo;
         }
 
         public async Task<List<BbsUserInfoDto>> GetBbsUserInfoAsync(List<Guid> userIds)
         {
-            return await _userRepository._DbQueryable
+            var userInfos= await _userRepository._DbQueryable
                      .Where(user => userIds.Contains(user.Id))
                 .LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto { Id = user.Id , Icon = user.Icon , Level = info.Level, UserLimit = info.UserLimit,
+                     .Select((user, info) => new BbsUserInfoDto
+                     {
+                         Id = user.Id,
+                         Icon = user.Icon,
+                         Level = info.Level,
+                         UserLimit = info.UserLimit,
                          Money = info.Money,
-                         Experience = info.Experience
-                     },true)
-                
+                         Experience = info.Experience,
+                         AgreeNumber = info.AgreeNumber,
+                         CommentNumber = info.CommentNumber,
+                         DiscussNumber = info.DiscussNumber
+                     }, true)
+
                      .ToListAsync();
+            userInfos?.ForEach(userInfo => userInfo.LevelName = _levelCacheDic[userInfo.Level].Name);
+        
+            return userInfos??new List<BbsUserInfoDto>();
         }
     }
 
@@ -74,6 +95,11 @@ namespace Yi.Framework.Bbs.Domain.Managers
         public int Level { get; set; }
 
         /// <summary>
+        /// 用户等级名称
+        /// </summary>
+        public string LevelName { get; set; }
+
+        /// <summary>
         /// 用户限制
         /// </summary>
         public UserLimitEnum UserLimit { get; set; }
@@ -89,6 +115,19 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// 经验
         /// </summary>
         public long Experience { get; set; }
+
+        public int DiscussNumber { get; set; }
+
+        /// <summary>
+        /// 发表主题数
+        /// </summary>
+        public int CommentNumber { get; set; }
+
+
+        /// <summary>
+        /// 被点赞数
+        /// </summary>
+        public int AgreeNumber { get; set; }
 
     }
 }

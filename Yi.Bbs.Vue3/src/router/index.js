@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Layout from "../layout/Index.vue";
 import NotFound from "../views/error/404.vue";
 import LoginLayout from "../layout/LoginLayout.vue";
-import SignInLayout from "../layout/signIn/index.vue";
+import ActivityLayout from "../layout/activity/Index.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -100,17 +100,26 @@ const router = createRouter({
       ],
     },
     {
-      path: "/sign",
-      name: "signInLayout",
-      component: SignInLayout,
-      redirect: "/sign/everyday",
+      path: "/activity",
+      name: "activityLayout",
+      component: ActivityLayout,
+      redirect: "/activity/sign",
       children: [
         {
-          name: "everyday",
-          path: "everyday",
-          component: () => import("../views/signIn/index.vue"),
+          name: "sign",
+          path: "sign",
+          component: () => import("../views/signIn/Index.vue"),
           meta: {
             title: "每日签到",
+          },
+        },
+
+        {
+          name: "level",
+          path: "level",
+          component: () => import("../views/level/Index.vue"),
+          meta: {
+            title: "等级",
           },
         },
       ],

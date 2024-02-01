@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using TencentCloud.Ame.V20190916.Models;
 using Volo.Abp.Application.Services;
 using Yi.Framework.Bbs.Application.Contracts.IServices;
 using Yi.Framework.Bbs.Domain.Managers;
-using Yi.Framework.Rbac.Domain.Shared.Dtos;
 
 namespace Yi.Framework.Bbs.Application.Services
 {
@@ -16,16 +14,25 @@ namespace Yi.Framework.Bbs.Application.Services
             _bbsUserManager = bbsUserManager;
         }
 
-        [HttpGet("bbs-user/{userName}")]
-        public async Task<BbsUserInfoDto> GetUserInfoByUserNameAsync([FromRoute][Required] string userName)
+        [HttpGet("bbs-user/{userNameOrUserId}")]
+        public async Task<BbsUserInfoDto> GetUserInfoByUserNameOrUserIdAsync([FromRoute][Required] string userNameOrUserId)
         {
-
-            var userEntity = await _bbsUserManager._userRepository.GetFirstAsync(x => x.UserName == userName);
-            if (userEntity == null)
+            Guid userId;
+            if (Guid.TryParse(userNameOrUserId, out var userGuidId))
             {
-                throw new Volo.Abp.UserFriendlyException("该用户不存在");
+                userId = userGuidId;
             }
-            var output =await _bbsUserManager.GetBbsUserInfoAsync(userEntity.Id);
+            else
+            {
+                var userEntity = await _bbsUserManager._userRepository.GetFirstAsync(x => x.UserName == userNameOrUserId);
+                if (userEntity == null)
+                {
+                    throw new Volo.Abp.UserFriendlyException("该用户不存在");
+                }
+                userId= userEntity.Id;
+            }
+
+            var output =await _bbsUserManager.GetBbsUserInfoAsync(userId);
 
             return output!;
         }

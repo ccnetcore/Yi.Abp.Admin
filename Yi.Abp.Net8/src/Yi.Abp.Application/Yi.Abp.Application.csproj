@@ -13,8 +13,5 @@
     <ProjectReference Include="..\Yi.Abp.Domain\Yi.Abp.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EventHandlers\" />
-  </ItemGroup>
 
 </Project>

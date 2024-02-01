@@ -296,7 +296,7 @@ const statisOptions = computed(() => {
 });
 
 const handleToSign = () => {
-  router.push("/sign");
+  router.push("/activity/sign");
 };
 
 // 推送的实时人数获取

@@ -15,12 +15,15 @@
             {{ friendData.userName }}
           </el-tooltip>
         </div>
-        <el-tag effect="light" :type="userLimit.type">
-          {{ userLimit.label }}
-        </el-tag>
+
+
+
+
         <el-tag effect="light" type="success"
-          >等级{{ friendData.level }}</el-tag
+          >{{ friendData.level }}-{{friendData.levelName}} 等级</el-tag
         >
+
+        <UserLimitTag :userLimit="friendData.userLimit" />
       </div>
     </div>
     <div class="right">
@@ -35,7 +38,7 @@
 <script setup name="RecommendFriend">
 import { defineProps, computed } from "vue";
 import UserInfoCard from "@/components/UserInfoCard/index.vue";
-
+import UserLimitTag from "@/components/UserLimitTag.vue";
 const props = defineProps({
   friendData: {
     type: Array,
@@ -43,29 +46,6 @@ const props = defineProps({
   },
 });
 
-const statusTypeList = [
-  {
-    label: "正常",
-    value: "Normal",
-    type: "success",
-  },
-  {
-    label: "危险",
-    value: "Dangerous",
-    type: "warning",
-  },
-  {
-    label: "已禁止",
-    value: "Ban",
-    type: "danger",
-  },
-];
-
-const getStatusInfo = (type) => {
-  return statusTypeList.filter((item) => item.value === type)[0];
-};
-
-const userLimit = computed(() => getStatusInfo(props.friendData.userLimit));
 const userImageSrc = computed(() => {
   if (props.friendData.icon) {
     return import.meta.env.VITE_APP_BASEAPI + "/file/" + props.friendData.icon;

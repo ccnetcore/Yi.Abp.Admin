@@ -2,6 +2,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using TencentCloud.Pds.V20210701.Models;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.EventBus.Local;
@@ -32,12 +33,14 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
        IDiscussService
     {
         private ISqlSugarRepository<DiscussTopEntity> _discussTopEntityRepository;
-        public DiscussService(ForumManager forumManager, ISqlSugarRepository<DiscussTopEntity> discussTopEntityRepository, ISqlSugarRepository<PlateEntity> plateEntityRepository, ILocalEventBus localEventBus) : base(forumManager._discussRepository)
+        private BbsUserManager _bbsUserManager;
+        public DiscussService(BbsUserManager bbsUserManager,  ForumManager forumManager, ISqlSugarRepository<DiscussTopEntity> discussTopEntityRepository, ISqlSugarRepository<PlateEntity> plateEntityRepository, ILocalEventBus localEventBus) : base(forumManager._discussRepository)
         {
             _forumManager = forumManager;
             _plateEntityRepository = plateEntityRepository;
             _localEventBus = localEventBus;
             _discussTopEntityRepository = discussTopEntityRepository;
+            _bbsUserManager=bbsUserManager;
         }
         private readonly ILocalEventBus _localEventBus;
         private ForumManager _forumManager { get; set; }
@@ -143,6 +146,8 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
 
             //查询完主题之后，要过滤一下私有的主题信息
             items.ApplyPermissionTypeFilter(CurrentUser.Id ?? Guid.Empty);
+
+            items?.ForEach(x => x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name);
             return new PagedResultDto<DiscussGetListOutputDto>(total, items);
         }
 
@@ -178,11 +183,11 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                         Remark = user.Remark,
                         UserLimit = info.UserLimit,
                         Money = info.Money,
-                        Experience = info.Experience
-
+                        Experience = info.Experience,
                     }
                 }, true)
                 .ToListAsync();
+            output?.ForEach(x => x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name);
             return output;
         }
 

@@ -55,7 +55,9 @@
             <el-dropdown-item @click="enterProfile"
               >进入个人中心</el-dropdown-item
             >
-            <el-dropdown-item @click="enterProfile">其他</el-dropdown-item>
+            <el-dropdown-item @click="enterActivity"
+              >进入活动页面</el-dropdown-item
+            >
             <el-dropdown-item @click="logout">登出</el-dropdown-item>
           </el-dropdown-menu>
           <el-dropdown-menu v-else="isLogin">
@@ -119,6 +121,9 @@ const enterIndex = () => {
 const enterProfile = () => {
   router.push(`/profile/${userStore.userName}`);
 };
+const enterActivity=()=>{
+  router.push(`/activity`);
+}
 const toLogin = () => {
   clearStorage();
   Session.set("currentPath", route.path);

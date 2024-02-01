@@ -31,7 +31,6 @@ const handleAction = (command, scope) => {
       />
     </el-table-column>
   </template>
-  <!-- 其他正常列 -->
   <el-table-column
     v-else
     :show-overflow-tooltip="col.showOverflowTooltip"

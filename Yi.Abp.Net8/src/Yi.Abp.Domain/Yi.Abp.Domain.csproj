@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <Folder Include="EventHandlers\" />
     <Folder Include="Entities\" />
     <Folder Include="Managers\" />
     <Folder Include="Repositories\" />

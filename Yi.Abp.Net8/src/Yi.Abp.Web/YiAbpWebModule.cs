@@ -12,6 +12,7 @@ using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
+using Volo.Abp.Caching;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
@@ -79,6 +80,13 @@ namespace Yi.Abp.Web
                 options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
                 options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
+
+            //设置缓存不要过期，默认滑动20分钟
+           Configure<AbpDistributedCacheOptions>(cacheOptions =>
+            {
+                cacheOptions.GlobalCacheEntryOptions.SlidingExpiration =null;
+            });
+
 
             Configure<AbpAntiForgeryOptions>(options =>
             {

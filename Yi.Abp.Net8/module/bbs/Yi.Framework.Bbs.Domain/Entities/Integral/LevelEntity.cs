@@ -48,4 +48,5 @@ namespace Yi.Framework.Bbs.Domain.Entities.Integral
         public string? Logo { get; set; }
 
     }
+
 }
