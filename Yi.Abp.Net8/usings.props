@@ -1,0 +1,6 @@
+<Project>
+	<ItemGroup>
+		<Using Include="Volo.Abp" />
+		<Using Include="Volo.Abp.Modularity" />
+	</ItemGroup>
+</Project>

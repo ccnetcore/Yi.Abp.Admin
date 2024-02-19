@@ -3,6 +3,7 @@ using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SqlSugar;
 using Volo.Abp;
@@ -33,15 +34,17 @@ namespace Yi.Framework.Rbac.Application.Services
         private readonly IGuidGenerator _guidGenerator;
         private readonly RbacOptions _rbacOptions;
         private readonly IAliyunManger _aliyunManger;
+        private IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> _userCache;
         public AccountService(IUserRepository userRepository,
             ICurrentUser currentUser,
             IAccountManager accountManager,
             ISqlSugarRepository<MenuEntity> menuRepository,
             IDistributedCache<CaptchaPhoneCacheItem, CaptchaPhoneCacheKey> phoneCache,
+            IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache,
             ICaptcha captcha,
             IGuidGenerator guidGenerator,
             IOptions<RbacOptions> options,
-            IAliyunManger aliyunManger  )
+            IAliyunManger aliyunManger)
         {
             _userRepository = userRepository;
             _currentUser = currentUser;
@@ -52,6 +55,7 @@ namespace Yi.Framework.Rbac.Application.Services
             _guidGenerator = guidGenerator;
             _rbacOptions = options.Value;
             _aliyunManger = aliyunManger;
+            _userCache = userCache;
         }
 
 
@@ -104,6 +108,7 @@ namespace Yi.Framework.Rbac.Application.Services
             return new { Token = accessToken, RefreshToken = refreshToken };
         }
 
+
         /// <summary>
         /// 刷新token
         /// </summary>
@@ -112,10 +117,10 @@ namespace Yi.Framework.Rbac.Application.Services
         [Authorize(AuthenticationSchemes = TokenTypeConst.Refresh)]
         public async Task<object> PostRefreshAsync([FromQuery] string refresh_token)
         {
-                var userId = CurrentUser.Id.Value;
-                var accessToken = await _accountManager.GetTokenByUserIdAsync(userId);
-                var refreshToken = _accountManager.CreateRefreshToken(userId);
-                return new { Token = accessToken, RefreshToken = refreshToken };
+            var userId = CurrentUser.Id.Value;
+            var accessToken = await _accountManager.GetTokenByUserIdAsync(userId);
+            var refreshToken = _accountManager.CreateRefreshToken(userId);
+            return new { Token = accessToken, RefreshToken = refreshToken };
         }
 
         /// <summary>
@@ -248,7 +253,7 @@ namespace Yi.Framework.Rbac.Application.Services
 
 
         /// <summary>
-        /// 查询已登录的账户信息
+        /// 查询已登录的账户信息，已缓存
         /// </summary>
         /// <returns></returns>
         [Route("account")]
@@ -262,16 +267,33 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 throw new UserFriendlyException("用户未登录");
             }
-            //此处从缓存中获取也行
-            //var data = _cacheManager.Get<UserRoleMenuDto>($"Yi:UserInfo:{userId}");
-            var data = await _userRepository.GetUserAllInfoAsync(userId ?? Guid.Empty);
-            //系统用户数据被重置，老前端访问重新授权
-            if (data is null)
+            //此处优先从缓存中获取
+            UserRoleMenuDto output = null;
+            var cacheData = await _userCache.GetAsync(new UserInfoCacheKey(userId.Value));
+            if (cacheData is not null)
             {
-                throw new AbpAuthorizationException();
+                output = cacheData.Info;
             }
-            data.Menus.Clear();
-            return data;
+            else
+            {
+                var data = await _userRepository.GetUserAllInfoAsync(userId.Value);
+                //系统用户数据被重置，老前端访问重新授权
+                if (data is null)
+                {
+                    throw new AbpAuthorizationException();
+                }
+                data.Menus.Clear();
+
+                output = data;
+
+                var tokenExpiresMinuteTime = LazyServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value.ExpiresMinuteTime;
+                //将用户信息放入缓存，下次获取直接从缓存中获取即可，过期时间为token过期时间
+                await _userCache.SetAsync(new UserInfoCacheKey(userId.Value), new UserInfoCacheItem(data), new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(tokenExpiresMinuteTime) });
+            }
+
+
+
+            return output;
         }
 
 
@@ -306,10 +328,18 @@ namespace Yi.Framework.Rbac.Application.Services
         /// 退出登录
         /// </summary>
         /// <returns></returns>
-        public Task<bool> PostLogout()
+        public async Task<bool> PostLogout()
         {
+            //通过鉴权jwt获取到用户的id
+            var userId = _currentUser.Id;
+            if (userId is null)
+            {
+                return false;
+               // throw new UserFriendlyException("用户已退出");
+            }
+            await _userCache.RemoveAsync(new UserInfoCacheKey(userId.Value));
             //Jwt去中心化登出，只需用记录日志即可
-            return Task.FromResult(true);
+            return true;
         }
 
         /// <summary>

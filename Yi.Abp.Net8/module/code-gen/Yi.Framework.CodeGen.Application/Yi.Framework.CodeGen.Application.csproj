@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.Ddd.Application\Yi.Framework.Ddd.Application.csproj" />
+    <ProjectReference Include="..\Yi.Framework.CodeGen.Application.Contracts\Yi.Framework.CodeGen.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Yi.Framework.CodeGen.Domain\Yi.Framework.CodeGen.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

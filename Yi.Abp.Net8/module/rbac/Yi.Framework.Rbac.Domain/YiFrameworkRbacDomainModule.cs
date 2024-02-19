@@ -3,6 +3,7 @@ using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
+using Yi.Framework.Caching.FreeRedis;
 using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Operlog;
@@ -13,6 +14,7 @@ namespace Yi.Framework.Rbac.Domain
 {
     [DependsOn(
         typeof(YiFrameworkRbacDomainSharedModule),
+        typeof(YiFrameworkCachingFreeRedisModule),
 
         typeof(AbpAspNetCoreSignalRModule),
         typeof(AbpDddDomainModule),

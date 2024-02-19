@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Volo.Abp.Data;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
@@ -15,7 +16,9 @@ namespace Yi.Framework.TenantManagement.Domain
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             var services = context.Services;
-            services.Replace(new ServiceDescriptor(typeof(ITenantStore),typeof(SqlSugarTenantStore), ServiceLifetime.Transient));
+            services.Replace(new ServiceDescriptor(typeof(ITenantStore), typeof(SqlSugarTenantStore), ServiceLifetime.Transient));
+
+            services.Replace(new ServiceDescriptor(typeof(IConnectionStringResolver), typeof(YiMultiTenantConnectionStringResolver), ServiceLifetime.Transient));
         }
     }
 }

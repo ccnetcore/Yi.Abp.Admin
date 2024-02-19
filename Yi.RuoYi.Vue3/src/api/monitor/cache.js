@@ -35,15 +35,15 @@ export function getCacheValue(cacheName, cacheKey) {
 // 清理指定名称缓存
 export function clearCacheName(cacheName) {
   return request({
-    url: '/monitor/cache/clearCacheName/' + cacheName,
+    url: '/monitor-cache/key/' + cacheName,
     method: 'delete'
   })
 }
 
 // 清理指定键名缓存
-export function clearCacheKey(cacheKey) {
+export function clearCacheKey(cacheName,cacheKey) {
   return request({
-    url: '/monitor/cache/clearCacheKey/' + cacheKey,
+    url: '/monitor-cache/value/'+cacheName+'/' + cacheKey,
     method: 'delete'
   })
 }
@@ -51,7 +51,7 @@ export function clearCacheKey(cacheKey) {
 // 清理全部缓存
 export function clearCacheAll() {
   return request({
-    url: '/monitor/cache/clearCacheAll',
+    url: '/monitor-cache/clear',
     method: 'delete'
   })
 }

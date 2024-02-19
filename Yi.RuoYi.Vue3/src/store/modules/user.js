@@ -1,5 +1,5 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,getTenantId,setTenantId,removeTenantId } from '@/utils/auth'
 import defAva from '@/assets/images/profile.jpg'
 
 const useUserStore = defineStore(
@@ -10,21 +10,28 @@ const useUserStore = defineStore(
       name: '',
       avatar: '',
       roles: [],
-      permissions: []
+      permissions: [],
+      tenantId:getTenantId()
     }),
     actions: {
       // 登录
-      login(userInfo) {
+      login(userInfo,tenantId) {
         const username = userInfo.username.trim()
         const password = userInfo.password
         const code = userInfo.code
         const uuid = userInfo.uuid
+
+        //登录之前先设置租户id，用户登录接口的请求设置
+        setTenantId(tenantId);
+        this.tenantId=tenantId;
         return new Promise((resolve, reject) => {
           login(username, password, code, uuid).then(res => {
             setToken(res.data.token);
             this.token = res.data.token;
             resolve();
           }).catch(error => {
+            removeTenantId();
+            this.tenantId=null;
             reject(error)
           })
         })
@@ -68,6 +75,7 @@ const useUserStore = defineStore(
             this.roles = []
             this.permissions = []
             removeToken()
+            removeTenantId()
             resolve()
           }).catch(error => {
             reject(error)

@@ -19,10 +19,16 @@ namespace Yi.Framework.Rbac.Domain.Shared.Consts
         public const string State_Is_State = "该用户已被禁用，请联系管理员进行恢复";
         public const string No_Permission = "登录禁用！该用户分配无任何权限，无意义登录！";
         public const string No_Role = "登录禁用！该用户分配无任何角色，无意义登录！";
+        public const string Name_Not_Allowed = "用户名被禁止";
 
+        //子租户管理员
         public const string Admin = "cc";
         public const string AdminRolesCode = "admin";
         public const string AdminPermissionCode = "*:*:*";
+
+        //租户管理员
+        public const string TenantAdmin = "ccadmin";
+        public const string TenantAdminPermissionCode = "*";
 
         public const string DefaultRoleCode = "default";
         public const string CommonRoleName = "common";

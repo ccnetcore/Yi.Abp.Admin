@@ -20,7 +20,7 @@ namespace Yi.Framework.Rbac.Domain.Shared.Caches
 
         public override string ToString()
         {
-            return $"Yi:Phone:{Phone}";
+            return $"Phone:{Phone}";
         }
     }
 }

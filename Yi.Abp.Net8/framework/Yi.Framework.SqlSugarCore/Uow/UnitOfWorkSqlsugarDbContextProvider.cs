@@ -14,7 +14,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
     public class UnitOfWorkSqlsugarDbContextProvider<TDbContext> : ISugarDbContextProvider<TDbContext> where TDbContext : ISqlSugarDbContext
     {
         private readonly ISqlSugarDbConnectionCreator _dbConnectionCreator;
-        private readonly string MasterTenantDbDefaultName = DbConnOptions.MasterTenantDbDefaultName;
+    
         public ILogger<UnitOfWorkSqlsugarDbContextProvider<TDbContext>> Logger { get; set; }
         public IServiceProvider ServiceProvider { get; set; }
 
@@ -59,11 +59,10 @@ namespace Yi.Framework.SqlSugarCore.Uow
                     ContextInstance.Current = (TDbContext)ServiceProvider.GetRequiredService<ISqlSugarDbContext>();
                 }
                 var dbContext = (TDbContext)ContextInstance.Current;
-                var output = DatabaseChange(dbContext, connectionStringName, connectionString);
                 //提高体验，取消工作单元强制性
                 //throw new AbpException("A DbContext can only be created inside a unit of work!");
                 //如果不启用工作单元，创建一个新的db，不开启事务即可
-                return output;
+                return dbContext;
             }
 
 
@@ -100,63 +99,9 @@ namespace Yi.Framework.SqlSugarCore.Uow
             using (SqlSugarDbContextCreationContext.Use(creationContext))
             {
                 var dbContext = await CreateDbContextAsync(unitOfWork);
-
-                //获取到DB之后，对多租户多库进行处理
-                var changedDbContext = DatabaseChange(dbContext, connectionStringName, connectionString);
-                return changedDbContext;
+                return dbContext;
             }
         }
-
-        protected virtual TDbContext DatabaseChange(TDbContext dbContext, string configId, string connectionString)
-        {
-            //没有检测到使用多租户功能，默认使用默认库即可
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                connectionString = dbContext.Options.Url;
-                configId = DbConnOptions.TenantDbDefaultName;
-            }
-
-            var dbOption = dbContext.Options;
-            var db = dbContext.SqlSugarClient.AsTenant();
-            //主库的Db切换，当操作的是租户表的时候
-            if (CurrentTenant.Name == MasterTenantDbDefaultName)
-            {
-                //直接切换
-                configId = MasterTenantDbDefaultName;
-                var conStrOrNull = dbOption.GetDefaultMasterSaasMultiTenancy();
-                Volo.Abp.Check.NotNull(conStrOrNull, "租户主库未找到");
-                connectionString = conStrOrNull.Url;
-            }
-
-            //租户Db的动态切换
-            //二级缓存
-            var changed = false;
-            if (!db.IsAnyConnection(configId))
-            {
-                var config = _dbConnectionCreator.Build(options =>
-                {
-                    options.DbType = dbOption.DbType!.Value;
-                    options.ConfigId = configId;//设置库的唯一标识
-                    options.IsAutoCloseConnection = true;
-                    options.ConnectionString = connectionString;
-                });
-                //添加一个db到当前上下文 (Add部分不线上下文不会共享)
-                db.AddConnection(config);
-                changed = true;
-            }
-            var currentDb = db.GetConnection(configId) as ISqlSugarClient;
-
-            //设置Aop
-            if (changed)
-            {
-                _dbConnectionCreator.SetDbAop(currentDb);
-            }
-
-
-            dbContext.SetSqlSugarClient(currentDb);
-            return dbContext;
-        }
-
 
         protected virtual async Task<TDbContext> CreateDbContextAsync(IUnitOfWork unitOfWork)
         {
@@ -182,7 +127,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
                       );
                 unitOfWork.AddTransactionApi(transactionApiKey, transaction);
 
-                await dbContext.SqlSugarClient.Ado.BeginTranAsync();
+               // await dbContext.SqlSugarClient.Ado.BeginTranAsync();
                 return dbContext;
             }
             else

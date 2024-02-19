@@ -42,31 +42,31 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(system);
 
-            //WebFirst
-            MenuEntity webfirst = new MenuEntity(_guidGenerator.Create(), Guid.Empty)
+            //代码生成
+            MenuEntity code = new MenuEntity(_guidGenerator.Create(), Guid.Empty)
             {
-                MenuName = "WebFirst",
+                MenuName = "代码生成",
                 MenuType = MenuTypeEnum.Catalogue,
-                Router = "/webfirst",
+                Router = "/code",
                 IsShow = true,
                 IsLink = false,
                 MenuIcon = "build",
                 OrderNum = 91,
                 IsDeleted = false
             };
-            entities.Add(webfirst);
+            entities.Add(code);
 
             //数据表管理
-            MenuEntity table = new MenuEntity(_guidGenerator.Create(), webfirst.Id)
+            MenuEntity table = new MenuEntity(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "数据表管理",
-                PermissionCode = "webfirst:table:list",
+                PermissionCode = "code:table:list",
                 MenuType = MenuTypeEnum.Menu,
                 Router = "table",
                 IsShow = true,
                 IsLink = false,
                 IsCache = true,
-                Component = "webfirst/table/index",
+                Component = "code/table/index",
                 MenuIcon = "online",
                 OrderNum = 100,
                 IsDeleted = false
@@ -74,35 +74,35 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(table);
 
             //字段管理
-            MenuEntity field = new MenuEntity(_guidGenerator.Create(), webfirst.Id)
+            MenuEntity field = new MenuEntity(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "字段管理",
-                PermissionCode = "webfirst:field:list",
+                PermissionCode = "code:field:list",
                 MenuType = MenuTypeEnum.Menu,
                 Router = "field",
                 IsShow = true,
                 IsLink = false,
                 IsCache = true,
-                Component = "webfirst/field/index",
+                Component = "code/field/index",
                 MenuIcon = "number",
                 OrderNum = 99,
-                ParentId = webfirst.Id,
+                ParentId = code.Id,
                 IsDeleted = false
             };
             entities.Add(field);
 
 
             //模板管理
-            MenuEntity template = new MenuEntity(_guidGenerator.Create(), webfirst.Id)
+            MenuEntity template = new MenuEntity(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "模板管理",
-                PermissionCode = "webfirst:template:list",
+                PermissionCode = "code:template:list",
                 MenuType = MenuTypeEnum.Menu,
                 Router = "template",
                 IsShow = true,
                 IsLink = false,
                 IsCache = true,
-                Component = "webfirst/template/index",
+                Component = "code/template/index",
                 MenuIcon = "documentation",
                 OrderNum = 98,
                 IsDeleted = false
@@ -230,7 +230,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             //ERP
             MenuEntity erp = new MenuEntity(_guidGenerator.Create())
             {
-                MenuName = "ERP",
+                MenuName = "ERP(待更新)",
                 MenuType = MenuTypeEnum.Catalogue,
                 Router = "/erp",
                 IsShow = true,
@@ -570,6 +570,83 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false,
             };
             entities.Add(guide);
+
+            //租户管理
+            MenuEntity tenant = new MenuEntity(_guidGenerator.Create())
+            {
+                MenuName = "租户管理",
+                PermissionCode = "system:tenant:list",
+                MenuType = MenuTypeEnum.Menu,
+                Router = "tenant",
+                IsShow = true,
+                IsLink = false,
+                IsCache = true,
+                Component = "system/tenant/index",
+                MenuIcon = "list",
+                OrderNum = 101,
+                ParentId = system.Id,
+                IsDeleted = false
+            };
+            entities.Add(tenant);
+
+            MenuEntity tenantQuery = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "租户查询",
+                PermissionCode = "system:tenant:query",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = tenant.Id,
+                IsDeleted = false
+            };
+            entities.Add(tenantQuery);
+
+            MenuEntity tenantAdd = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "租户新增",
+                PermissionCode = "system:tenant:add",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = tenant.Id,
+                IsDeleted = false
+            };
+            entities.Add(tenantAdd);
+
+            MenuEntity tenantEdit = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "租户修改",
+                PermissionCode = "system:tenant:edit",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = tenant.Id,
+                IsDeleted = false
+            };
+            entities.Add(tenantEdit);
+
+            MenuEntity tenantRemove = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "租户删除",
+                PermissionCode = "system:tenant:remove",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = tenant.Id,
+                IsDeleted = false
+            };
+            entities.Add(tenantRemove);
+
+
+
+
+
+
+
+
+
+
+
 
             //用户管理
             MenuEntity user = new MenuEntity(_guidGenerator.Create())

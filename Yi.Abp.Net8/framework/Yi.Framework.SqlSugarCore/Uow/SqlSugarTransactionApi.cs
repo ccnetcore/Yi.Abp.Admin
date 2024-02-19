@@ -20,7 +20,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
 
         public async Task CommitAsync(CancellationToken cancellationToken = default)
         {
-            await _sqlsugarDbContext.SqlSugarClient.Ado.CommitTranAsync();
+          //  await _sqlsugarDbContext.SqlSugarClient.Ado.CommitTranAsync();
         }
 
         public void Dispose()
@@ -29,7 +29,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
 
         public async Task RollbackAsync(CancellationToken cancellationToken = default)
         {
-            await _sqlsugarDbContext.SqlSugarClient.Ado.RollbackTranAsync();
+         //   await _sqlsugarDbContext.SqlSugarClient.Ado.RollbackTranAsync();
         }
     }
 }

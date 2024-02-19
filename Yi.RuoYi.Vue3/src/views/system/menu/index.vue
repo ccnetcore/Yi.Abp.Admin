@@ -117,13 +117,13 @@
                <el-col :span="24">
                   <el-form-item label="菜单类型" prop="menuType">
                      <el-radio-group v-model="form.menuType">
-                        <el-radio :label=0>目录</el-radio>
-                        <el-radio :label=1>菜单</el-radio>
-                        <el-radio :label=2>按钮</el-radio>
+                        <el-radio label="Catalogue">目录</el-radio>
+                        <el-radio label="Menu">菜单</el-radio>
+                        <el-radio label="Component">按钮</el-radio>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
-               <el-col :span="24" v-if="form.menuType != 2">
+               <el-col :span="24" v-if="form.menuType != 'Component'">
                   <el-form-item label="菜单图标" prop="menuIcon">
                      <el-popover
                         placement="bottom-start"
@@ -159,7 +159,7 @@
                      <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType != 2">
+               <el-col :span="12" v-if="form.menuType != 'Component'">
                   <el-form-item>
                      <template #label>
                         <span>
@@ -176,7 +176,7 @@
                </el-col>
 
         
-               <el-col :span="12" v-if="form.menuType != 2">
+               <el-col :span="12" v-if="form.menuType != 'Component'">
                   <el-form-item prop="router">
                      <template #label>
                         <span>
@@ -189,7 +189,7 @@
                      <el-input v-model="form.router" placeholder="请输入路由地址" />
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType == 1">
+               <el-col :span="12" v-if="form.menuType == 'Menu'">
                   <el-form-item prop="component">
                      <template #label>
                         <span>
@@ -202,7 +202,7 @@
                      <el-input v-model="form.component" placeholder="请输入组件路径" />
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType != 0">
+               <el-col :span="12" v-if="form.menuType !='Catalogue'">
                   <el-form-item>
                      <el-input v-model="form.permissionCode" placeholder="请输入权限标识" maxlength="100" />
                      <template #label>
@@ -215,7 +215,7 @@
                      </template>
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType == 1">
+               <el-col :span="12" v-if="form.menuType == 'Menu'">
                   <el-form-item>
                      <el-input v-model="form.query" placeholder="请输入路由参数" maxlength="255" />
                      <template #label>
@@ -228,7 +228,7 @@
                      </template>
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType == 1">
+               <el-col :span="12" v-if="form.menuType == 'Menu'">
                   <el-form-item>
                      <template #label>
                         <span>
@@ -244,7 +244,7 @@
                      </el-radio-group>
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType != 2">
+               <el-col :span="12" v-if="form.menuType != 'Component'">
                   <el-form-item>
                      <template #label>
                         <span>
@@ -263,7 +263,7 @@
                      </el-radio-group>
                   </el-form-item>
                </el-col>
-               <el-col :span="12" v-if="form.menuType != 2">
+               <el-col :span="12" v-if="form.menuType !='Component'">
                   <el-form-item>
                      <template #label>
                         <span>

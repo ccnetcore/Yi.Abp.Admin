@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
-using Volo.Abp;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
 using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
@@ -13,7 +12,6 @@ using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
-using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using Yi.Abp.Application;
@@ -25,10 +23,12 @@ using Yi.Framework.AspNetCore.Authentication.OAuth.QQ;
 using Yi.Framework.AspNetCore.Microsoft.AspNetCore.Builder;
 using Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection;
 using Yi.Framework.Bbs.Application;
+using Yi.Framework.CodeGen.Application;
 using Yi.Framework.Rbac.Application;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Options;
+using Yi.Framework.TenantManagement.Application;
 
 namespace Yi.Abp.Web
 {
@@ -72,6 +72,8 @@ namespace Yi.Abp.Web
                 options.ConventionalControllers.Create(typeof(YiAbpApplicationModule).Assembly, options => options.RemoteServiceName = "default");
                 options.ConventionalControllers.Create(typeof(YiFrameworkRbacApplicationModule).Assembly, options => options.RemoteServiceName = "rbac");
                 options.ConventionalControllers.Create(typeof(YiFrameworkBbsApplicationModule).Assembly, options => options.RemoteServiceName = "bbs");
+                options.ConventionalControllers.Create(typeof(YiFrameworkTenantManagementApplicationModule).Assembly, options => options.RemoteServiceName = "tenant-management");
+                options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly, options => options.RemoteServiceName = "code-gun");
             });
 
             //设置api格式
@@ -85,6 +87,8 @@ namespace Yi.Abp.Web
            Configure<AbpDistributedCacheOptions>(cacheOptions =>
             {
                 cacheOptions.GlobalCacheEntryOptions.SlidingExpiration =null;
+                //缓存key前缀
+                cacheOptions.KeyPrefix = "Yi:";
             });
 
 
@@ -123,7 +127,12 @@ namespace Yi.Abp.Web
             Configure<AbpTenantResolveOptions>(options =>
             {
                 //基于cookie jwt不好用，有坑
-                options.TenantResolvers.RemoveAll(x => x.Name == CookieTenantResolveContributor.ContributorName);
+                options.TenantResolvers.Clear();
+                options.TenantResolvers.Add(new HeaderTenantResolveContributor());
+                //options.TenantResolvers.Add(new HeaderTenantResolveContributor());
+                //options.TenantResolvers.Add(new CookieTenantResolveContributor());
+
+                //options.TenantResolvers.RemoveAll(x => x.Name == CookieTenantResolveContributor.ContributorName);
             });
 
             //jwt鉴权

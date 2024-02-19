@@ -30,6 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		common.props = common.props
 		end.sh = end.sh
 		start.sh = start.sh
+		usings.props = usings.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SqlSugarCore.Abstractions", "framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj", "{FD6D6860-3753-4747-8A26-977E4A3001F9}"
@@ -96,9 +97,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManageme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManagement.Domain", "module\tenant-management\Yi.Framework.TenantManagement.Domain\Yi.Framework.TenantManagement.Domain.csproj", "{54D8E2BC-591C-4344-A58E-874D49C00B41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AuditLogging.Domain", "module\audit-logging\Yi.Framework.AuditLogging.Domain\Yi.Framework.AuditLogging.Domain.csproj", "{EFD13211-17B5-400A-B99A-9F6F4E520C1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.AuditLogging.Domain", "module\audit-logging\Yi.Framework.AuditLogging.Domain\Yi.Framework.AuditLogging.Domain.csproj", "{EFD13211-17B5-400A-B99A-9F6F4E520C1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.AuditLogging.Domain.Shared", "module\audit-logging\Yi.Framework.AuditLogging.Domain.Shared\Yi.Framework.AuditLogging.Domain.Shared.csproj", "{9C8C3C53-3DCE-4516-867E-228858E61B26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.AuditLogging.Domain.Shared", "module\audit-logging\Yi.Framework.AuditLogging.Domain.Shared\Yi.Framework.AuditLogging.Domain.Shared.csproj", "{9C8C3C53-3DCE-4516-867E-228858E61B26}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManagement.Application", "module\tenant-management\Yi.Framework.TenantManagement.Application\Yi.Framework.TenantManagement.Application.csproj", "{17816837-E53B-486B-B796-53C601FE6CD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManagement.Application.Contracts", "module\tenant-management\Yi.Framework.TenantManagement.Application.Contracts\Yi.Framework.TenantManagement.Application.Contracts.csproj", "{FA735055-CBDD-4EFD-B84B-85810DA1425E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "code-gen", "code-gen", "{4FFE7212-21F2-476D-B628-3C65E6C5075E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application", "module\code-gen\Yi.Framework.Codegen.Application\Yi.Framework.CodeGen.Application.csproj", "{97EC40D7-DBFA-467A-98CB-221AF27B14F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application.Contracts", "module\code-gen\Yi.Framework.Codegen.Application.Contracts\Yi.Framework.CodeGen.Application.Contracts.csproj", "{882BC563-2F75-4B95-AC96-F4BF23F5E69D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain", "module\code-gen\Yi.Framework.Codegen.Domain\Yi.Framework.CodeGen.Domain.csproj", "{85CB8517-2B80-42D8-B954-081079AC9BA0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain.Shared", "module\code-gen\Yi.Framework.Codegen.Domain.Shared\Yi.Framework.CodeGen.Domain.Shared.csproj", "{EEFF0F05-2709-4151-A8CE-667935CEAE0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Caching.FreeRedis", "framework\Yi.Framework.Caching.FreeRedis\Yi.Framework.Caching.FreeRedis.csproj", "{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.CodeGen.SqlSugarCore", "module\code-gen\Yi.Framework.CodeGen.SqlSugarCore\Yi.Framework.CodeGen.SqlSugarCore.csproj", "{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -250,6 +269,38 @@ Global
 		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C8C3C53-3DCE-4516-867E-228858E61B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17816837-E53B-486B-B796-53C601FE6CD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17816837-E53B-486B-B796-53C601FE6CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17816837-E53B-486B-B796-53C601FE6CD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17816837-E53B-486B-B796-53C601FE6CD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA735055-CBDD-4EFD-B84B-85810DA1425E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA735055-CBDD-4EFD-B84B-85810DA1425E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA735055-CBDD-4EFD-B84B-85810DA1425E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA735055-CBDD-4EFD-B84B-85810DA1425E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97EC40D7-DBFA-467A-98CB-221AF27B14F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97EC40D7-DBFA-467A-98CB-221AF27B14F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97EC40D7-DBFA-467A-98CB-221AF27B14F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97EC40D7-DBFA-467A-98CB-221AF27B14F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{882BC563-2F75-4B95-AC96-F4BF23F5E69D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{882BC563-2F75-4B95-AC96-F4BF23F5E69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{882BC563-2F75-4B95-AC96-F4BF23F5E69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{882BC563-2F75-4B95-AC96-F4BF23F5E69D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85CB8517-2B80-42D8-B954-081079AC9BA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85CB8517-2B80-42D8-B954-081079AC9BA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85CB8517-2B80-42D8-B954-081079AC9BA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85CB8517-2B80-42D8-B954-081079AC9BA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEFF0F05-2709-4151-A8CE-667935CEAE0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEFF0F05-2709-4151-A8CE-667935CEAE0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEFF0F05-2709-4151-A8CE-667935CEAE0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEFF0F05-2709-4151-A8CE-667935CEAE0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -295,6 +346,15 @@ Global
 		{54D8E2BC-591C-4344-A58E-874D49C00B41} = {499A8C71-7892-42D0-A77E-48756E1EFF16}
 		{EFD13211-17B5-400A-B99A-9F6F4E520C1E} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
 		{9C8C3C53-3DCE-4516-867E-228858E61B26} = {73CCF2C4-B9FD-44AB-8D4B-0A421805B094}
+		{17816837-E53B-486B-B796-53C601FE6CD9} = {499A8C71-7892-42D0-A77E-48756E1EFF16}
+		{FA735055-CBDD-4EFD-B84B-85810DA1425E} = {499A8C71-7892-42D0-A77E-48756E1EFF16}
+		{4FFE7212-21F2-476D-B628-3C65E6C5075E} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
+		{97EC40D7-DBFA-467A-98CB-221AF27B14F2} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
+		{882BC563-2F75-4B95-AC96-F4BF23F5E69D} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
+		{85CB8517-2B80-42D8-B954-081079AC9BA0} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
+		{EEFF0F05-2709-4151-A8CE-667935CEAE0B} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
+		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
+		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

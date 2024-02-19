@@ -14,6 +14,11 @@ namespace Yi.Framework.Rbac.Domain.Shared.Options
         public string AdminPassword { get; set; } = "123456";
 
         /// <summary>
+        /// 租户超级管理员默认密码
+        /// </summary>
+        public string TenantAdminPassword { get; set; } = "123456";
+
+        /// <summary>
         /// 是否开启登录验证码
         /// </summary>
         public bool EnableCaptcha { get; set; } = false;

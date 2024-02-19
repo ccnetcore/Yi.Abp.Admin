@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
+using TencentCloud.Tcr.V20190924.Models;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.EventBus.Local;
@@ -85,6 +86,11 @@ namespace Yi.Framework.Rbac.Application.Services.System
         [Permission("system:user:add")]
         public async override Task<UserGetOutputDto> CreateAsync(UserCreateInputVo input)
         {
+            if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)
+            {
+                throw new UserFriendlyException(UserConst.Name_Not_Allowed);
+            }
+
             if (string.IsNullOrEmpty(input.Password))
             {
                 throw new UserFriendlyException(UserConst.Login_Passworld_Error);
@@ -134,6 +140,10 @@ namespace Yi.Framework.Rbac.Application.Services.System
         [Permission("system:user:update")]
         public async override Task<UserGetOutputDto> UpdateAsync(Guid id, UserUpdateInputVo input)
         {
+            if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)
+            {
+                throw new UserFriendlyException(UserConst.Name_Not_Allowed);
+            }
             if (await _repository.IsAnyAsync(u => input.UserName!.Equals(u.UserName) && !id.Equals(u.Id)))
             {
                 throw new UserFriendlyException("用户已经存在，更新失败");

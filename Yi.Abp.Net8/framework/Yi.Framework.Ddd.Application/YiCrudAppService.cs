@@ -76,7 +76,7 @@ namespace Yi.Framework.Ddd.Application
             {
                 entites = await Repository.GetListAsync();
             }
-            var total = await Repository.CountAsync();
+            var total = await Repository.GetCountAsync();
             var output = await MapToGetListOutputDtosAsync(entites);
             return new PagedResultDto<TGetListOutputDto>(total, output);
             //throw new NotImplementedException($"【{typeof(TEntity)}】实体的CrudAppService，查询为具体业务，通用查询几乎无实际场景，请重写实现！");

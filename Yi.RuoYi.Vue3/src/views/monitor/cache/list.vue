@@ -207,7 +207,7 @@ function refreshCacheKeys() {
 
 /** 清理指定键名缓存 */
 function handleClearCacheKey(cacheKey) {
-  clearCacheKey(cacheKey).then(response => {
+  clearCacheKey(nowCacheName.value,cacheKey).then(response => {
     proxy.$modal.msgSuccess("清理缓存键名[" + cacheKey + "]成功");
     getCacheKeys();
   });

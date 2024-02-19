@@ -25,6 +25,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.Repositories
         /// <exception cref="ArgumentNullException"></exception>
         public async Task<UserRoleMenuDto> GetUserAllInfoAsync(Guid userId)
         {
+
             var userRoleMenu = new UserRoleMenuDto();
             //首先获取到该用户全部信息，导航到角色、菜单，(菜单需要去重,完全交给Set来处理即可)
 

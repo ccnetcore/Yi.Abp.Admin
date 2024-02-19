@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,7 @@ namespace Yi.Framework.SqlSugarCore
         /// </summary>
         public ISqlSugarClient SqlSugarClient { get; private set; }
         public ICurrentUser CurrentUser => LazyServiceProvider.GetRequiredService<ICurrentUser>();
-
+        private readonly string MasterTenantDbDefaultName = DbConnOptions.MasterTenantName;
         private IAbpLazyServiceProvider LazyServiceProvider { get; }
 
         private IGuidGenerator GuidGenerator => LazyServiceProvider.LazyGetRequiredService<IGuidGenerator>();
@@ -37,7 +38,7 @@ namespace Yi.Framework.SqlSugarCore
 
         public IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
         public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
-
+        private ISqlSugarDbConnectionCreator _dbConnectionCreator;
 
         public void SetSqlSugarClient(ISqlSugarClient sqlSugarClient)
         {
@@ -47,15 +48,45 @@ namespace Yi.Framework.SqlSugarCore
         {
             LazyServiceProvider = lazyServiceProvider;
             var connectionCreator = LazyServiceProvider.LazyGetRequiredService<ISqlSugarDbConnectionCreator>();
+            _dbConnectionCreator = connectionCreator;
             connectionCreator.OnSqlSugarClientConfig = OnSqlSugarClientConfig;
             connectionCreator.EntityService = EntityService;
             connectionCreator.DataExecuting = DataExecuting;
             connectionCreator.DataExecuted = DataExecuted;
             connectionCreator.OnLogExecuting = OnLogExecuting;
             connectionCreator.OnLogExecuted = OnLogExecuted;
-            SqlSugarClient = new SqlSugarClient(connectionCreator.Build());
-            connectionCreator.SetDbAop(SqlSugarClient);
+            var currentConnection = GetCurrentConnectionString();
+            SqlSugarClient = new SqlSugarClient(connectionCreator.Build(action: options =>
+            {
+                options.ConnectionString = currentConnection;
+            }));
         }
+
+        /// <summary>
+        /// db切换多库支持
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string GetCurrentConnectionString()
+        {
+            var connectionStringResolver = LazyServiceProvider.LazyGetRequiredService<IConnectionStringResolver>();
+            var connectionString = connectionStringResolver.ResolveAsync().Result;
+
+            //没有检测到使用多租户功能，默认使用默认库即可
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                Volo.Abp.Check.NotNull(Options.Url, "租户默认库Defalut未找到");
+                connectionString = Options.Url;
+            }
+            //如果当前租户是主库，单独使用主要库
+            if (CurrentTenant.Name == MasterTenantDbDefaultName)
+            {
+                var conStrOrNull = Options.GetMasterSaasMultiTenancy();
+                Volo.Abp.Check.NotNull(conStrOrNull, "租户主库Master未找到");
+                connectionString = conStrOrNull.Url;
+            }
+            return connectionString!;
+        }
+
 
         /// <summary>
         /// 上下文对象扩展
@@ -211,6 +242,11 @@ namespace Yi.Framework.SqlSugarCore
         /// <param name="pars"></param>
         protected virtual void OnLogExecuted(string sql, SugarParameter[] pars)
         {
+            if (Options.EnabledSqlLog)
+            {
+                var sqllog = $"=========Yi-SQL耗时{SqlSugarClient.Ado.SqlExecutionTime.TotalMilliseconds}毫秒=====";
+                Logger.CreateLogger<SqlSugarDbContext>().LogDebug(sqllog.ToString());
+            }
         }
 
         /// <summary>
@@ -220,7 +256,14 @@ namespace Yi.Framework.SqlSugarCore
         /// <param name="column"></param>
         protected virtual void EntityService(PropertyInfo property, EntityColumnInfo column)
         {
-
+            if (property.PropertyType == typeof(ExtraPropertyDictionary))
+            {
+                column.IsIgnore = true;
+            }
+            if (property.Name == nameof(Entity<object>.Id))
+            {
+                column.IsPrimarykey = true;
+            }
         }
 
         public void BackupDataBase()

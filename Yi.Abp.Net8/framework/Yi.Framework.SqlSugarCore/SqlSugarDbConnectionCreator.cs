@@ -24,6 +24,9 @@ namespace Yi.Framework.SqlSugarCore
             currentDb.Aop.DataExecuted = this.DataExecuted;
             OnSqlSugarClientConfig(currentDb);
         }
+
+
+
         public ConnectionConfig Build(Action<ConnectionConfig>? action=null)
         {
             var dbConnOptions = Options;

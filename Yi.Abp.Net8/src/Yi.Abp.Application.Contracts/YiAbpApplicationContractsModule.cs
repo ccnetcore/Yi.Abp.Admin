@@ -3,6 +3,7 @@ using Yi.Abp.Domain.Shared;
 using Yi.Framework.Bbs.Application.Contracts;
 using Yi.Framework.Ddd.Application.Contracts;
 using Yi.Framework.Rbac.Application.Contracts;
+using Yi.Framework.TenantManagement.Application.Contracts;
 
 namespace Yi.Abp.Application.Contracts
 {
@@ -12,6 +13,7 @@ namespace Yi.Abp.Application.Contracts
         typeof(YiFrameworkRbacApplicationContractsModule),
         typeof(YiFrameworkBbsApplicationContractsModule),
 
+        typeof(YiFrameworkTenantManagementApplicationContractsModule),
         typeof(YiFrameworkDddApplicationContractsModule))]
     public class YiAbpApplicationContractsModule:AbpModule
     {

@@ -78,7 +78,7 @@
             <h4>后端技术</h4>
             <ul>
               <li>.Net6</li>
-              <li>WebFirst</li>
+              <li>CodeFirst</li>
               <li>JWT</li>
               <li>Sqlsugar</li>
               <li>Redis</li>
