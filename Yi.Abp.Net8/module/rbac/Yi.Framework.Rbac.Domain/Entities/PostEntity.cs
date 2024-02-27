@@ -10,7 +10,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
     /// 岗位表
     ///</summary>
     [SugarTable("Post")]
-    public partial class PostEntity : Entity<Guid>, ISoftDelete, IAuditedObject, IOrderNum, IState
+    public  class PostEntity : Entity<Guid>, ISoftDelete, IAuditedObject, IOrderNum, IState
     {
 
         /// <summary>

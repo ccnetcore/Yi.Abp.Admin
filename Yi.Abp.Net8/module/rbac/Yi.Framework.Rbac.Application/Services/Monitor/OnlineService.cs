@@ -12,8 +12,8 @@ namespace Yi.Framework.Rbac.Application.Services.Monitor
     public class OnlineService : ApplicationService, IOnlineService
     {
         private ILogger<OnlineService> _logger;
-        private IHubContext<OnlineUserHub> _hub;
-        public OnlineService(ILogger<OnlineService> logger, IHubContext<OnlineUserHub> hub)
+        private IHubContext<OnlineHub> _hub;
+        public OnlineService(ILogger<OnlineService> logger, IHubContext<OnlineHub> hub)
         {
             _logger = logger;
             _hub = hub;
@@ -26,7 +26,7 @@ namespace Yi.Framework.Rbac.Application.Services.Monitor
         /// <returns></returns>
         public Task<PagedResultDto<OnlineUserModel>> GetListAsync([FromQuery] OnlineUserModel online)
         {
-            var data = OnlineUserHub.clientUsers;
+            var data = OnlineHub.clientUsers;
             IEnumerable<OnlineUserModel> dataWhere = data.AsEnumerable();
 
             if (!string.IsNullOrEmpty(online.Ipaddr))
@@ -50,7 +50,7 @@ namespace Yi.Framework.Rbac.Application.Services.Monitor
         [Route("online/{connnectionId}")]
         public async Task<bool> ForceOut(string connnectionId)
         {
-            if (OnlineUserHub.clientUsers.Exists(u => u.ConnnectionId == connnectionId))
+            if (OnlineHub.clientUsers.Exists(u => u.ConnnectionId == connnectionId))
             {
                 //前端接受到这个事件后，触发前端自动退出
                 await _hub.Clients.Client(connnectionId).SendAsync("forceOut", "你已被强制退出！");

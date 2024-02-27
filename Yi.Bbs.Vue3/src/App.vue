@@ -7,6 +7,7 @@
 </template>
 <script setup>
 import signalR from "@/utils/signalR";
+import noticeSignalR from "@/utils/noticeSignalR";
 import useConfigStore from "@/stores/config";
 import { ElConfigProvider } from "element-plus";
 import useUserStore from "@/stores/user.js";
@@ -25,9 +26,8 @@ if (loading !== null) {
 //加载全局信息
 onMounted(async () => {
   await configStore.getConfig();
-  //    setInterval(() => {
-  //  console.log("token的值："+tokenValue.value);
-  //     }, 1000); // 1000毫秒，即1秒
+  noticeSignalR.close();
+  noticeSignalR.init(`notice`);
 });
 
 

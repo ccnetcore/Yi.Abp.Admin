@@ -269,6 +269,7 @@ namespace Yi.Framework.Rbac.Application.Services
             }
             //此处优先从缓存中获取
             UserRoleMenuDto output = null;
+
             var cacheData = await _userCache.GetAsync(new UserInfoCacheKey(userId.Value));
             if (cacheData is not null)
             {

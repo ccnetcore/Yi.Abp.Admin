@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.Application.Services;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Users;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Integral;
 using Yi.Framework.Bbs.Domain.Managers;
+using Yi.Framework.Bbs.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Authorization;
 
 namespace Yi.Framework.Bbs.Application.Services.Integral
@@ -17,10 +19,12 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
     {
         private IntegralManager _integralManager;
         private ICurrentUser _currentUser;
-        public IntegralService(IntegralManager integralManager, ICurrentUser currentUser)
+        private ILocalEventBus _localEventBus;
+        public IntegralService(IntegralManager integralManager, ICurrentUser currentUser, ILocalEventBus localEventBus)
         {
             _integralManager = integralManager;
             _currentUser = currentUser;
+            _localEventBus = localEventBus;
         }
 
 

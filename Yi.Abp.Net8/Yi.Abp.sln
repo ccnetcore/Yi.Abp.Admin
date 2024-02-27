@@ -107,13 +107,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.TenantManageme
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "code-gen", "code-gen", "{4FFE7212-21F2-476D-B628-3C65E6C5075E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application", "module\code-gen\Yi.Framework.Codegen.Application\Yi.Framework.CodeGen.Application.csproj", "{97EC40D7-DBFA-467A-98CB-221AF27B14F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application", "module\code-gen\Yi.Framework.CodeGen.Application\Yi.Framework.CodeGen.Application.csproj", "{97EC40D7-DBFA-467A-98CB-221AF27B14F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application.Contracts", "module\code-gen\Yi.Framework.Codegen.Application.Contracts\Yi.Framework.CodeGen.Application.Contracts.csproj", "{882BC563-2F75-4B95-AC96-F4BF23F5E69D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Application.Contracts", "module\code-gen\Yi.Framework.CodeGen.Application.Contracts\Yi.Framework.CodeGen.Application.Contracts.csproj", "{882BC563-2F75-4B95-AC96-F4BF23F5E69D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain", "module\code-gen\Yi.Framework.Codegen.Domain\Yi.Framework.CodeGen.Domain.csproj", "{85CB8517-2B80-42D8-B954-081079AC9BA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain", "module\code-gen\Yi.Framework.CodeGen.Domain\Yi.Framework.CodeGen.Domain.csproj", "{85CB8517-2B80-42D8-B954-081079AC9BA0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain.Shared", "module\code-gen\Yi.Framework.Codegen.Domain.Shared\Yi.Framework.CodeGen.Domain.Shared.csproj", "{EEFF0F05-2709-4151-A8CE-667935CEAE0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain.Shared", "module\code-gen\Yi.Framework.CodeGen.Domain.Shared\Yi.Framework.CodeGen.Domain.Shared.csproj", "{EEFF0F05-2709-4151-A8CE-667935CEAE0B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Caching.FreeRedis", "framework\Yi.Framework.Caching.FreeRedis\Yi.Framework.Caching.FreeRedis.csproj", "{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}"
 EndProject

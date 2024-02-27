@@ -122,6 +122,14 @@ const router = createRouter({
             title: "等级",
           },
         },
+        {
+          name: "lucky",
+          path: "lucky",
+          component: () => import("../views/lucky/Index.vue"),
+          meta: {
+            title: "大转盘",
+          },
+        },
       ],
     },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },

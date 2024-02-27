@@ -13,3 +13,10 @@ export function signInRecord() {
     method: "get"
   });
 }
+
+export function luckyWheel() {
+  return request({
+    url: "/lucky/wheel",
+    method: "post"
+  });
+}

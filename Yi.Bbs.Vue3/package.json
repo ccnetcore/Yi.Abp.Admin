@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@lucky-canvas/vue": "^0.1.11",
     "@microsoft/signalr": "^8.0.0",
     "axios": "^1.3.4",
     "dayjs": "^1.11.10",

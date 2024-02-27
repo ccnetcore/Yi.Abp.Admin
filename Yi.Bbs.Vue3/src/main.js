@@ -11,6 +11,7 @@ import "@/assets/styles/index.scss"; // global css
 
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import directive from "./directive"; // directive
+import VueLuckyCanvas from '@lucky-canvas/vue'
 
 import "./permission";
 
@@ -24,6 +25,7 @@ import "./permission";
   app.use(pinia);
   directive(app);
   app.use(router);
+  app.use(VueLuckyCanvas);
   await router.isReady();
   app.mount("#app");
 })();

@@ -34,6 +34,7 @@
 import { onMounted, ref, reactive, computed, nextTick, watch } from "vue";
 import { signIn, signInRecord } from "@/apis/integralApi.js";
 import useAuths from "@/hooks/useAuths";
+
 const { isLogin } = useAuths();
 const number=ref(0);
 const signInData=ref([]);

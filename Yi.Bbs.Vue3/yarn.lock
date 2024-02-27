@@ -286,6 +286,15 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@lucky-canvas/vue@^0.1.11":
+  "integrity" "sha512-5vm0txSKRBtMgrE/HZEvw1joSTx9NTdAkc8tBp/aX0LxyhQtiTVBLsRgdYUK/OiURCL8bo+046BTGnV+Q4JFlg=="
+  "resolved" "https://registry.npmmirror.com/@lucky-canvas/vue/-/vue-0.1.11.tgz"
+  "version" "0.1.11"
+  dependencies:
+    "@vue/composition-api" "^1.0.0"
+    "lucky-canvas" "^1.7.23"
+    "vue-demi" "^0.7.4"
+
 "@microsoft/signalr@^8.0.0":
   "integrity" "sha512-K/wS/VmzRWePCGqGh8MU8OWbS1Zvu7DG7LSJS62fBB8rJUXwwj4axQtqrAAwKGUZHQF6CuteuQR9xMsVpM2JNA=="
   "resolved" "https://registry.npmmirror.com/@microsoft/signalr/-/signalr-8.0.0.tgz"
@@ -474,6 +483,11 @@
   dependencies:
     "@vue/compiler-dom" "3.2.47"
     "@vue/shared" "3.2.47"
+
+"@vue/composition-api@^1.0.0", "@vue/composition-api@^1.0.0-beta.1":
+  "integrity" "sha512-M8jm9J/laYrYT02665HkZ5l2fWTK4dcVg3BsDHm/pfz+MjDYwX+9FUaZyGwEyXEDonQYRCo0H7aLgdklcIELjw=="
+  "resolved" "https://registry.npmmirror.com/@vue/composition-api/-/composition-api-1.7.2.tgz"
+  "version" "1.7.2"
 
 "@vue/devtools-api@^6.4.5", "@vue/devtools-api@^6.5.0":
   "integrity" "sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q=="
@@ -1499,6 +1513,11 @@
   dependencies:
     "yallist" "^4.0.0"
 
+"lucky-canvas@^1.7.23":
+  "integrity" "sha512-Ftz6qD+863bI7xijBmZg3dw3cNEc7odPr70EZQcGA14y3TgTAzH65HPosOCd6kKUlMwhntBaHMx3onoj9MtJRQ=="
+  "resolved" "https://registry.npmmirror.com/lucky-canvas/-/lucky-canvas-1.7.27.tgz"
+  "version" "1.7.27"
+
 "magic-string@^0.25.7":
   "integrity" "sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ=="
   "resolved" "https://registry.npmmirror.com/magic-string/-/magic-string-0.25.9.tgz"
@@ -2239,6 +2258,11 @@
   "resolved" "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.13.11.tgz"
   "version" "0.13.11"
 
+"vue-demi@^0.7.4":
+  "integrity" "sha512-eFSQSvbQdY7C9ujOzvM6tn7XxwLjn0VQDXQsiYBLBwf28Na+2nTQR4BBBcomhmdP6mmHlBKAwarq6a0BPG87hQ=="
+  "resolved" "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.7.5.tgz"
+  "version" "0.7.5"
+
 "vue-router@^4.1.6":
   "integrity" "sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ=="
   "resolved" "https://registry.npmmirror.com/vue-router/-/vue-router-4.1.6.tgz"
@@ -2246,7 +2270,7 @@
   dependencies:
     "@vue/devtools-api" "^6.4.5"
 
-"vue@^2.6.14 || ^3.2.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.23", "vue@^3.2.25", "vue@^3.2.47", "vue@2 || 3", "vue@3.2.47":
+"vue@^2.0.0 || >=3.0.0-rc.0", "vue@^2.6.0 || >=3.0.0-rc.1", "vue@^2.6.14 || ^3.2.0", "vue@^3.0.0-0 || ^2.6.0", "vue@^3.2.0", "vue@^3.2.23", "vue@^3.2.25", "vue@^3.2.47", "vue@>= 2.5 < 2.7", "vue@2 || 3", "vue@3.2.47":
   "integrity" "sha512-60188y/9Dc9WVrAZeUVSDxRQOZ+z+y5nO2ts9jWXSTkMvayiWxCWOWtBQoYjLeccfXkiiPZWAHcV+WTPhkqJHQ=="
   "resolved" "https://registry.npmmirror.com/vue/-/vue-3.2.47.tgz"
   "version" "3.2.47"

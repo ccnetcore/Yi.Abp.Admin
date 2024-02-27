@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
@@ -84,12 +87,12 @@ namespace Yi.Abp.Web
             });
 
             //设置缓存不要过期，默认滑动20分钟
-           Configure<AbpDistributedCacheOptions>(cacheOptions =>
-            {
-                cacheOptions.GlobalCacheEntryOptions.SlidingExpiration =null;
-                //缓存key前缀
-                cacheOptions.KeyPrefix = "Yi:";
-            });
+            Configure<AbpDistributedCacheOptions>(cacheOptions =>
+             {
+                 cacheOptions.GlobalCacheEntryOptions.SlidingExpiration = null;
+                 //缓存key前缀
+                 cacheOptions.KeyPrefix = "Yi:";
+             });
 
 
             Configure<AbpAntiForgeryOptions>(options =>
@@ -135,24 +138,62 @@ namespace Yi.Abp.Web
                 //options.TenantResolvers.RemoveAll(x => x.Name == CookieTenantResolveContributor.ContributorName);
             });
 
+
+            //速率限制
+            //每60秒限制100个请求，滑块添加，分6段
+            service.AddRateLimiter(_ =>
+            {
+                _.RejectionStatusCode = StatusCodes.Status429TooManyRequests; 
+                _.OnRejected = (context, _) =>
+                {
+                    if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                    {
+                        context.HttpContext.Response.Headers.RetryAfter =
+                            ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
+                    }
+                    context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                    context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.");
+
+                    return new ValueTask();
+                };
+
+                //全局使用，链式表达式
+                _.GlobalLimiter = PartitionedRateLimiter.CreateChained(
+                   PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                   {
+                       var userAgent = httpContext.Request.Headers.UserAgent.ToString();
+
+                       return RateLimitPartition.GetSlidingWindowLimiter
+                       (userAgent, _ =>
+                           new SlidingWindowRateLimiterOptions
+                           {
+                               PermitLimit = 100,
+                               Window = TimeSpan.FromSeconds(60),
+                               SegmentsPerWindow = 6,
+                               QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                           });
+                   }));
+            });
+
+
             //jwt鉴权
             var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
             var refreshJwtOptions = configuration.GetSection(nameof(RefreshJwtOptions)).Get<RefreshJwtOptions>();
 
             context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                .AddJwtBearer(options =>
                 {
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOptions.Issuer,
-                    ValidAudience = jwtOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecurityKey))
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecurityKey))
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
                         if (!string.IsNullOrEmpty(accessToken))
@@ -161,21 +202,21 @@ namespace Yi.Abp.Web
                         }
                         return Task.CompletedTask;
                     }
-                };
-            })
-            .AddJwtBearer(TokenTypeConst.Refresh, options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                    };
+                })
+                .AddJwtBearer(TokenTypeConst.Refresh, options =>
                 {
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = refreshJwtOptions.Issuer,
-                    ValidAudience = refreshJwtOptions.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshJwtOptions.SecurityKey))
-                };
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew = TimeSpan.Zero,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = refreshJwtOptions.Issuer,
+                        ValidAudience = refreshJwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshJwtOptions.SecurityKey))
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
                     {
                         var refresh_token = context.Request.Headers["refresh_token"];
                         if (!string.IsNullOrEmpty(refresh_token))
@@ -191,17 +232,17 @@ namespace Yi.Abp.Web
 
                         return Task.CompletedTask;
                     }
-                };
+                    };
 
-            })
-            .AddQQ(options =>
-            {
-                configuration.GetSection("OAuth:QQ").Bind(options);
-            })
-            .AddGitee(options =>
-            {
-                configuration.GetSection("OAuth:Gitee").Bind(options);
-            });
+                })
+                .AddQQ(options =>
+                {
+                    configuration.GetSection("OAuth:QQ").Bind(options);
+                })
+                .AddGitee(options =>
+                {
+                    configuration.GetSection("OAuth:Gitee").Bind(options);
+                });
 
             //授权
             context.Services.AddAuthorization();
@@ -220,6 +261,9 @@ namespace Yi.Abp.Web
 
             //跨域
             app.UseCors(DefaultCorsPolicyName);
+
+            //速率限制
+            app.UseRateLimiter();
 
             //无感token，先刷新再鉴权
             app.UseRefreshToken();

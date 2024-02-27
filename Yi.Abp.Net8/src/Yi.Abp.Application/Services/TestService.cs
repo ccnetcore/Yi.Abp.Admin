@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Uow;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Banner;
@@ -117,5 +118,19 @@ namespace Yi.Abp.Application.Services
             var entity = new BannerEntity();
             var dto = entity.Adapt<BannerGetListOutputDto>();
         }
+
+
+        /// <summary>
+        /// 速率限制
+        /// </summary>
+        /// <returns></returns>
+        // [DisableRateLimiting]
+        //[EnableRateLimiting("sliding")]
+        public int GetRateLimiting()
+        {
+            RequestNumber++;
+            return RequestNumber;
+        }
+        private static int RequestNumber { get; set; } = 0;
     }
 }

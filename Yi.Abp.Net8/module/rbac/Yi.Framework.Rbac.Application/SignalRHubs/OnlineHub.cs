@@ -10,14 +10,14 @@ namespace Yi.Framework.Rbac.Application.SignalRHubs
 {
     [HubRoute("/hub/main")]
     [Authorize]
-    public class OnlineUserHub : AbpHub
+    public class OnlineHub : AbpHub
     {
         public static readonly List<OnlineUserModel> clientUsers = new();
         private readonly static object objLock = new object();
 
         private HttpContext? _httpContext;
-        private ILogger<OnlineUserHub> _logger => LoggerFactory.CreateLogger<OnlineUserHub>();
-        public OnlineUserHub(IHttpContextAccessor httpContextAccessor)
+        private ILogger<OnlineHub> _logger => LoggerFactory.CreateLogger<OnlineHub>();
+        public OnlineHub(IHttpContextAccessor httpContextAccessor)
         {
             _httpContext = httpContextAccessor?.HttpContext;
         }

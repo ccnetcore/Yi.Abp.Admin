@@ -211,11 +211,11 @@ const deptRef = ref(null);
 
 /** 数据范围选项*/
 const dataScopeOptions = ref([
-  { value: 0, label: "全部数据权限" },
-  { value: 1, label: "自定数据权限" },
-  { value: 2, label: "本部门数据权限" },
-  { value: 3, label: "本部门及以下数据权限" },
-  { value: 4, label: "仅本人数据权限" },
+  { value: 'ALL', label: "全部数据权限" },
+  { value: 'CUSTOM', label: "自定数据权限" },
+  { value: 'DEPT', label: "本部门数据权限" },
+  { value: 'DEPT_FOLLOW', label: "本部门及以下数据权限" },
+  { value: 'USER', label: "仅本人数据权限" },
 ]);
 
 const data = reactive({

@@ -39,9 +39,10 @@ import {getList,upgrade} from '@/apis/levelApi.js'
 import {getBbsUserProfile} from '@/apis/userApi.js'
 import { ref,onMounted, reactive,computed  } from 'vue'
 import  useAuths  from '@/hooks/useAuths.js';
-const { isLogin,currentUserInfo } = useAuths();
+import useUserStore from "@/stores/user";
+const { isLogin } = useAuths();
 const userInfo=ref({});
-
+const currentUserInfo=useUserStore();
 const levelData =ref([]);
 const moneyNum=ref(1);
 
@@ -73,7 +74,7 @@ const loadLevelData=  async () => {
 const loadUserInfoData=async()=>{
     if(isLogin)
    {
-        const {data}= await getBbsUserProfile(currentUserInfo.value.id);
+        const {data}= await getBbsUserProfile(currentUserInfo.id);
         userInfo.value=data;
    }
 }

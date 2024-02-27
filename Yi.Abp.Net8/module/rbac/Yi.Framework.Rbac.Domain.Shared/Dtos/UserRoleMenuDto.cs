@@ -18,7 +18,7 @@ namespace Yi.Framework.Rbac.Domain.Shared.Dtos
         /// <summary>
         /// 主键
         /// </summary>
-        public Guid Id { get; protected set; }
+        public Guid Id { get;  set; }
 
         /// <summary>
         /// 逻辑删除
@@ -134,7 +134,7 @@ namespace Yi.Framework.Rbac.Domain.Shared.Dtos
     }
     public class RoleDto
     {
-        public Guid Id { get; protected set; }
+        public Guid Id { get;  set; }
 
         /// <summary>
         /// 逻辑删除
@@ -194,7 +194,7 @@ namespace Yi.Framework.Rbac.Domain.Shared.Dtos
     }
     public class MenuDto
     {
-        public Guid Id { get; protected set; }
+        public Guid Id { get;  set; }
 
         /// <summary>
         /// 逻辑删除

@@ -18,7 +18,7 @@
             <el-icon><Memo /></el-icon>
           <span>任务列表</span>
         </el-menu-item>
-        <el-menu-item index="4" :route="{path:'/activity/sign'}">
+        <el-menu-item index="4" :route="{path:'/activity/lucky'}">
             <el-icon><HelpFilled /></el-icon>
           <span>大转盘</span>
         </el-menu-item>

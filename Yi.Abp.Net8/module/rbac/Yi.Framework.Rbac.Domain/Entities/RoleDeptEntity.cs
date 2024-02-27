@@ -7,7 +7,7 @@ namespace Yi.Framework.Rbac.Domain.Entities;
 /// 角色部门关系表
 ///</summary>
 [SugarTable("RoleDept")]
-public partial class RoleDeptEntity : Entity<Guid>
+public  class RoleDeptEntity : Entity<Guid>
 {
     /// <summary>
     /// 主键

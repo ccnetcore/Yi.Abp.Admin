@@ -1125,6 +1125,75 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
 
+            //通知公告
+            MenuEntity notice = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "通知公告",
+                PermissionCode = "system:notice:list",
+                MenuType = MenuTypeEnum.Menu,
+                Router = "notice",
+                IsShow = true,
+                IsLink = false,
+                IsCache = true,
+                Component = "system/notice/index",
+                MenuIcon = "message",
+                OrderNum = 93,
+                ParentId = system.Id,
+                IsDeleted = false
+            };
+            entities.Add(notice);
+
+            MenuEntity noticeQuery = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "通知查询",
+                PermissionCode = "system:notice:query",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = notice.Id,
+                IsDeleted = false
+            };
+            entities.Add(noticeQuery);
+
+            MenuEntity noticeAdd = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "通知新增",
+                PermissionCode = "system:notice:add",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = notice.Id,
+                IsDeleted = false
+            };
+            entities.Add(noticeAdd);
+
+            MenuEntity noticeEdit = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "通知修改",
+                PermissionCode = "system:notice:edit",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = notice.Id,
+                IsDeleted = false
+            };
+            entities.Add(noticeEdit);
+
+            MenuEntity noticeRemove = new MenuEntity(_guidGenerator.Create())
+            {
+
+                MenuName = "通知删除",
+                PermissionCode = "system:notice:remove",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = notice.Id,
+                IsDeleted = false
+            };
+            entities.Add(noticeRemove);
+
+
+
             //日志管理
             MenuEntity log = new MenuEntity(_guidGenerator.Create())
             {
@@ -1135,7 +1204,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsShow = true,
                 IsLink = false,
                 MenuIcon = "log",
-                OrderNum = 93,
+                OrderNum = 92,
                 ParentId = system.Id,
                 IsDeleted = false
             };
