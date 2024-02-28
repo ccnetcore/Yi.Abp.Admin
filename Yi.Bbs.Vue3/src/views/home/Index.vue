@@ -6,22 +6,11 @@
           <ScrollbarInfo />
         </div>
         <el-row class="left-div">
-          <el-col
-            :span="8"
-            v-for="i in plateList"
-            :key="i.id"
-            class="plate"
-            :style="{
-              'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
-              'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
-            }"
-          >
-            <PlateCard
-              :name="i.name"
-              :introduction="i.introduction"
-              :id="i.id"
-              :isPublish="i.isDisableCreateDiscuss"
-            />
+          <el-col :span="8" v-for="i in plateList" :key="i.id" class="plate" :style="{
+            'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
+            'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
+          }">
+            <PlateCard :name="i.name" :introduction="i.introduction" :id="i.id" :isPublish="i.isDisableCreateDiscuss" />
           </el-col>
           <template v-if="isDiscussFinished">
             <el-col :span="24" v-for="i in discussList" :key="i.id">
@@ -49,11 +38,7 @@
                 <div class="carousel-font" :style="{ color: item.color }">
                   {{ item.name }}
                 </div>
-                <el-image
-                  style="width: 100%; height: 100%"
-                  :src="item.logo"
-                  fit="cover"
-                />
+                <el-image style="width: 100%; height: 100%" :src="item.logo" fit="cover" />
               </el-carousel-item>
             </el-carousel>
           </el-col>
@@ -101,20 +86,22 @@
           </el-col>
 
           <el-col :span="24">
-            <InfoCard header="访问统计" class="VisitsLineChart" text="详情">
+            <InfoCard header="访问统计" class="VisitsLineChart" text="(New)全站历史统计" @onClickText="onClickAccessLog">
               <template #content>
                 <VisitsLineChart :option="statisOptions" class="statisChart" />
               </template>
             </InfoCard>
+
+            <el-dialog v-model="accessLogDialogVisible" title="全站历史统计" width="1200px" center>
+              <AccessLogChart :option="accessLogOptins" class="accessLogChart" />
+            </el-dialog>
           </el-col>
 
           <el-col :span="24">
-            <InfoCard header="简介" text="详情">
+            <InfoCard header="简介" text="">
               <template #content>
                 <div class="introduce">
-                  没有什么能够阻挡，人类对代码<span style="color: #1890ff"
-                    >优雅</span
-                  >的追求
+                  没有什么能够阻挡，人类对代码<span style="color: #1890ff">优雅</span>的追求
                 </div>
               </template>
             </InfoCard>
@@ -122,12 +109,7 @@
 
           <el-col :span="24">
             <template v-if="isPointFinished">
-              <InfoCard
-                :items="pointList"
-                header="财富排行榜"
-                text="关于钱钱"
-                height="400"
-              >
+              <InfoCard :items="pointList" header="财富排行榜" text="关于钱钱" height="400">
                 <template #item="temp">
                   <PointsRanking :pointsData="temp" />
                 </template>
@@ -135,19 +117,16 @@
             </template>
             <template v-else>
               <InfoCard header="本月排行" text="更多">
-                <template #content> <Skeleton /></template>
+                <template #content>
+                  <Skeleton />
+                </template>
               </InfoCard>
             </template>
           </el-col>
 
           <el-col :span="24">
             <template v-if="isFriendFinished">
-              <InfoCard
-                :items="friendList"
-                header="推荐好友"
-                text="更多"
-                height="400"
-              >
+              <InfoCard :items="friendList" header="推荐好友" text="更多" height="400">
                 <template #item="temp">
                   <RecommendFriend :friendData="temp" />
                 </template>
@@ -155,18 +134,15 @@
             </template>
             <template v-else>
               <InfoCard header="推荐好友" text="更多">
-                <template #content> <Skeleton /></template>
+                <template #content>
+                  <Skeleton />
+                </template>
               </InfoCard>
             </template>
           </el-col>
           <el-col :span="24">
             <template v-if="isThemeFinished">
-              <InfoCard
-                :items="themeList"
-                header="推荐主题"
-                text="更多"
-                height="400"
-              >
+              <InfoCard :items="themeList" header="推荐主题" text="更多" height="400">
                 <template #item="temp">
                   <ThemeData :themeData="temp" />
                 </template>
@@ -174,7 +150,9 @@
             </template>
             <template v-else>
               <InfoCard header="推荐主题" text="更多">
-                <template #content> <Skeleton /></template>
+                <template #content>
+                  <Skeleton />
+                </template>
               </InfoCard>
             </template>
           </el-col>
@@ -197,7 +175,8 @@ import PlateCard from "@/components/PlateCard.vue";
 import ScrollbarInfo from "@/components/ScrollbarInfo.vue";
 import BottomInfo from "@/components/BottomInfo.vue";
 import VisitsLineChart from "./components/VisitsLineChart/index.vue";
-import { access } from "@/apis/accessApi.js";
+import AccessLogChart from "./components/AccessLogChart/Index.vue"
+import { access, getAccessList } from "@/apis/accessApi.js";
 import { getList } from "@/apis/plateApi.js";
 import { getList as bannerGetList } from "@/apis/bannerApi.js";
 import { getHomeDiscuss } from "@/apis/discussApi.js";
@@ -215,10 +194,10 @@ import ThemeData from "./components/RecommendTheme/index.vue";
 import Skeleton from "@/components/Skeleton/index.vue";
 import useSocketStore from "@/stores/socket";
 
-
+const accessLogDialogVisible = ref(false)
 const router = useRouter();
 
-
+const accessAllList = ref([]);
 
 const plateList = ref([]);
 const discussList = ref([]);
@@ -294,6 +273,25 @@ const statisOptions = computed(() => {
     },
   };
 });
+//历史全部访问统计
+const accessLogOptins = computed(() => {
+  return {
+    xAxis: {
+      data: accessAllList.value?.map((item,index)=>{
+        return item.creationTime.slice(0, 10);
+
+      })
+    },
+    series: [
+      {
+        data: accessAllList.value?.map((item,index)=>{
+        return item.number;
+        })
+      }
+    ]
+  }
+});
+
 
 const handleToSign = () => {
   router.push("/activity/sign");
@@ -309,12 +307,19 @@ watch(
   { deep: true }
 );
 
+const onClickAccessLog = async () => {
+  accessLogDialogVisible.value = true;
+  const {data} = await getAccessList();
+
+  accessAllList.value = data;
+}
 
 </script>
 <style scoped lang="scss">
 .home-box {
   width: 1300px;
   height: 100%;
+
   .introduce {
     color: rgba(0, 0, 0, 0.45);
     font-size: small;
@@ -350,6 +355,7 @@ watch(
     display: block;
     margin-bottom: 0.5rem;
   }
+
   .analyse {
     display: flex;
     justify-content: space-between;
@@ -357,6 +363,7 @@ watch(
     width: 100%;
     height: 100px;
     margin-bottom: 10px;
+
     .item {
       width: 30%;
       height: 100%;
@@ -368,6 +375,7 @@ watch(
       border: 1px solid #409eff;
       border-radius: 5px;
       color: #409eff;
+
       .content {
         width: 100%;
         height: 100%;
@@ -385,6 +393,7 @@ watch(
           .name {
             font-size: 14px;
           }
+
           .count {
             font-size: 20px;
             font-weight: bold;
@@ -407,11 +416,13 @@ watch(
       }
     }
   }
+
   .signIn {
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #8a919f;
+
     &-btn {
       cursor: pointer;
       display: flex;
@@ -426,13 +437,18 @@ watch(
     }
   }
 
-  .VisitsLineChart >>> .el-card__body {
+  .VisitsLineChart>>>.el-card__body {
     padding: 0.5rem;
   }
 
   .statisChart {
     width: 100%;
     height: 300px;
+  }
+
+  .accessLogChart {
+    width: 1100px;
+    height: 500px;
   }
 }
 </style>

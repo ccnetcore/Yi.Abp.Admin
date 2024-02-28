@@ -2,7 +2,12 @@
 import { ref } from "vue";
 
 const props = defineProps(["items", "header", "text", "hideDivider", "height"]);
+const emit = defineEmits(['onClickText'])
 const height = ref(props.height + "px");
+
+const onClickText=()=>{
+  emit('onClickText')
+}
 </script>
 
 <template>
@@ -10,7 +15,7 @@ const height = ref(props.height + "px");
     <template #header>
       <div class="card-header">
         <span>{{ props.header }}</span>
-        <el-link :underline="false" type="primary">{{ props.text }}</el-link>
+        <el-link :underline="false" type="primary" @click="onClickText">{{ props.text }}</el-link>
       </div>
     </template>
 

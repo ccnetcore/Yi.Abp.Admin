@@ -44,6 +44,21 @@ namespace Yi.Framework.Bbs.Application.Services
             }
         }
 
+
+
+
+        /// <summary>
+        /// 获取全部访问流量
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<AccessLogDto>> Get()
+        {
+            var entities = await _repository._DbQueryable.OrderBy(x => x.CreationTime).ToListAsync();
+            var output = entities.Adapt<List<AccessLogDto>>();
+            output?.ForEach(x => x.CreationTime = x.CreationTime.Date);
+            return output;
+        }
+
         /// <summary>
         /// 触发
         /// </summary>
@@ -106,5 +121,8 @@ namespace Yi.Framework.Bbs.Application.Services
 
             return result.ToArray();
         }
+
+
+
     }
 }

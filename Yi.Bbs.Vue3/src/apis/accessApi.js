@@ -15,3 +15,10 @@ export function getWeek() {
     method: "get",
   });
 }
+// 获取全部数据
+export function getAccessList() {
+  return request({
+    url: "/access-log",
+    method: "get",
+  });
+}

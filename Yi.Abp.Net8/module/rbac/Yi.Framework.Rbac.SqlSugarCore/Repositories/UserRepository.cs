@@ -33,7 +33,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.Repositories
             var user = await _DbQueryable.Includes(u => u.Roles.Where(r => r.IsDeleted == false).ToList(), r => r.Menus.Where(m => m.IsDeleted == false).ToList()).InSingleAsync(userId);
             if (user is null)
             {
-                throw new ArgumentNullException($"参数错误，用户id：{nameof(userId)} 不存在");
+                throw new UserFriendlyException($"数据错误，用户id：{nameof(userId)} 不存在，请重新登录");
             }
             user.Password = string.Empty;
             user.Salt = string.Empty;
