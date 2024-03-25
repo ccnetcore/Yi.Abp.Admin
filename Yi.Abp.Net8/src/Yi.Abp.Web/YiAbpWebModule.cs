@@ -59,7 +59,6 @@ namespace Yi.Abp.Web
             var configuration = context.Services.GetConfiguration();
             var host = context.Services.GetHostingEnvironment();
             var service = context.Services;
-
             //请求日志
             Configure<AbpAuditingOptions>(optios =>
             {
@@ -76,7 +75,7 @@ namespace Yi.Abp.Web
                 options.ConventionalControllers.Create(typeof(YiFrameworkRbacApplicationModule).Assembly, options => options.RemoteServiceName = "rbac");
                 options.ConventionalControllers.Create(typeof(YiFrameworkBbsApplicationModule).Assembly, options => options.RemoteServiceName = "bbs");
                 options.ConventionalControllers.Create(typeof(YiFrameworkTenantManagementApplicationModule).Assembly, options => options.RemoteServiceName = "tenant-management");
-                options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly, options => options.RemoteServiceName = "code-gun");
+                options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly, options => options.RemoteServiceName = "code-gen");
             });
 
             //设置api格式
@@ -138,7 +137,6 @@ namespace Yi.Abp.Web
                 //options.TenantResolvers.RemoveAll(x => x.Name == CookieTenantResolveContributor.ContributorName);
             });
 
-
             //速率限制
             //每60秒限制100个请求，滑块添加，分6段
             service.AddRateLimiter(_ =>
@@ -167,7 +165,7 @@ namespace Yi.Abp.Web
                        (userAgent, _ =>
                            new SlidingWindowRateLimiterOptions
                            {
-                               PermitLimit = 100,
+                               PermitLimit = 1000,
                                Window = TimeSpan.FromSeconds(60),
                                SegmentsPerWindow = 6,
                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
@@ -262,8 +260,12 @@ namespace Yi.Abp.Web
             //跨域
             app.UseCors(DefaultCorsPolicyName);
 
-            //速率限制
-            app.UseRateLimiter();
+            if (!env.IsDevelopment())
+            {
+                //速率限制
+                app.UseRateLimiter();
+            }
+
 
             //无感token，先刷新再鉴权
             app.UseRefreshToken();

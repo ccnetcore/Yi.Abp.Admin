@@ -2,7 +2,7 @@ import { login, logout, register } from "@/apis/accountApi";
 import { getUserDetailInfo, getLoginCode } from "@/apis/auth";
 import useAuths from "@/hooks/useAuths";
 import { defineStore } from "pinia";
-
+import { getBbsUserProfile } from '@/apis/userApi.js'
 const { getToken, setToken, clearStorage } = useAuths();
 
 const useUserStore = defineStore("user", {
@@ -16,6 +16,7 @@ const useUserStore = defineStore("user", {
     permissions: [],
     codeImageURL: "",
     codeUUid: "",
+    money:0
   }),
   getters: {},
   actions: {
@@ -42,8 +43,10 @@ const useUserStore = defineStore("user", {
     // 获取用户信息
     getInfo() {
       return new Promise((resolve, reject) => {
+
         getUserDetailInfo()
-          .then((response) => {
+          .then(async (response) => {
+  
             const res = response.data;
             const user = res.user;
             const avatar =
@@ -59,6 +62,7 @@ const useUserStore = defineStore("user", {
             } else {
               this.roles = ["ROLE_DEFAULT"];
             }
+     
             // this.roles = ["admin"];
             // this.permissions=["*:*:*"]
             this.name = user.nick;
@@ -66,11 +70,23 @@ const useUserStore = defineStore("user", {
 
             this.userName = user.userName;
             this.id = user.id;
+       
+
+          //获取bbs信息
+         const  {data:bbsData}=  await  getBbsUserProfile(this.id)
+             
+     
+            this.money= bbsData.money;
+   
             resolve(res);
           })
           .catch((error) => {
             reject(error);
           });
+
+
+
+
       });
     },
     // 退出系统

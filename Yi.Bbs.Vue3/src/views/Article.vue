@@ -62,15 +62,16 @@
               :userInfo="discuss.user"
             ></AvatarInfo>
             <!-- :userInfo="{nick:'qwe'} -->
-            <el-divider />
+         
             <h2>{{ discuss.title }}</h2>
+            <h5 class="subtitle">{{discuss.introduction  }}</h5>
             <el-image
               :preview-src-list="[getUrl(discuss.cover)]"
               v-if="discuss.cover"
               :src="getUrl(discuss.cover)"
               style="width: 150px; height: 150px"
             />
-
+            <el-divider />
             <ArticleContentInfo
               :code="discuss.content ?? ''"
             ></ArticleContentInfo>
@@ -397,6 +398,13 @@ watch(
 );
 </script>
 <style scoped lang="scss">
+
+.subtitle
+{
+  color:#999AAA;
+  margin: 0;
+}
+
 .article-box {
   width: 1400px;
   height: 100%;

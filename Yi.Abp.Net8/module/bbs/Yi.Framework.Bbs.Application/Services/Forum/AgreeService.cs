@@ -26,6 +26,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
 
         /// <summary>
         /// 点赞,返回true为点赞+1，返回false为点赞-1
+        /// Todo: 可放入领域层
         /// </summary>
         /// <returns></returns>
         [UnitOfWork]

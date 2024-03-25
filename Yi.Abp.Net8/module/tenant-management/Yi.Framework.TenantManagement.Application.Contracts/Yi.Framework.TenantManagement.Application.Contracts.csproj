@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="8.0.0" />
+		<PackageReference Include="Volo.Abp.TenantManagement.Domain.Shared" Version="8.0.5" />
 
 	</ItemGroup>
 	<ItemGroup>

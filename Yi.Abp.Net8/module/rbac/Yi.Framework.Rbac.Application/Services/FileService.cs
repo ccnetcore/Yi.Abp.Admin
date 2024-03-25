@@ -71,6 +71,7 @@ namespace Yi.Framework.Rbac.Application.Services
 
         /// <summary>
         /// 上传文件
+        /// Todo: 可放入领域层
         /// </summary>
         /// <returns></returns>
         public async Task<List<FileGetListOutputDto>> Post([FromForm] IFormFileCollection file)

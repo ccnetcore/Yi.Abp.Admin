@@ -139,7 +139,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
 
         }
         /// <summary>
-        /// 登录效验
+        /// 登录校验
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="password"></param>
@@ -176,7 +176,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 userAction.Invoke(user);
             }
-            //这里为了兼容解决数据库开启了大小写不敏感问题,还要将用户名进行二次效验
+            //这里为了兼容解决数据库开启了大小写不敏感问题,还要将用户名进行二次校验
             if (user != null&&user.UserName==userName)
             {
                 return true;

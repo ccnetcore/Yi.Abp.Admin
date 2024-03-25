@@ -100,11 +100,11 @@
          <el-table-column label="请求方式" align="center" prop="requestMethod" />
          <el-table-column label="操作人员" align="center" prop="operUser" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" width="100" />
          <el-table-column label="主机" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
-         <el-table-column label="操作状态" align="center" prop="state">
+         <!-- <el-table-column label="操作状态" align="center" prop="state">
             <template #default="scope">
                <dict-tag :options="sys_common_status" :value="scope.row.state" />
             </template>
-         </el-table-column>
+         </el-table-column> -->
          <el-table-column label="操作日期" align="center" prop="creationTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="180">
             <template #default="scope">
                <span>{{ parseTime(scope.row.creationTime) }}</span>

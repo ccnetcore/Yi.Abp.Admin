@@ -90,6 +90,11 @@ namespace Yi.Framework.Bbs.Application.Services
             return WeekTimeHandler(lastSeven.ToArray());
         }
 
+        /// <summary>
+        /// Todo: 可放入领域层
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private AccessLogDto[] WeekTimeHandler(AccessLogEntity[] data)
         {
             data = data.Where(x => x.CreationTime >= GetWeekFirst()).OrderByDescending(x => x.CreationTime).DistinctBy(x => x.CreationTime.DayOfWeek).ToArray();

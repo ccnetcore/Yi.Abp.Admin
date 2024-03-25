@@ -27,11 +27,11 @@ const router = createRouter({
           // component: () => import("../views/Login.vue"),
           component: () => import("../views/login/index.vue"),
         },
-        {
-          name: "register",
-          path: "/register",
-          component: () => import("../views/Register.vue"),
-        },
+        // {
+        //   name: "register",
+        //   path: "/register",
+        //   component: () => import("../views/Register.vue"),
+        // },
         {
           name: "auth",
           path: "/auth/:type",
@@ -128,6 +128,14 @@ const router = createRouter({
           component: () => import("../views/lucky/Index.vue"),
           meta: {
             title: "大转盘",
+          },
+        },
+        {
+          name: "bank",
+          path: "bank",
+          component: () => import("../views/bank/Index.vue"),
+          meta: {
+            title: "银行",
           },
         },
       ],

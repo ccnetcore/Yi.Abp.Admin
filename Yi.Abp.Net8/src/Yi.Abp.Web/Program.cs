@@ -16,6 +16,16 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
+    Log.Information("""
+
+        __     ___   ______                                           _    
+        \ \   / (_) |  ____|                                         | |   
+         \ \_/ / _  | |__ _ __ __ _ _ __ ___   _____      _____  _ __| | __
+          \   / | | |  __| '__/ _` | '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
+           | |  | | | |  | | | (_| | | | | | |  __/\ V  V / (_) | |  |   < 
+           |_|  |_| |_|  |_|  \__,_|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
+   
+     """);
     Log.Information("Yi框架-Abp.vNext，启动！");
 
     var builder = WebApplication.CreateBuilder(args);

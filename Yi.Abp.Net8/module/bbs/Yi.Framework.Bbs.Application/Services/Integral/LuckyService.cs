@@ -16,6 +16,7 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
 
         /// <summary>
         /// 大转盘
+        /// Todo: 可放入领域层
         /// </summary>
         /// <returns></returns>
         [Authorize]
@@ -32,11 +33,11 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
             var index = GetWheelIndex();
             var value = values[index] - 50;
 
-            //不存在负数钱钱
-            if (value < 0)
-            {
-                value = 0;
-            }
+            ////不存在负数钱钱
+            //if (value < 0)
+            //{
+            //    value = 0;
+            //}
 
             //修改钱钱，如果钱钱不足，直接会丢出去,那本次抽奖将无效
             await _localEventBus.PublishAsync(new MoneyChangeEventArgs { UserId = CurrentUser.Id!.Value, Number = value }, false);

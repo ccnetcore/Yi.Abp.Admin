@@ -48,10 +48,17 @@
       </el-input>
     </div>
     <div class="user">
+
+
+      <div class="money" v-if="isLogin">钱钱：<span>{{money}}</span></div>
       <el-dropdown trigger="click">
         <AvatarInfo :size="30" :isSelf="true" />
+
         <template #dropdown>
+
+       
           <el-dropdown-menu v-if="isLogin">
+            <el-dropdown-item>你的钱钱：{{money}}</el-dropdown-item>
             <el-dropdown-item @click="enterProfile"
               >进入个人中心</el-dropdown-item
             >
@@ -60,11 +67,14 @@
             >
             <el-dropdown-item @click="logout">登出</el-dropdown-item>
           </el-dropdown-menu>
-          <el-dropdown-menu v-else="isLogin">
+          <el-dropdown-menu v-else>
             <el-dropdown-item @click="toLogin">去登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+
+
+
       <div class="gitee" @click="handleGitClick">
         <el-tooltip effect="dark" content="在gitee找到我们" placement="bottom">
           <img src="@/assets/common/icons/gitee.png" alt="" />
@@ -86,13 +96,13 @@ import useUserStore from "@/stores/user.js";
 import useConfigStore from "@/stores/config";
 import useAuths from "@/hooks/useAuths";
 import { Session } from "@/utils/storage";
-import signalR from "@/utils/signalR";
-
+import { storeToRefs } from 'pinia'
 const { isLogin, clearStorage } = useAuths();
 const configStore = useConfigStore();
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+const { money } = storeToRefs(userStore)
 const activeIndex = ref("1");
 const searchText = ref("");
 const handleSelect = (key, keyPath) => {
@@ -106,7 +116,6 @@ const logout = async () => {
   }).then(async () => {
     //异步
     await userStore.logOut();
-    await signalR.close();
     //删除成功后，跳转到主页
     router.push("/login");
     ElMessage({
@@ -144,6 +153,16 @@ const handleGithubClick = () => {
 </script>
 
 <style scoped lang="scss">
+.money
+{
+
+  font-size: small;
+  color: #FED055;
+  margin: 0 5px;
+  span{
+    font-weight: 600;
+  }
+}
 .header {
   width: 1300px;
   display: flex;

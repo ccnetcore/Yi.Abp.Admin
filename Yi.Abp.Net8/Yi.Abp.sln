@@ -117,7 +117,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Caching.FreeRedis", "framework\Yi.Framework.Caching.FreeRedis\Yi.Framework.Caching.FreeRedis.csproj", "{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.CodeGen.SqlSugarCore", "module\code-gen\Yi.Framework.CodeGen.SqlSugarCore\Yi.Framework.CodeGen.SqlSugarCore.csproj", "{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.SqlSugarCore", "module\code-gen\Yi.Framework.CodeGen.SqlSugarCore\Yi.Framework.CodeGen.SqlSugarCore.csproj", "{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{8B27846A-043D-4F2F-8140-5CEC9D1863B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.HttpApi.Client", "client\Yi.Abp.HttpApi.Client\Yi.Abp.HttpApi.Client.csproj", "{6B554DCC-3A81-4624-9141-4E39365ADA35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Client.Console", "client\Yi.Abp.Client.Console\Yi.Abp.Client.Console.csproj", "{2D23B44A-DFA3-4C36-8516-4F5AE442403C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Client.WebApi", "client\Yi.Abp.Client.WebApi\Yi.Abp.Client.WebApi.csproj", "{00E49781-C6A0-491C-86A1-46F685C90915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -301,6 +309,18 @@ Global
 		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B554DCC-3A81-4624-9141-4E39365ADA35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B554DCC-3A81-4624-9141-4E39365ADA35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B554DCC-3A81-4624-9141-4E39365ADA35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B554DCC-3A81-4624-9141-4E39365ADA35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D23B44A-DFA3-4C36-8516-4F5AE442403C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D23B44A-DFA3-4C36-8516-4F5AE442403C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D23B44A-DFA3-4C36-8516-4F5AE442403C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D23B44A-DFA3-4C36-8516-4F5AE442403C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00E49781-C6A0-491C-86A1-46F685C90915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00E49781-C6A0-491C-86A1-46F685C90915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00E49781-C6A0-491C-86A1-46F685C90915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00E49781-C6A0-491C-86A1-46F685C90915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -355,6 +375,9 @@ Global
 		{EEFF0F05-2709-4151-A8CE-667935CEAE0B} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
 		{862BB0EF-3D4E-44FF-AB15-0EB74CE553D3} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
 		{FB09ACC2-A27D-4D87-8D85-1435FDED4D04} = {4FFE7212-21F2-476D-B628-3C65E6C5075E}
+		{6B554DCC-3A81-4624-9141-4E39365ADA35} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
+		{2D23B44A-DFA3-4C36-8516-4F5AE442403C} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
+		{00E49781-C6A0-491C-86A1-46F685C90915} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

@@ -1,161 +1,132 @@
 <template>
-  <div class="login">
-    <div class="login-box">
-      <div class="left"></div>
-      <div class="right">
-        <div class="header-box">
-          <div class="text" @click="guestlogin" v-if="isRegister">返回首页</div>
-          <div class="text" @click="handleSignInNow" v-else>
-            已有账号立即登录
-          </div>
-          <el-icon size="15"><DArrowRight /></el-icon>
-        </div>
-        <div class="top">
-          <div class="title" v-if="isRegister">意社区登录 | SIGN IN</div>
-          <div class="title" v-else>意社区注册 | REGISTER</div>
-        </div>
-        <div class="center">
-          <div class="login-form">
-            <el-form
-              ref="loginFormRef"
-              :model="loginForm"
-              :rules="rules"
-              v-if="isRegister"
-            >
-              <el-form-item label="用户名" class="title-item"></el-form-item>
-              <el-form-item prop="userName">
-                <el-input
-                  type="text"
-                  v-model="loginForm.userName"
-                  placeholder="请输入用户名"
-                />
-              </el-form-item>
-              <el-form-item label="密码" class="title-item"></el-form-item>
-              <el-form-item prop="password">
-                <el-input
-                  type="password"
-                  v-model="loginForm.password"
-                  placeholder="请输入密码"
-                  show-password
-                />
-              </el-form-item>
-              <el-form-item label="验证码" class="title-item"></el-form-item>
-              <div class="flex-between">
-                <el-col :span="18">
-                  <el-form-item prop="phone">
-                    <el-input
-                      type="text"
-                      v-model.trim="loginForm.code"
-                      placeholder="请输入验证码"
-                    />
-                  </el-form-item>
-                </el-col>
-                <el-image
-                  @click="handleGetCodeImage"
-                  style="width: 120px; height: 40px; cursor: pointer"
-                  :src="codeImageURL"
-                  :fit="fit"
-                />
-              </div>
-            </el-form>
-            <el-form
-              class="registerForm"
-              ref="registerFormRef"
-              :model="registerForm"
-              :rules="registerRules"
-              v-else
-            >
-              <el-form-item label="用户名" class="title-item"></el-form-item>
-              <el-form-item prop="userName">
-                <el-input
-                  type="text"
-                  v-model.trim="registerForm.userName"
-                  placeholder="请输入用户名"
-                />
-              </el-form-item>
-              <el-form-item label="手机号" class="title-item"></el-form-item>
-              <div class="flex-between">
-                <div class="item">
-                  <el-form-item prop="phone">
-                    <el-input
-                      type="text"
-                      v-model.trim="registerForm.phone"
-                      placeholder="请输入手机号"
-                    />
-                  </el-form-item>
-                </div>
-                <el-button
-                  type="primary"
-                  @click="captcha"
-                  :disabled="isDisabledCode"
+ <div class="container">
+  <!-- 登录 -->
+        <div class="div-content"  v-if="isRegister">
+            <div class="div-left">
+                <div class="left-container">
+                    <p class="title title-1">Hello,<span @click="guestlogin">you can go to homepage >></span></p>
+                    <p class="title title-2">Welcome to Yi!</p>
+                    <el-form
+                ref="loginFormRef"
+                :model="loginForm"
+                :rules="rules"
                 >
-                  {{ codeInfo }}
-                </el-button>
-              </div>
-              <el-form-item label="验证码" class="title-item"></el-form-item>
-              <el-form-item prop="code">
-                <el-input
-                  type="text"
-                  v-model.trim="registerForm.code"
-                  placeholder="请输入验证码"
-                />
-              </el-form-item>
-              <el-form-item label="新密码" class="title-item"></el-form-item>
-              <el-form-item prop="password">
-                <el-input
-                  type="password"
-                  v-model.trim="registerForm.password"
-                  placeholder="请输入新密码"
-                />
-              </el-form-item>
-              <el-form-item label="确认密码" class="title-item"></el-form-item>
-              <el-form-item>
-                <el-input
-                  type="password"
-                  v-model.trim="passwordConfirm"
-                  placeholder="请确认密码"
-                  show-password
-                />
-              </el-form-item>
-            </el-form>
-            <div class="link" v-if="isRegister">
-              <div class="text" @click="handleRegister">没有账号？前往注册</div>
+
+                    <div class="input-content">
+                        <div class="input">
+                            <p>用户名</p>
+                            <el-form-item prop="userName">
+                            <input type="text" v-model="loginForm.userName">
+                            </el-form-item>
+                        </div>
+
+                        <div class="input">
+                            <p>密码</p>
+                            <el-form-item prop="password">
+                            <input type="password" v-model="loginForm.password">
+                            </el-form-item>
+                        </div>
+
+                        <div class="input">
+                            <p>验证码</p>
+                            <el-form-item prop="code">
+                            <div class="code">
+                                <input class="code-input" type="text" v-model.trim="loginForm.code">
+                                <img class="code-img" alt="加载中" @click="handleGetCodeImage"  :src="codeImageURL">
+                            </div>
+                          </el-form-item>
+                        </div>
+                    </div>
+</el-form>
+                    <div class="left-lable">
+                        <input type="checkbox">
+                        <label>记住我</label>
+                    </div>
+
+                    <div class="left-btn">
+                        <button type="button" class="btn-login" @click="login(loginFormRef)">登录</button>
+                        <button type="button" class="btn-reg" @click="handleRegister">前往注册</button>
+                    </div>
+                    <div class="bottom-div">
+                        <p>其他方式: <span @click="handleQQLogin"><img src="@/assets/login_images/qq-setting.png" alt="QQ" /></span> <span @click="handleGiteeLogin"><img src="@/assets/login_images/gitee-setting.png" alt="Gitee" /></span></p>
+                    </div>
+                </div>
             </div>
-            <div
-              class="login-btn"
-              @click="login(loginFormRef)"
-              v-if="isRegister"
-            >
-              登 录
+            <div class="div-right">
+<img class="div-img" src="@/assets/login.png"/>
             </div>
-            <div class="login-btn" @click="register(registerFormRef)" v-else>
-              注 册
-            </div>
-          </div>
+
+           
         </div>
-        <div class="bottom" v-if="isRegister">
-          <div class="title">
-            <div>或者</div>
-            <div>其他方式登录</div>
-          </div>
-          <div class="icon-list">
-            <div class="icon" @click="handleQQLogin">
-              <img src="@/assets/login_images/qq-setting.png" alt="" />
+  <!-- 注册 -->
+        <div class="div-content" v-else>
+            <div class="div-right-register">
+              <img class="div-img" src="@/assets/login.png"/>
             </div>
-            <div class="icon" @click="handleGiteeLogin">
-              <img src="@/assets/login_images/gitee-setting.png" alt="" />
+            <div class="div-left-register">
+                <div class="left-container">
+                    <p class="title  register-title">Thank Join to Yi!</p>
+                    <el-form
+                class="registerForm"
+                ref="registerFormRef"
+                :model="registerForm"
+                :rules="registerRules"
+              >
+                    <div class="input-content">
+                        <div class="input">
+                            <p>用户名</p>
+                            <el-form-item prop="userName">
+                            <input type="text"    v-model.trim="registerForm.userName">
+                          </el-form-item>
+                        </div>
+
+                        <div class="input">
+                            <p>电话</p>
+                            <el-form-item prop="phone">
+                            <div class="phone-code">
+                                <input class="phone-code-input" type="text" v-model.trim="registerForm.phone">
+                                <button type="button" class="phone-code-btn" @click="captcha()">{{codeInfo}}</button>
+                            </div>
+                            </el-form-item>
+                        </div>
+                        <div class="input">
+                            <p>短信验证码</p>
+                            <el-form-item prop="code" >
+                            <input :disabled="!isDisabledCode" type="text" v-model.trim="registerForm.code">
+                            </el-form-item>
+                        </div>
+                        <div class="input">
+                            <p>密码</p>
+                            <el-form-item prop="password">
+                            <input :disabled="!isDisabledCode" type="password" v-model.trim="registerForm.password">
+                            </el-form-item>
+                        </div>
+                        <div class="input">
+                            <p>确认密码</p>
+                            <el-form-item>
+                            <input :disabled="!isDisabledCode" type="password" v-model.trim="passwordConfirm">
+                            </el-form-item>
+                        </div>
+                 
+                    </div>
+                    </el-form>
+                    <div class="left-btn">
+                        <button type="button" class="btn-login" @click="register(registerFormRef)">注册</button>
+                        <button type="button" class="btn-reg" @click="handleSignInNow">前往登录</button>
+                    </div>
+                </div>
             </div>
-          </div>
+       
         </div>
-      </div>
+        <div class="div-bottom">
+                <span>备案：赣ICP备20008025号-3</span>
+                <span>站长：橙子</span>
+                <span @click="handleContact">联系我们</span>
+                <span>关于本站</span>
+                <span>建议反馈</span>
+                <span>原创站点</span>
+            </div>
     </div>
-    <div class="login-footer">
-      <div class="info">站长：{{ configStore.author }}</div>
-      <div class="info btn" @click="handleContact">联系我们</div>
-      <div class="info btn">关于本站</div>
-      <div class="info btn">建议反馈</div>
-    </div>
-  </div>
 </template>
 <script setup>
 import { ref, reactive, onMounted, computed } from "vue";
@@ -234,6 +205,7 @@ const handleRegister = () => {
 const register = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {
+
     if (valid) {
       try {
         if (registerForm.password != passwordConfirm.value) {
@@ -254,8 +226,9 @@ const register = async (formEl) => {
 };
 
 //验证码
-const codeInfo = ref("发送验证码");
+const codeInfo = ref("发送短信");
 const isDisabledCode = ref(false);
+
 const captcha = async () => {
   if (registerForm.phone !== "") {
     const { data } = await getCodePhone(registerForm.phone);
@@ -279,7 +252,7 @@ const captcha = async () => {
     }, 1000);
   } else {
     ElMessage({
-      message: `清先输入手机号`,
+      message: `请先输入手机号`,
       type: "warning",
     });
   }
@@ -328,197 +301,5 @@ window.addEventListener("message", async (e) => {
   }
 });
 </script>
-<style scoped lang="scss">
-.login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: url("@/assets/login_images/login_bg.jpg") no-repeat;
-  &-box {
-    display: flex;
-    width: 70%;
-    height: 80%;
-    border-radius: 20px;
-    background-color: #fff;
-    box-shadow: 15px 15px 30px -10px rgba(0, 0, 0, 0.2),
-      inset 20px 20px 15px rgba(255, 255, 255, 0.7);
-    .left {
-      width: 55%;
-      height: 100%;
-      display: flex;
-      background: url("@/assets/login_images/welcome.jpg") no-repeat;
-      background-size: 100% auto;
-      background-position: 50%;
-      border-right: 2px solid #eeefef;
-    }
-    .right {
-      display: flex;
-      flex-direction: column;
-      width: 45%;
-      padding: 40px 30px 40px 30px;
-      border-radius: 20px;
-      // color: #06035a;
-
-      background-color: #fff;
-      .header-box {
-        cursor: pointer;
-        margin-bottom: 20px;
-        height: 10px;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        color: #409eff;
-      }
-      .top {
-        height: 40px;
-        .title {
-          font-size: 25px;
-          font-weight: bold;
-        }
-        .text {
-          margin-top: 10px;
-        }
-      }
-      .center {
-        flex: 1;
-        .login-form {
-          width: 100%;
-          height: 100%;
-          padding: 10px 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-around;
-          .input-item {
-            width: 100%;
-            height: 45px;
-            outline: none;
-            border: 2px solid #dde0df;
-            border-radius: 5px;
-            padding: 0 10px;
-            &:hover {
-              outline: none;
-            }
-          }
-          .login-btn {
-            cursor: pointer;
-            width: 100%;
-            height: 45px;
-            color: #fff;
-            text-align: center;
-            line-height: 50px;
-            border-radius: 5px;
-            background-color: #2282fe;
-          }
-          .link {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .text {
-              cursor: pointer;
-              color: #2282fe;
-            }
-          }
-          .visitor {
-            margin-top: 10px;
-          }
-          .registerForm {
-            :deep(.el-form-item) {
-              margin-bottom: 5px;
-            }
-          }
-        }
-      }
-      .bottom {
-        width: 100%;
-        height: 150px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        .title {
-          > div {
-            text-align: center;
-            margin: 10px;
-          }
-        }
-        .icon-list {
-          margin-top: 10px;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          .icon {
-            cursor: pointer;
-            width: 25px;
-            height: 25px;
-            margin: 0 10px;
-            img {
-              width: 100%;
-              height: 100%;
-            }
-          }
-        }
-      }
-    }
-  }
-  &-footer {
-    width: 70%;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-    color: #eee;
-    font-size: 14px;
-    .info {
-      margin: 0 10px;
-    }
-    .btn {
-      cursor: pointer;
-      &:hover {
-        color: #fff;
-      }
-    }
-  }
-
-  :deep(.title-item) {
-    margin-bottom: 0;
-  }
-  .flex-between {
-    display: flex;
-    justify-content: space-between;
-    .item {
-      flex: 1;
-    }
-  }
-}
-/*手机端CSS*/
-@media (max-width: 768px) {
-  .login {
-    background: url("@/assets/login_images/phone_login_bg.jpg") no-repeat;
-    &-box {
-      .left {
-        display: none;
-      }
-      .right {
-        flex: 1;
-        .top {
-          .title {
-            font-size: 20px;
-          }
-          .text {
-            margin-top: 10px;
-          }
-        }
-      }
-      .flex-between {
-        display: flex;
-        justify-content: space-between;
-        .item {
-          flex: 1;
-        }
-      }
-    }
-  }
-}
+<style src="@/assets/styles/login.css" scoped>
 </style>

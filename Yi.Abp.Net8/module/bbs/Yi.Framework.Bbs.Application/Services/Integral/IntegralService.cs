@@ -41,6 +41,7 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
 
         /// <summary>
         /// 获取本月签到记录
+        /// Todo: 可放入领域层
         /// </summary>
         /// <returns></returns>
         [Authorize]

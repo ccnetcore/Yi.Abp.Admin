@@ -16,6 +16,7 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddYiSwaggerGen<Program>(this IServiceCollection services, Action<SwaggerGenOptions>? action=null)
         {
+
             var serviceProvider = services.BuildServiceProvider();
             var mvcOptions = serviceProvider.GetRequiredService<IOptions<AbpAspNetCoreMvcOptions>>();
 

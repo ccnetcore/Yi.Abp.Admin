@@ -44,6 +44,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         private IDiscussService _discussService { get; set; }
         /// <summary>
         /// 获取改主题下的评论,结构为二维列表，该查询无分页
+        /// Todo: 可放入领域层
         /// </summary>
         /// <param name="discussId"></param>
         /// <param name="input"></param>

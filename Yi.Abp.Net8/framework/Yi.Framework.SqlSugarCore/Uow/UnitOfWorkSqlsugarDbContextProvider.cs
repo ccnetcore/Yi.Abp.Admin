@@ -127,7 +127,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
                       );
                 unitOfWork.AddTransactionApi(transactionApiKey, transaction);
 
-               // await dbContext.SqlSugarClient.Ado.BeginTranAsync();
+                await dbContext.SqlSugarClient.Ado.BeginTranAsync();
                 return dbContext;
             }
             else

@@ -3,8 +3,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="SqlSugarCoreNoDrive" Version="5.1.4.124" />
-    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="8.0.0" />
+    <PackageReference Include="SqlSugarCoreNoDrive" Version="5.1.4.146" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>

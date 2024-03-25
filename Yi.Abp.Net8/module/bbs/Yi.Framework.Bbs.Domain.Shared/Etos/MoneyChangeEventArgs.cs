@@ -8,6 +8,9 @@ namespace Yi.Framework.Bbs.Domain.Shared.Etos
 {
     public class MoneyChangeEventArgs
     {
+        public MoneyChangeEventArgs() { }
+        public MoneyChangeEventArgs(Guid userId, decimal changeNumber) { UserId = userId; Number = changeNumber; }
+
         /// <summary>
         /// 用户id
         /// </summary>

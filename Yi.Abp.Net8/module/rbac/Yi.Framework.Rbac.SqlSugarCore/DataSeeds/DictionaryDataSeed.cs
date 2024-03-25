@@ -260,7 +260,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "新增",
-                DictValue = "1",
+                DictValue = "Insert",
                 DictType = "sys_oper_type",
                 OrderNum = 100,
                 Remark = "新增操作",
@@ -272,7 +272,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "修改",
-                DictValue = "2",
+                DictValue = "Update",
                 DictType = "sys_oper_type",
                 OrderNum = 99,
                 Remark = "修改操作",
@@ -284,7 +284,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "删除",
-                DictValue = "3",
+                DictValue = "Delete",
                 DictType = "sys_oper_type",
                 OrderNum = 98,
                 Remark = "删除操作",
@@ -297,7 +297,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "授权",
-                DictValue = "4",
+                DictValue = "Auth",
                 DictType = "sys_oper_type",
                 OrderNum = 97,
                 Remark = "授权操作",
@@ -309,7 +309,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "导出",
-                DictValue = "5",
+                DictValue = "Export",
                 DictType = "sys_oper_type",
                 OrderNum = 96,
                 Remark = "导出操作",
@@ -321,7 +321,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "导入",
-                DictValue = "6",
+                DictValue = "Import",
                 DictType = "sys_oper_type",
                 OrderNum = 95,
                 Remark = "导入操作",
@@ -333,7 +333,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "强退",
-                DictValue = "7",
+                DictValue = "ForcedOut",
                 DictType = "sys_oper_type",
                 OrderNum = 94,
                 Remark = "强退操作",
@@ -345,7 +345,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "生成代码",
-                DictValue = "8",
+                DictValue = "GenerateCode",
                 DictType = "sys_oper_type",
                 OrderNum = 93,
                 Remark = "生成代码操作",
@@ -357,7 +357,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "清空数据",
-                DictValue = "9",
+                DictValue = "ClearData",
                 DictType = "sys_oper_type",
                 OrderNum = 92,
                 Remark = "清空数据操作",

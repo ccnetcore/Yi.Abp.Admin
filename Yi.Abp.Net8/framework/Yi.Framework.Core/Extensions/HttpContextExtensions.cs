@@ -75,7 +75,7 @@ namespace Yi.Framework.Core.Extensions
 
             result = result.Replace("::ffff:", "127.0.0.1");
 
-            //Ip规则效验
+            //Ip规则校验
             var regResult = Regex.IsMatch(result, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
 
             result = regResult ? result : "127.0.0.1";

@@ -1,6 +1,9 @@
 ﻿using System.Reflection;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SqlSugar;
 using Volo.Abp;
@@ -23,7 +26,6 @@ namespace Yi.Framework.SqlSugarCore
             var service = context.Services;
             var configuration = service.GetConfiguration();
             Configure<DbConnOptions>(configuration.GetSection("DbConnOptions"));
-
 
             service.TryAddScoped<ISqlSugarDbContext, SqlSugarDbContext>();
 
@@ -48,8 +50,22 @@ namespace Yi.Framework.SqlSugarCore
             //进行CodeFirst
             var service = context.ServiceProvider;
             var options = service.GetRequiredService<IOptions<DbConnOptions>>().Value;
+            
+           var _logger= service.GetRequiredService<ILogger<YiFrameworkSqlSugarCoreModule>>();
 
 
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine();
+            sb.AppendLine("==========Yi-SQL配置:==========");
+            sb.AppendLine($"数据库连接字符串：{options.Url}");
+            sb.AppendLine($"数据库类型：{options.DbType.ToString()}");
+            sb.AppendLine($"是否开启种子数据：{options.EnabledDbSeed}");
+            sb.AppendLine($"是否开启CodeFirst：{options.EnabledCodeFirst}");
+            sb.AppendLine($"是否开启Saas多租户：{options.EnabledSaasMultiTenancy}");
+            sb.AppendLine("===============================");
+
+
+            _logger.LogInformation(sb.ToString());
             //Todo：准备支持多租户种子数据及CodeFirst
 
             if (options.EnabledCodeFirst)

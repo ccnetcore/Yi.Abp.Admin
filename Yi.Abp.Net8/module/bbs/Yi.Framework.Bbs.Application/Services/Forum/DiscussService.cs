@@ -27,7 +27,7 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 namespace Yi.Framework.Bbs.Application.Services.Forum
 {
     /// <summary>
-    /// Discuss应用服务实现,用于参数效验、领域服务业务组合、日志记录、事务处理、账户信息
+    /// Discuss应用服务实现,用于参数校验、领域服务业务组合、日志记录、事务处理、账户信息
     /// </summary>
     public class DiscussService : YiCrudAppService<DiscussEntity, DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
        IDiscussService
@@ -221,7 +221,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         }
 
         /// <summary>
-        /// 效验主题查询权限
+        /// 校验主题查询权限
         /// </summary>
         /// <param name="discussId"></param>
         /// <returns></returns>

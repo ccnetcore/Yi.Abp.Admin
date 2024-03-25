@@ -147,6 +147,7 @@ const currentUserInfo=computed(()=>{
     useUserStore().updateToken(token);
     try {
       // 存储用户信息
+
       await useUserStore().getInfo(); // 用户信息
       // 登录成功后 路由跳转
       // 如果有记录当前跳转页面

@@ -43,7 +43,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
 
             var sigInLast = await _signInRepository._DbQueryable.Where(x => x.CreatorId == userId).OrderByDescending(x => x.CreationTime).FirstAsync();
 
-            //verify 效验是否允许签到了
+            //verify 校验是否允许签到了
             if (sigInLast is not null)
             {
                 VerifySignInTime(sigInLast.CreationTime);
@@ -65,7 +65,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
         }
 
         /// <summary>
-        /// 效验签到时间
+        /// 校验签到时间
         /// </summary>
         /// <param name="dataTime"></param>
         /// <exception cref="UserFriendlyException"></exception>

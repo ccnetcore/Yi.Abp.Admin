@@ -6,12 +6,12 @@
   </el-config-provider>
 </template>
 <script setup>
-import signalR from "@/utils/signalR";
-import noticeSignalR from "@/utils/noticeSignalR";
+import mainHub from "@/hubs/mainHub.js";
+import noticeSignalR from "@/hubs/noticeHub.js";
 import useConfigStore from "@/stores/config";
 import { ElConfigProvider } from "element-plus";
 import useUserStore from "@/stores/user.js";
-import { onMounted,watch,computed } from "vue";
+import { onMounted, watch, computed } from "vue";
 const userStore = useUserStore();
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 const locale = zhCn;
@@ -26,21 +26,18 @@ if (loading !== null) {
 //加载全局信息
 onMounted(async () => {
   await configStore.getConfig();
-  noticeSignalR.close();
-  noticeSignalR.init(`notice`);
+  noticeSignalR();
 });
-
 
 watch(
   () => token,
-   (val,oldValue) => {
-   //console.log("token发生改变");
+   (val, oldValue) => {
+    //console.log("token发生改变");
     if (val) {
-      signalR.close();
-      signalR.init(`main`);
+      mainHub();
     }
   },
-  {immediate:true,deep:true}
+  { immediate: true, deep: true }
 );
 </script>
 <style scoped></style>

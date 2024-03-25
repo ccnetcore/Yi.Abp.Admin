@@ -178,7 +178,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
 
 
         /// <summary>
-        /// 效验创建权限，userId为主题创建者
+        /// 校验创建权限，userId为主题创建者
         /// </summary>
         /// <param name="disucssId"></param>
         /// <returns></returns>

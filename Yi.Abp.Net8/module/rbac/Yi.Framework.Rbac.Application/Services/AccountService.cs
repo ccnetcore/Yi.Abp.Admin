@@ -64,14 +64,14 @@ namespace Yi.Framework.Rbac.Application.Services
         private IAccountManager _accountManager;
         private ISqlSugarRepository<MenuEntity> _menuRepository;
         /// <summary>
-        /// 效验图片登录验证码,无需和账号绑定
+        /// 校验图片登录验证码,无需和账号绑定
         /// </summary>
         [AllowAnonymous]
         private void ValidationImageCaptcha(LoginInputVo input)
         {
             if (_rbacOptions.EnableCaptcha)
             {
-                //登录不想要验证码 ，可不效验
+                //登录不想要验证码 ，可不校验
                 if (!_captcha.Validate(input.Uuid, input.Code))
                 {
                     throw new UserFriendlyException("验证码错误");
@@ -94,11 +94,11 @@ namespace Yi.Framework.Rbac.Application.Services
                 throw new UserFriendlyException("请输入合理数据！");
             }
 
-            //效验验证码
+            //校验验证码
             ValidationImageCaptcha(input);
 
             UserEntity user = new();
-            //效验
+            //校验
             await _accountManager.LoginValidationAsync(input.UserName, input.Password, x => user = x);
 
             //获取token
@@ -186,7 +186,7 @@ namespace Yi.Framework.Rbac.Application.Services
         }
 
         /// <summary>
-        /// 效验电话验证码，需要与电话号码绑定
+        /// 校验电话验证码，需要与电话号码绑定
         /// </summary>
         private async Task ValidationPhoneCaptchaAsync(RegisterDto input)
         {
@@ -240,10 +240,10 @@ namespace Yi.Framework.Rbac.Application.Services
                 throw new UserFriendlyException("密码需大于等于6位！");
             }
 
-            //效验用户名
+            //校验用户名
             ValidateUserName(input);
 
-            //效验验证码，根据电话号码获取 value，比对验证码已经uuid
+            //校验验证码，根据电话号码获取 value，比对验证码已经uuid
             await ValidationPhoneCaptchaAsync(input);
 
 
