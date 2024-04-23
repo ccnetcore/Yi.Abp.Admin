@@ -35,6 +35,7 @@ namespace Yi.Framework.Rbac.Application.Services
         private readonly RbacOptions _rbacOptions;
         private readonly IAliyunManger _aliyunManger;
         private IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> _userCache;
+        private UserManager _userManager;
         public AccountService(IUserRepository userRepository,
             ICurrentUser currentUser,
             IAccountManager accountManager,
@@ -44,7 +45,8 @@ namespace Yi.Framework.Rbac.Application.Services
             ICaptcha captcha,
             IGuidGenerator guidGenerator,
             IOptions<RbacOptions> options,
-            IAliyunManger aliyunManger)
+            IAliyunManger aliyunManger,
+            UserManager userManager)
         {
             _userRepository = userRepository;
             _currentUser = currentUser;
@@ -56,6 +58,7 @@ namespace Yi.Framework.Rbac.Application.Services
             _rbacOptions = options.Value;
             _aliyunManger = aliyunManger;
             _userCache = userCache;
+            _userManager = userManager;
         }
 
 
@@ -268,32 +271,7 @@ namespace Yi.Framework.Rbac.Application.Services
                 throw new UserFriendlyException("用户未登录");
             }
             //此处优先从缓存中获取
-            UserRoleMenuDto output = null;
-
-            var cacheData = await _userCache.GetAsync(new UserInfoCacheKey(userId.Value));
-            if (cacheData is not null)
-            {
-                output = cacheData.Info;
-            }
-            else
-            {
-                var data = await _userRepository.GetUserAllInfoAsync(userId.Value);
-                //系统用户数据被重置，老前端访问重新授权
-                if (data is null)
-                {
-                    throw new AbpAuthorizationException();
-                }
-                data.Menus.Clear();
-
-                output = data;
-
-                var tokenExpiresMinuteTime = LazyServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value.ExpiresMinuteTime;
-                //将用户信息放入缓存，下次获取直接从缓存中获取即可，过期时间为token过期时间
-                await _userCache.SetAsync(new UserInfoCacheKey(userId.Value), new UserInfoCacheItem(data), new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(tokenExpiresMinuteTime) });
-            }
-
-
-
+            var output = await _userManager.GetInfoAsync(userId.Value);
             return output;
         }
 
@@ -312,7 +290,7 @@ namespace Yi.Framework.Rbac.Application.Services
                 throw new AbpAuthorizationException("用户未登录");
 
             }
-            var data = await _userRepository.GetUserAllInfoAsync(userId ?? Guid.Empty);
+            var data = await _userManager.GetInfoAsync(userId!.Value);
             var menus = data.Menus.ToList();
 
             //为超级管理员直接给全部路由
@@ -336,7 +314,7 @@ namespace Yi.Framework.Rbac.Application.Services
             if (userId is null)
             {
                 return false;
-               // throw new UserFriendlyException("用户已退出");
+                // throw new UserFriendlyException("用户已退出");
             }
             await _userCache.RemoveAsync(new UserInfoCacheKey(userId.Value));
             //Jwt去中心化登出，只需用记录日志即可

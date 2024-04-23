@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj" />
+    <ProjectReference Include="..\Yi.Framework.ChatHub.Domain.Shared\Yi.Framework.ChatHub.Domain.Shared.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+
+		<PackageReference Include="Volo.Abp.AspNetCore.SignalR" Version="$(AbpVersion)" />
+
+		<PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
+		<PackageReference Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
+		<ProjectReference Include="..\..\..\framework\Yi.Framework.Caching.FreeRedis\Yi.Framework.Caching.FreeRedis.csproj" />
+		<ProjectReference Include="..\..\..\framework\Yi.Framework.Mapster\Yi.Framework.Mapster.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <Folder Include="EventHandlers\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

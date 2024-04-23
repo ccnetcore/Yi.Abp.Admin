@@ -25,6 +25,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
 
         public void Dispose()
         {
+            _sqlsugarDbContext.SqlSugarClient.Ado.Dispose();
         }
 
         public async Task RollbackAsync(CancellationToken cancellationToken = default)

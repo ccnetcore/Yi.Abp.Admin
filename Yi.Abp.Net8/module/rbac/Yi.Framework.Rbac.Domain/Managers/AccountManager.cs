@@ -67,7 +67,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public async Task<string> GetTokenByUserIdAsync(Guid userId)
         {
             //获取用户信息
-            var userInfo = await _repository.GetUserAllInfoAsync(userId);
+            var userInfo = await _userManager.GetInfoAsync(userId);
 
             //判断用户状态
             if (userInfo.User.State == false)
@@ -261,7 +261,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public async Task<bool> RestPasswordAsync(Guid userId, string password)
         {
             var user = await _repository.GetByIdAsync(userId);
-            EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
+           // EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
             user.Password = password;
             user.BuildPassword();
             return await _repository.UpdateAsync(user);

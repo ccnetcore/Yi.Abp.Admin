@@ -1,5 +1,9 @@
 <Project>
 	<Import Project="usings.props" />
+	<Import Project="version.props" />
+
+
+
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -27,5 +31,9 @@
   <ItemGroup>
     <Content Remove="$(UserProfile)\.nuget\packages\*\*\contentFiles\any\*\*.abppkg*.json" />
   </ItemGroup>
-
+	
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
 </Project>

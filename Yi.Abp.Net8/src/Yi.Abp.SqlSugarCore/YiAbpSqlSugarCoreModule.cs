@@ -4,6 +4,7 @@ using Yi.Abp.Domain;
 using Yi.Abp.SqlSugarCore;
 using Yi.Framework.AuditLogging.SqlSugarCore;
 using Yi.Framework.Bbs.SqlSugarCore;
+using Yi.Framework.ChatHub.SqlSugarCore;
 using Yi.Framework.CodeGen.SqlSugarCore;
 using Yi.Framework.Mapster;
 using Yi.Framework.Rbac.SqlSugarCore;
@@ -19,6 +20,7 @@ namespace Yi.Abp.SqlsugarCore
         typeof(YiFrameworkRbacSqlSugarCoreModule),
         typeof(YiFrameworkBbsSqlSugarCoreModule),
         typeof(YiFrameworkCodeGenSqlSugarCoreModule),
+         typeof(YiFrameworkChatHubSqlSugarCoreModule),
 
         typeof(YiFrameworkAuditLoggingSqlSugarCoreModule),
         typeof(YiFrameworkTenantManagementSqlSugarCoreModule),

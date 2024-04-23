@@ -31,6 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		end.sh = end.sh
 		start.sh = start.sh
 		usings.props = usings.props
+		version.props = version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SqlSugarCore.Abstractions", "framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj", "{FD6D6860-3753-4747-8A26-977E4A3001F9}"
@@ -121,11 +122,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.CodeGen.SqlSug
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{8B27846A-043D-4F2F-8140-5CEC9D1863B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.HttpApi.Client", "client\Yi.Abp.HttpApi.Client\Yi.Abp.HttpApi.Client.csproj", "{6B554DCC-3A81-4624-9141-4E39365ADA35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.HttpApi.Client", "client\Yi.Abp.HttpApi.Client\Yi.Abp.HttpApi.Client.csproj", "{6B554DCC-3A81-4624-9141-4E39365ADA35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Client.Console", "client\Yi.Abp.Client.Console\Yi.Abp.Client.Console.csproj", "{2D23B44A-DFA3-4C36-8516-4F5AE442403C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Client.Console", "client\Yi.Abp.Client.Console\Yi.Abp.Client.Console.csproj", "{2D23B44A-DFA3-4C36-8516-4F5AE442403C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Client.WebApi", "client\Yi.Abp.Client.WebApi\Yi.Abp.Client.WebApi.csproj", "{00E49781-C6A0-491C-86A1-46F685C90915}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Client.WebApi", "client\Yi.Abp.Client.WebApi\Yi.Abp.Client.WebApi.csproj", "{00E49781-C6A0-491C-86A1-46F685C90915}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "setting-management", "setting-management", "{8C68059E-F3B1-4D28-A1C9-A5830F53E5D3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SettingManagement.Domain", "module\setting-management\Yi.Framework.SettingManagement.Domain\Yi.Framework.SettingManagement.Domain.csproj", "{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.SettingManagement.SqlSugarCore", "module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj", "{495C4643-39D4-46E7-BDC8-237589627BE4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chat-hub", "chat-hub", "{D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Application.Contracts", "module\chat-hub\Yi.Framework.ChatHub.Application.Contracts\Yi.Framework.ChatHub.Application.Contracts.csproj", "{65D4D033-5504-44B9-B152-0172ACD64CE6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Domain.Shared", "module\chat-hub\Yi.Framework.ChatHub.Domain.Shared\Yi.Framework.ChatHub.Domain.Shared.csproj", "{DEEC0B15-190C-4464-B469-C45C6563C592}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.SqlSugarCore", "module\chat-hub\Yi.Framework.ChatHub.SqlSugarCore\Yi.Framework.ChatHub.SqlSugarCore.csproj", "{E476D266-8FB2-4D6B-AE2B-F0D279D4264E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Domain", "module\chat-hub\Yi.Framework.ChatHub.Domain\Yi.Framework.ChatHub.Domain.csproj", "{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Application", "module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj", "{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -321,6 +340,34 @@ Global
 		{00E49781-C6A0-491C-86A1-46F685C90915}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00E49781-C6A0-491C-86A1-46F685C90915}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00E49781-C6A0-491C-86A1-46F685C90915}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495C4643-39D4-46E7-BDC8-237589627BE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{495C4643-39D4-46E7-BDC8-237589627BE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{495C4643-39D4-46E7-BDC8-237589627BE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{495C4643-39D4-46E7-BDC8-237589627BE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65D4D033-5504-44B9-B152-0172ACD64CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65D4D033-5504-44B9-B152-0172ACD64CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65D4D033-5504-44B9-B152-0172ACD64CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65D4D033-5504-44B9-B152-0172ACD64CE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEEC0B15-190C-4464-B469-C45C6563C592}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEEC0B15-190C-4464-B469-C45C6563C592}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEEC0B15-190C-4464-B469-C45C6563C592}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEEC0B15-190C-4464-B469-C45C6563C592}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -378,6 +425,15 @@ Global
 		{6B554DCC-3A81-4624-9141-4E39365ADA35} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
 		{2D23B44A-DFA3-4C36-8516-4F5AE442403C} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
 		{00E49781-C6A0-491C-86A1-46F685C90915} = {8B27846A-043D-4F2F-8140-5CEC9D1863B5}
+		{8C68059E-F3B1-4D28-A1C9-A5830F53E5D3} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
+		{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF} = {8C68059E-F3B1-4D28-A1C9-A5830F53E5D3}
+		{495C4643-39D4-46E7-BDC8-237589627BE4} = {8C68059E-F3B1-4D28-A1C9-A5830F53E5D3}
+		{D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
+		{65D4D033-5504-44B9-B152-0172ACD64CE6} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
+		{DEEC0B15-190C-4464-B469-C45C6563C592} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
+		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
+		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
+		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

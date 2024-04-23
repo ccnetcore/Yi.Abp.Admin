@@ -171,15 +171,15 @@ const currentUserInfo=computed(()=>{
 
   // 注册
   const registerFun = async (params) => {
-    try {
+    // try {
       await userRegister(params);
       ElMessage({
         message: `恭喜！${params.userName}，注册成功！请登录！`,
         type: "success",
       });
-    } catch (error) {
-      console.log(error);
-    }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return {

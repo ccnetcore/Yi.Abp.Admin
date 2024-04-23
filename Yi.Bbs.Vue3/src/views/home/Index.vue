@@ -2,9 +2,13 @@
   <div class="home-box">
     <el-row :gutter="20" class="top-div">
       <el-col :span="17">
+      <div class="chat-hub">  
+        <p @click="onClickToChatHub" >点击前往-最新上线<span>《聊天室》 </span>，探索更多可能，结交更多朋友，闭上眼睛，聆听名刀破碎的声音</p>
+        </div>
         <div class="scrollbar">
           <ScrollbarInfo />
         </div>
+     
         <el-row class="left-div">
           <el-col :span="8" v-for="i in plateList" :key="i.id" class="plate" :style="{
             'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
@@ -291,7 +295,9 @@ const accessLogOptins = computed(() => {
     ]
   }
 });
-
+const onClickToChatHub=()=>{
+  router.push("/chat");
+};
 
 const handleToSign = () => {
   router.push("/activity/sign");
@@ -451,4 +457,30 @@ const onClickAccessLog = async () => {
     height: 500px;
   }
 }
+//走马灯，聊天室链接
+.chat-hub
+{
+  background-color: #E6A23C;
+  color: #ffffff;
+  margin-bottom: 10px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  span{
+   color: red;
+  }
+  p {
+    cursor: pointer;
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 20s linear infinite;
+}
+}
+ 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
 </style>

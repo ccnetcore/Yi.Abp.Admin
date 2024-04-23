@@ -13,11 +13,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.0.5" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="$(AbpVersion)" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
   </ItemGroup>
 
   <ItemGroup>

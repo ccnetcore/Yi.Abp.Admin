@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Volo.Abp.Http.Client" Version="8.0.5" />
-	  <PackageReference Include="Volo.Abp.Autofac" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.Http.Client" Version="$(AbpVersion)" />
+	  <PackageReference Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\common.props" />
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="8.0.5" />
-	  <PackageReference Include="Volo.Abp.Caching" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
+	  <PackageReference Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
 	  
   </ItemGroup>
 
@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj" />
     <ProjectReference Include="..\..\module\audit-logging\Yi.Framework.AuditLogging.Domain\Yi.Framework.AuditLogging.Domain.csproj" />
     <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.Domain\Yi.Framework.Bbs.Domain.csproj" />
+    <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.Domain\Yi.Framework.ChatHub.Domain.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Domain\Yi.Framework.Rbac.Domain.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.Domain\Yi.Framework.TenantManagement.Domain.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain.Shared\Yi.Abp.Domain.Shared.csproj" />

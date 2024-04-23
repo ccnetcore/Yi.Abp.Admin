@@ -28,7 +28,7 @@ namespace Yi.Framework.AspNetCore.Mvc
             var controllerNameInUrl =
                 NormalizeUrlControllerName(rootPath, controllerName, action, httpMethod, configuration);
 
-            var url = $"{apiRoutePrefix}/{rootPath}/{NormalizeControllerNameCase(controllerNameInUrl, configuration)}";
+            var url = $"{rootPath}/{NormalizeControllerNameCase(controllerNameInUrl, configuration)}";
 
             //Add {id} path if needed
             var idParameterModel = action.Parameters.FirstOrDefault(p => p.ParameterName == "id");

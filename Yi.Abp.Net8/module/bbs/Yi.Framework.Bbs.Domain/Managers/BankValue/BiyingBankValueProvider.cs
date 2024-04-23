@@ -11,7 +11,7 @@ namespace Yi.Framework.Bbs.Domain.Managers.BankValue
 {
     public class BiyingBankValueProvider : IBankValueProvider, ITransientDependency
     {
-        private const string Url = "https://api.biyingapi.com/hsrl/ssjy/600519/504d30854dbd93312d";
+        private const string Url = "https://api.biyingapi.com/hsrl/ssjy/600519/006566735102404165";
         public async Task<decimal> GetValueAsync()
         {
             try

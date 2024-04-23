@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="FreeRedis" Version="1.2.14" />
     <PackageReference Include="FreeRedis.DistributedCache" Version="1.2.5" />
-    <PackageReference Include="Volo.Abp.Caching" Version="8.0.5" />
+    <PackageReference Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
   </ItemGroup>
 
 </Project>

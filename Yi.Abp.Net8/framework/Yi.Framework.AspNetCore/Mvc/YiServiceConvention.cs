@@ -72,7 +72,7 @@ namespace Yi.Framework.AspNetCore.Mvc
                     var template = selector.AttributeRouteModel.Template;
                     if (!template.StartsWith("/"))
                     {
-                        var route = $"{AbpAspNetCoreConsts.DefaultApiPrefix}/{rootPath}/{template}";
+                        var route = $"{rootPath}/{template}";
                         selector.AttributeRouteModel.Template = route;
 
                     }

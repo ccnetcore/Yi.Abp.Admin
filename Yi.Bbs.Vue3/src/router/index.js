@@ -3,6 +3,7 @@ import Layout from "../layout/Index.vue";
 import NotFound from "../views/error/404.vue";
 import LoginLayout from "../layout/LoginLayout.vue";
 import ActivityLayout from "../layout/activity/Index.vue";
+import ChatLayout from "../layout/ChatLayout.vue"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
@@ -140,6 +141,24 @@ const router = createRouter({
         },
       ],
     },
+
+    {
+      path: "/hub",
+      name: "hub",
+      component: ChatLayout,
+      redirect: "/chat",
+      children: [
+        {
+          name: "main",
+          path: "/chat",
+          component: () => import("../views/chathub/Index.vue"),
+          meta: {
+            title: "聊天室",
+          },
+        }
+      ],
+    },
+
     { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFound },
   ],
 });

@@ -4,5 +4,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\rbac\Yi.Framework.Rbac.Domain.Shared\Yi.Framework.Rbac.Domain.Shared.csproj" />
   </ItemGroup>
+	
 
 </Project>
