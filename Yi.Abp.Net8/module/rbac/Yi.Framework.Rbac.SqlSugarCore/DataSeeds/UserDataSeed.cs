@@ -2,6 +2,7 @@
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Entities.ValueObjects;
 using Yi.Framework.Rbac.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
@@ -27,7 +28,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                     Name = "大橙子",
                     UserName = "cc",
                     Nick = "橙子",
-                    Password = _options.AdminPassword,
+                    EncryPassword = new EncryPasswordValueObject(_options.AdminPassword),
                     Email = "454313500@qq.com",
                     Phone = 13800000000,
                     Sex = SexEnum.Male,
@@ -47,7 +48,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                     Name = "大测试",
                     UserName = "test",
                     Nick = "测试",
-                    Password = "123456",
+                    EncryPassword=new EncryPasswordValueObject("123456"),
                     Email = "454313500@qq.com",
                     Phone = 15900000000,
                     Sex = SexEnum.Woman,
@@ -68,7 +69,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                     Name = "游客",
                     UserName = "guest",
                     Nick = "测试",
-                    Password = "123456",
+                    EncryPassword = new EncryPasswordValueObject("123456"),
                     Email = "454313500@qq.com",
                     Phone = 15900000000,
                     Sex = SexEnum.Woman,

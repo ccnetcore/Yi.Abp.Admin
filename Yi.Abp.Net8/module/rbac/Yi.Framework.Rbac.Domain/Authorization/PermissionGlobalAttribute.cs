@@ -20,12 +20,24 @@ namespace Yi.Framework.Rbac.Domain.Authorization
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (context.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
-            PermissionAttribute? perAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttributes(inherit: true)
-                   .FirstOrDefault(a => a.GetType().Equals(typeof(PermissionAttribute))) as PermissionAttribute;
+            List<PermissionAttribute>? perAttributes = controllerActionDescriptor.MethodInfo.GetCustomAttributes(inherit: true)
+                   .Where(a => a.GetType().Equals(typeof(PermissionAttribute)))
+                   .Select(x => x as PermissionAttribute)
+                   .ToList()!;
             //空对象直接返回
-            if (perAttribute is null) return;
+            if (perAttributes.Count==0) return;
 
-            var result = _permissionHandler.IsPass(perAttribute.Code);
+            var result = false;
+            foreach (var perAttribute in perAttributes)
+            {
+                result = _permissionHandler.IsPass(perAttribute.Code);
+                //存在有一个不满，直接跳出
+                if (!result)
+                {
+                    break;
+                }
+            }
+
 
             if (!result)
             {

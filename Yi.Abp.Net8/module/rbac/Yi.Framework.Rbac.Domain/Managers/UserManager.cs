@@ -95,42 +95,26 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <returns></returns>
         public async Task<UserRoleMenuDto> GetInfoAsync(Guid userId)
         {
-            var user = await _userRepository.GetUserAllInfoAsync(userId);
-            var output = await GetInfoByCacheAsync(user);
+     
+            var output = await GetInfoByCacheAsync(userId);
             return output;
         }
-
-        /// <summary>
-        /// 批量查询用户信息
-        /// </summary>
-        /// <param name="userIds"></param>
-        /// <returns></returns>
-        public async Task<List<UserRoleMenuDto>> GetInfoListAsync(List<Guid> userIds)
-        {
-            List<UserRoleMenuDto> output = new List<UserRoleMenuDto>();
-            var users = await _userRepository.GetListUserAllInfoAsync(userIds);
-            foreach (var user in users)
-            {
-                output.Add(await GetInfoByCacheAsync(user));
-            }
-            return output;
-        }
-
-        private async Task<UserRoleMenuDto> GetInfoByCacheAsync(UserEntity user)
+        private async Task<UserRoleMenuDto> GetInfoByCacheAsync(Guid userId)
         {
             //此处优先从缓存中获取
             UserRoleMenuDto output = null;
             var tokenExpiresMinuteTime = LazyServiceProvider.GetRequiredService<IOptions<JwtOptions>>().Value.ExpiresMinuteTime;
-            var cacheData = await _userCache.GetOrAddAsync(new UserInfoCacheKey(user.Id),
+            var cacheData = await _userCache.GetOrAddAsync(new UserInfoCacheKey(userId),
                async () =>
                {
+                   var user = await _userRepository.GetUserAllInfoAsync(userId);
                    var data = EntityMapToDto(user);
                    //系统用户数据被重置，老前端访问重新授权
                    if (data is null)
                    {
                        throw new AbpAuthorizationException();
                    }
-                   data.Menus.Clear();
+                   //data.Menus.Clear();
                    output = data;
                    return new UserInfoCacheItem(data);
                },
@@ -143,6 +127,24 @@ namespace Yi.Framework.Rbac.Domain.Managers
             return output!;
         }
 
+
+        /// <summary>
+        /// 批量查询用户信息
+        /// </summary>
+        /// <param name="userIds"></param>
+        /// <returns></returns>
+        public async Task<List<UserRoleMenuDto>> GetInfoListAsync(List<Guid> userIds)
+        {
+            List<UserRoleMenuDto> output = new List<UserRoleMenuDto>();
+            foreach (var userId in userIds)
+            {
+                output.Add(await GetInfoByCacheAsync(userId));
+            }
+            return output;
+        }
+
+
+
         private UserRoleMenuDto EntityMapToDto(UserEntity user)
         {
 
@@ -152,8 +154,8 @@ namespace Yi.Framework.Rbac.Domain.Managers
             //{
             //    throw new UserFriendlyException($"数据错误，用户id：{nameof(userId)} 不存在，请重新登录");
             //}
-            user.Password = string.Empty;
-            user.Salt = string.Empty;
+            user.EncryPassword.Password = string.Empty;
+            user.EncryPassword.Salt = string.Empty;
 
             //超级管理员特殊处理
             if (UserConst.Admin.Equals(user.UserName))

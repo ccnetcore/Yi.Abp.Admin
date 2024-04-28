@@ -4,6 +4,7 @@ using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Yi.Framework.Core.Data;
 using Yi.Framework.Core.Helper;
+using Yi.Framework.Rbac.Domain.Entities.ValueObjects;
 using Yi.Framework.Rbac.Domain.Shared.Enums;
 
 namespace Yi.Framework.Rbac.Domain.Entities
@@ -22,7 +23,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
         public UserEntity(string userName, string password, long phone, string nick = "萌新")
         {
             UserName = userName;
-            Password = password;
+            EncryPassword.Password = password;
             Phone = phone;
             Nick = nick;
             BuildPassword();
@@ -55,14 +56,20 @@ namespace Yi.Framework.Rbac.Domain.Entities
         public string UserName { get; set; } = string.Empty;
 
         /// <summary>
-        /// 密码
+        /// 加密密码
         /// </summary>
-        public string Password { get; set; } = string.Empty;
+        [SugarColumn(IsOwnsOne = true)]
+        public EncryPasswordValueObject EncryPassword { get; set; } = new EncryPasswordValueObject();
 
-        /// <summary>
-        /// 加密盐值
-        /// </summary>
-        public string Salt { get; set; } = string.Empty;
+        ///// <summary>
+        ///// 密码
+        ///// </summary>
+        //public string Password { get; set; } = string.Empty;
+
+        ///// <summary>
+        ///// 加密盐值
+        ///// </summary>
+        //public string Salt { get; set; } = string.Empty;
 
         /// <summary>
         /// 头像
@@ -175,14 +182,14 @@ namespace Yi.Framework.Rbac.Domain.Entities
             //如果不传值，那就把自己的password当作传进来的password
             if (password == null)
             {
-                if (Password == null)
+                if (EncryPassword?.Password == null)
                 {
-                    throw new ArgumentNullException(nameof(Password));
+                    throw new ArgumentNullException(nameof(EncryPassword.Password));
                 }
-                password = Password;
+                password = EncryPassword.Password;
             }
-            Salt = MD5Helper.GenerateSalt();
-            Password = MD5Helper.SHA2Encode(password, Salt);
+            EncryPassword.Salt = MD5Helper.GenerateSalt();
+            EncryPassword.Password = MD5Helper.SHA2Encode(password, EncryPassword.Salt);
             return this;
         }
 
@@ -193,12 +200,12 @@ namespace Yi.Framework.Rbac.Domain.Entities
         /// <returns></returns>
         public bool JudgePassword(string password)
         {
-            if (Salt is null)
+            if (EncryPassword.Salt is null)
             {
-                throw new ArgumentNullException(Salt);
+                throw new ArgumentNullException(EncryPassword.Salt);
             }
-            var p = MD5Helper.SHA2Encode(password, Salt);
-            if (Password == MD5Helper.SHA2Encode(password, Salt))
+            var p = MD5Helper.SHA2Encode(password, EncryPassword.Salt);
+            if (EncryPassword.Password == MD5Helper.SHA2Encode(password, EncryPassword.Salt))
             {
                 return true;
             }

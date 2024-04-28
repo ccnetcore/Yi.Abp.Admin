@@ -1,5 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Caching;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.DictionaryType;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
@@ -36,6 +38,5 @@ namespace Yi.Framework.Rbac.Application.Services
                 Items = await MapToGetListOutputDtosAsync(entities)
             };
         }
-
     }
 }

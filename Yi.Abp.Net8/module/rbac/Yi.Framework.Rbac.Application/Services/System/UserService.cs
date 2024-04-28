@@ -3,6 +3,7 @@ using SqlSugar;
 using TencentCloud.Tcr.V20190924.Models;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Caching;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Users;
 using Yi.Framework.Ddd.Application;
@@ -12,6 +13,7 @@ using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Managers;
 using Yi.Framework.Rbac.Domain.Repositories;
+using Yi.Framework.Rbac.Domain.Shared.Caches;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Shared.OperLog;
@@ -25,7 +27,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
     public class UserService : YiCrudAppService<UserEntity, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>,IUserService
     //IUserService
     {
-        public UserService(ISqlSugarRepository<UserEntity, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus) : base(repository)
+        public UserService(ISqlSugarRepository<UserEntity, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
             =>
             (_userManager, _userRepository, _currentUser, _deptService, _repository, _localEventBus) =
             (userManager, userRepository, currentUser, deptService, repository, localEventBus);
@@ -77,6 +79,14 @@ namespace Yi.Framework.Rbac.Application.Services.System
             return result;
         }
 
+
+        protected override UserEntity MapToEntity(UserCreateInputVo createInput)
+        {
+          var output=  base.MapToEntity(createInput);
+            output.EncryPassword = new Domain.Entities.ValueObjects.EncryPasswordValueObject(createInput.Password);
+            return output;
+        }
+
         /// <summary>
         /// 添加用户
         /// </summary>
@@ -99,13 +109,13 @@ namespace Yi.Framework.Rbac.Application.Services.System
             {
                 throw new UserFriendlyException(UserConst.User_Exist);
             }
-            var entities = await MapToEntityAsync(input);
-
-            entities.BuildPassword();
+            var entitiy = await MapToEntityAsync(input);
+          
+            entitiy.BuildPassword();
 
             //using (var uow = _unitOfWorkManager.CreateContext())
             //{
-            var returnEntity = await _repository.InsertReturnEntityAsync(entities);
+            var returnEntity = await _repository.InsertReturnEntityAsync(entitiy);
             await _userManager.GiveUserSetRoleAsync(new List<Guid> { returnEntity.Id }, input.RoleIds);
             await _userManager.GiveUserSetPostAsync(new List<Guid> { returnEntity.Id }, input.PostIds);
             //uow.Commit();
@@ -152,17 +162,14 @@ namespace Yi.Framework.Rbac.Application.Services.System
             //更新密码，特殊处理
             if (input.Password is not null)
             {
-                entity.Password = input.Password;
+                entity.EncryPassword.Password = input.Password;
                 entity.BuildPassword();
             }
             await MapToEntityAsync(input, entity);
-            //using (var uow = _unitOfWorkManager.CreateContext())
-            //{
+
             var res1 = await _repository.UpdateAsync(entity);
             await _userManager.GiveUserSetRoleAsync(new List<Guid> { id }, input.RoleIds);
             await _userManager.GiveUserSetPostAsync(new List<Guid> { id }, input.PostIds);
-            //    uow.Commit();
-            //}
             return await MapToGetOutputDtoAsync(entity);
         }
 
@@ -206,6 +213,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         [Permission("system:user:delete")]
         public override async Task DeleteAsync(Guid id)
         {
+
             await base.DeleteAsync(id);
         }
 

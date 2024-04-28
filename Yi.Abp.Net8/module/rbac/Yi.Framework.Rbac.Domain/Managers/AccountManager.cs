@@ -79,6 +79,10 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 throw new UserFriendlyException(UserConst.No_Role);
             }
+            if (userInfo.PermissionCodes.Count() ==0)
+            {
+                throw new UserFriendlyException(UserConst.No_Permission);
+            }
             //这里抛出一个登录的事件
             if (_httpContextAccessor.HttpContext is not null)
             {
@@ -154,7 +158,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
                 {
                     userAction.Invoke(user);
                 }
-                if (user.Password == MD5Helper.SHA2Encode(password, user.Salt))
+                if (user.EncryPassword.Password == MD5Helper.SHA2Encode(password, user.EncryPassword.Salt))
                 {
                     return;
                 }
@@ -247,7 +251,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 throw new UserFriendlyException("无效更新！原密码错误！");
             }
-            user.Password = newPassword;
+            user.EncryPassword.Password = newPassword;
             user.BuildPassword();
             await _repository.UpdateAsync(user);
         }
@@ -262,7 +266,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         {
             var user = await _repository.GetByIdAsync(userId);
            // EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
-            user.Password = password;
+            user.EncryPassword.Password = password;
             user.BuildPassword();
             return await _repository.UpdateAsync(user);
         }
