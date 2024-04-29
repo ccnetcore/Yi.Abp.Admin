@@ -24,7 +24,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// User服务实现
     /// </summary>
-    public class UserService : YiCrudAppService<UserEntity, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>,IUserService
+    public class UserService : YiCrudAppService<UserEntity, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>, IUserService
     //IUserService
     {
         public UserService(ISqlSugarRepository<UserEntity, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
@@ -82,7 +82,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
         protected override UserEntity MapToEntity(UserCreateInputVo createInput)
         {
-          var output=  base.MapToEntity(createInput);
+            var output = base.MapToEntity(createInput);
             output.EncryPassword = new Domain.Entities.ValueObjects.EncryPasswordValueObject(createInput.Password);
             return output;
         }
@@ -96,37 +96,24 @@ namespace Yi.Framework.Rbac.Application.Services.System
         [Permission("system:user:add")]
         public async override Task<UserGetOutputDto> CreateAsync(UserCreateInputVo input)
         {
-            if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)
-            {
-                throw new UserFriendlyException(UserConst.Name_Not_Allowed);
-            }
 
-            if (string.IsNullOrEmpty(input.Password))
-            {
-                throw new UserFriendlyException(UserConst.Login_Passworld_Error);
-            }
-            if (await _repository.IsAnyAsync(u => input.UserName.Equals(u.UserName)))
-            {
-                throw new UserFriendlyException(UserConst.User_Exist);
-            }
             var entitiy = await MapToEntityAsync(input);
-          
-            entitiy.BuildPassword();
 
-            //using (var uow = _unitOfWorkManager.CreateContext())
-            //{
-            var returnEntity = await _repository.InsertReturnEntityAsync(entitiy);
-            await _userManager.GiveUserSetRoleAsync(new List<Guid> { returnEntity.Id }, input.RoleIds);
-            await _userManager.GiveUserSetPostAsync(new List<Guid> { returnEntity.Id }, input.PostIds);
-            //uow.Commit();
+            await _userManager.CreateAsync(entitiy);
+            await _userManager.GiveUserSetRoleAsync(new List<Guid> { entitiy.Id }, input.RoleIds);
+            await _userManager.GiveUserSetPostAsync(new List<Guid> { entitiy.Id }, input.PostIds);
 
-            var result = await MapToGetOutputDtoAsync(returnEntity);
-
-
-            await _localEventBus.PublishAsync(new UserCreateEventArgs(returnEntity.Id));
+            var result = await MapToGetOutputDtoAsync(entitiy);
             return result;
-            //}
         }
+
+        protected override async Task<UserEntity> MapToEntityAsync(UserCreateInputVo createInput)
+        {
+            var entitiy = await base.MapToEntityAsync(createInput);
+            entitiy.BuildPassword();
+            return entitiy;
+        }
+
         /// <summary>
         /// 单查
         /// </summary>

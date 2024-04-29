@@ -28,6 +28,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
         {
             List<MenuEntity> entities = new List<MenuEntity>();
 
+
+
             //系统管理
             MenuEntity system = new MenuEntity(_guidGenerator.Create(), Guid.Empty)
             {

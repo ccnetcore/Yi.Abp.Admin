@@ -203,18 +203,6 @@ namespace Yi.Framework.Rbac.Application.Services
             throw new UserFriendlyException("验证码错误");
         }
 
-        private void ValidateUserName(RegisterDto input)
-        {
-            // 正则表达式，匹配只包含数字和字母的字符串
-            string pattern = @"^[a-zA-Z0-9]+$";
-
-            bool isMatch = Regex.IsMatch(input.UserName, pattern);
-            if (!isMatch)
-            {
-                throw new UserFriendlyException("用户名不能包含除【字母】与【数字】的其他字符");
-            }
-        }
-
         /// <summary>
         /// 注册，需要验证码通过
         /// </summary>
@@ -228,28 +216,11 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 throw new UserFriendlyException("该系统暂未开放注册功能");
             }
-
-            if (input.UserName == UserConst.Admin)
+            if (_rbacOptions.EnableCaptcha)
             {
-                throw new UserFriendlyException("用户名无效注册！");
+                //校验验证码，根据电话号码获取 value，比对验证码已经uuid
+                await ValidationPhoneCaptchaAsync(input);
             }
-
-            if (input.UserName.Length < 2)
-            {
-                throw new UserFriendlyException("账号名需大于等于2位！");
-            }
-            if (input.Password.Length < 6)
-            {
-                throw new UserFriendlyException("密码需大于等于6位！");
-            }
-
-            //校验用户名
-            ValidateUserName(input);
-
-            //校验验证码，根据电话号码获取 value，比对验证码已经uuid
-            await ValidationPhoneCaptchaAsync(input);
-
-
             //注册领域逻辑
             await _accountManager.RegisterAsync(input.UserName, input.Password, input.Phone);
         }
@@ -262,7 +233,7 @@ namespace Yi.Framework.Rbac.Application.Services
         [Route("account")]
         [Authorize]
 
-        public async Task<UserRoleMenuDto> Get()
+        public async Task<UserRoleMenuDto> GetAsync()
         {
             //通过鉴权jwt获取到用户的id
             var userId = _currentUser.Id;

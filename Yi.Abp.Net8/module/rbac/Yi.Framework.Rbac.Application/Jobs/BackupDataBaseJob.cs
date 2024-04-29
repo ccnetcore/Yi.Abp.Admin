@@ -18,8 +18,12 @@ namespace Yi.Framework.Rbac.Application.Jobs
     public class BackupDataBaseJob : QuartzBackgroundWorkerBase
     {
         private ISqlSugarDbContext _dbContext;
-        public BackupDataBaseJob(ISqlSugarDbContext dbContext)
+        public BackupDataBaseJob(ISqlSugarDbContext dbContext, IOptions<RbacOptions> options)
         {
+            if (options.Value.EnableDataBaseBackup)
+            {
+                return;
+            }
             _dbContext = dbContext;
             JobDetail = JobBuilder.Create<BackupDataBaseJob>().WithIdentity(nameof(BackupDataBaseJob)).Build();
 
@@ -29,15 +33,14 @@ namespace Yi.Framework.Rbac.Application.Jobs
         }
         public override Task Execute(IJobExecutionContext context)
         {
-            var options = LazyServiceProvider.GetRequiredService<IOptions<RbacOptions>>();
-            if (options.Value.EnableDataBaseBackup)
-            {
-                var logger = LoggerFactory.CreateLogger<BackupDataBaseJob>();
-                logger.LogWarning("正在进行数据库备份");
-                _dbContext.BackupDataBase();
-                logger.LogWarning("数据库备份已完成");
-              
-            }
+
+
+            var logger = LoggerFactory.CreateLogger<BackupDataBaseJob>();
+            logger.LogWarning("正在进行数据库备份");
+            _dbContext.BackupDataBase();
+            logger.LogWarning("数据库备份已完成");
+
+
             return Task.CompletedTask;
         }
     }

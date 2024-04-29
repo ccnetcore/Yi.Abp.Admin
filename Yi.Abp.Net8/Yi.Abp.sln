@@ -132,7 +132,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "setting-management", "setti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SettingManagement.Domain", "module\setting-management\Yi.Framework.SettingManagement.Domain\Yi.Framework.SettingManagement.Domain.csproj", "{6FEE0EB3-EAD2-47F8-B6FC-3D0FD3CCABFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.SettingManagement.SqlSugarCore", "module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj", "{495C4643-39D4-46E7-BDC8-237589627BE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SettingManagement.SqlSugarCore", "module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj", "{495C4643-39D4-46E7-BDC8-237589627BE4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chat-hub", "chat-hub", "{D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}"
 EndProject
@@ -145,6 +145,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Domain", "module\chat-hub\Yi.Framework.ChatHub.Domain\Yi.Framework.ChatHub.Domain.csproj", "{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Application", "module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj", "{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Rbac.Test", "test\Yi.Framework.Rbac.Test\Yi.Framework.Rbac.Test.csproj", "{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -368,6 +370,10 @@ Global
 		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -434,6 +440,7 @@ Global
 		{E476D266-8FB2-4D6B-AE2B-F0D279D4264E} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
 		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
 		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
+		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07} = {0D10EEF2-FBAE-4C72-B816-A52823FC299B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

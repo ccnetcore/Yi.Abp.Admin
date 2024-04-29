@@ -1,17 +1,19 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Text.RegularExpressions;
+using Mapster;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Guids;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Caches;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Dtos;
+using Yi.Framework.Rbac.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
@@ -22,12 +24,14 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public readonly ISqlSugarRepository<UserEntity> _repository;
         public readonly ISqlSugarRepository<UserRoleEntity> _repositoryUserRole;
         public readonly ISqlSugarRepository<UserPostEntity> _repositoryUserPost;
+        private readonly ISqlSugarRepository<RoleEntity> _roleRepository;
         private IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> _userCache;
         private readonly IGuidGenerator _guidGenerator;
         private IUserRepository _userRepository;
-        public UserManager(ISqlSugarRepository<UserEntity> repository, ISqlSugarRepository<UserRoleEntity> repositoryUserRole, ISqlSugarRepository<UserPostEntity> repositoryUserPost, IGuidGenerator guidGenerator, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache, IUserRepository userRepository) =>
-            (_repository, _repositoryUserRole, _repositoryUserPost, _guidGenerator, _userCache, _userRepository) =
-            (repository, repositoryUserRole, repositoryUserPost, guidGenerator, userCache, userRepository);
+        private ILocalEventBus _localEventBus;
+        public UserManager(ISqlSugarRepository<UserEntity> repository, ISqlSugarRepository<UserRoleEntity> repositoryUserRole, ISqlSugarRepository<UserPostEntity> repositoryUserPost, IGuidGenerator guidGenerator, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache, IUserRepository userRepository, ILocalEventBus localEventBus, ISqlSugarRepository<RoleEntity> roleRepository) =>
+            (_repository, _repositoryUserRole, _repositoryUserPost, _guidGenerator, _userCache, _userRepository, _localEventBus, _roleRepository) =
+            (repository, repositoryUserRole, repositoryUserPost, guidGenerator, userCache, userRepository, localEventBus, roleRepository);
 
         /// <summary>
         /// 给用户设置角色
@@ -88,6 +92,74 @@ namespace Yi.Framework.Rbac.Domain.Managers
             }
         }
 
+        /// <summary>
+        /// 创建用户
+        /// </summary>
+        /// <returns></returns>
+        public async Task CreateAsync(UserEntity userEntity)
+        {
+            //校验用户名
+            ValidateUserName(userEntity);
+
+            if (userEntity.EncryPassword?.Password.Length < 6)
+            {
+                throw new UserFriendlyException(UserConst.Create_Passworld_Error);
+            }
+
+            if (userEntity.Phone is not null)
+            {
+                if (await _repository.IsAnyAsync(x => x.Phone == userEntity.Phone))
+                {
+                    throw new UserFriendlyException(UserConst.Phone_Repeat);
+
+                }
+            }
+
+            var isExist = await _repository.IsAnyAsync(x => x.UserName == userEntity.UserName);
+            if (isExist)
+            {
+                throw new UserFriendlyException(UserConst.User_Exist);
+            }
+
+            var entity = await _repository.InsertReturnEntityAsync(userEntity);
+
+            userEntity = entity;
+            await _localEventBus.PublishAsync(new UserCreateEventArgs(entity.Id));
+
+
+        }
+
+
+        public async Task SetDefautRoleAsync(Guid userId)
+        {
+            var role = await _roleRepository.GetFirstAsync(x => x.RoleCode == UserConst.DefaultRoleCode);
+            if (role is not null)
+            {
+                await GiveUserSetRoleAsync(new List<Guid> { userId }, new List<Guid> { role.Id });
+            }
+        }
+
+        private void ValidateUserName(UserEntity input)
+        {
+            if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)
+            {
+                throw new UserFriendlyException("用户名无效注册！");
+            }
+
+            if (input.UserName.Length < 2)
+            {
+                throw new UserFriendlyException("账号名需大于等于2位！");
+            }
+
+            // 正则表达式，匹配只包含数字和字母的字符串
+            string pattern = @"^[a-zA-Z0-9]+$";
+
+            bool isMatch = Regex.IsMatch(input.UserName, pattern);
+            if (!isMatch)
+            {
+                throw new UserFriendlyException("用户名不能包含除【字母】与【数字】的其他字符");
+            }
+        }
 
         /// <summary>
         /// 查询用户信息，已缓存
@@ -95,7 +167,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <returns></returns>
         public async Task<UserRoleMenuDto> GetInfoAsync(Guid userId)
         {
-     
+
             var output = await GetInfoByCacheAsync(userId);
             return output;
         }

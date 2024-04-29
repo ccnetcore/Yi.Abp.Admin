@@ -56,7 +56,15 @@ namespace Yi.Framework.Rbac.Domain.Entities
             {
                 var str = context.GetUserAgent();
                 var uaParser = Parser.GetDefault();
-                ClientInfo c = uaParser.Parse(str);
+                ClientInfo c;
+                try
+                {
+                     c = uaParser.Parse(str);
+                }
+                catch
+                {
+                    c = new ClientInfo("null",new OS("null", "null", "null", "null", "null"),new Device("null","null","null"), new UserAgent("null", "null", "null", "null"));
+                }
                 return c;
             }
             var ipAddr = context.GetClientIp();

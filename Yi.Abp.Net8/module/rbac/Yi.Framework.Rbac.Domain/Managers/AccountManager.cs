@@ -79,7 +79,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 throw new UserFriendlyException(UserConst.No_Role);
             }
-            if (userInfo.PermissionCodes.Count() ==0)
+            if (userInfo.PermissionCodes.Count() == 0)
             {
                 throw new UserFriendlyException(UserConst.No_Permission);
             }
@@ -181,7 +181,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
                 userAction.Invoke(user);
             }
             //这里为了兼容解决数据库开启了大小写不敏感问题,还要将用户名进行二次校验
-            if (user != null&&user.UserName==userName)
+            if (user != null && user.UserName == userName)
             {
                 return true;
             }
@@ -225,7 +225,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
                 dto.PermissionCodes?.ForEach(per => AddToClaim(claims, TokenTypeConst.Permission, per));
                 dto.RoleCodes?.ForEach(role => AddToClaim(claims, AbpClaimTypes.Role, role));
             }
-          
+
             return claims;
         }
 
@@ -265,34 +265,24 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public async Task<bool> RestPasswordAsync(Guid userId, string password)
         {
             var user = await _repository.GetByIdAsync(userId);
-           // EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
+            // EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
             user.EncryPassword.Password = password;
             user.BuildPassword();
             return await _repository.UpdateAsync(user);
         }
 
-
+        /// <summary>
+        /// 注册用户，创建用户之后设置默认角色
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <param name="phone"></param>
+        /// <returns></returns>
         public async Task RegisterAsync(string userName, string password, long phone)
         {
-            //输入的用户名与电话号码都不能在数据库中存在
-            UserEntity user = new();
-            var isExist = await _repository.IsAnyAsync(x => x.UserName == userName || x.Phone == phone);
-            if (isExist)
-            {
-                throw new UserFriendlyException("用户已存在，注册失败");
-            }
-
-            var newUser = new UserEntity(userName, password, phone);
-
-            var entity = await _repository.InsertReturnEntityAsync(newUser);
-            //赋上一个初始角色
-            var role = await _roleRepository.GetFirstAsync(x => x.RoleCode == UserConst.DefaultRoleCode);
-            if (role is not null)
-            {
-                await _userManager.GiveUserSetRoleAsync(new List<Guid> { entity.Id }, new List<Guid> { role.Id });
-            }
-
-            await _localEventBus.PublishAsync(new UserCreateEventArgs(entity.Id));
+            var user = new UserEntity(userName, password, phone);
+            await _userManager.CreateAsync(user);
+            await _userManager.SetDefautRoleAsync(user.Id);
 
         }
     }
