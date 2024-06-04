@@ -44,14 +44,16 @@ public class YiMultiTenantConnectionStringResolver : DefaultConnectionStringReso
         var tenantDefaultConnectionString = tenant.ConnectionStrings?.Default;
 
         //Requesting default connection string...
-        //if (connectionStringName == null ||
-        //    connectionStringName == ConnectionStrings.DefaultConnectionStringName)
-        //{
-        //    //Return tenant's default or global default
-        //    return !tenantDefaultConnectionString.IsNullOrWhiteSpace()
-        //        ? tenantDefaultConnectionString!
-        //        : Options.ConnectionStrings.Default!;
-        //}
+        if (connectionStringName == null ||
+            connectionStringName == ConnectionStrings.DefaultConnectionStringName)
+        {
+            //Return tenant's default or global default
+            return !tenantDefaultConnectionString.IsNullOrWhiteSpace()
+                ? tenantDefaultConnectionString!
+                : Options.ConnectionStrings.Default!;
+        }
+
+
 
         //Requesting specific connection string...
         var connString = tenant.ConnectionStrings?.FirstOrDefault().Value;

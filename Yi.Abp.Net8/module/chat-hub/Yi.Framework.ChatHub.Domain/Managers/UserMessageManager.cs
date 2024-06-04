@@ -19,8 +19,8 @@ namespace Yi.Framework.ChatHub.Domain.Managers
     public class UserMessageManager : DomainService
     {
         private IHubContext<ChatCenterHub> _hubContext;
-        public ISqlSugarRepository<MessageEntity> _repository;
-        public UserMessageManager(IHubContext<ChatCenterHub> hubContext, ISqlSugarRepository<MessageEntity> repository)
+        public ISqlSugarRepository<MessageAggregateRoot> _repository;
+        public UserMessageManager(IHubContext<ChatCenterHub> hubContext, ISqlSugarRepository<MessageAggregateRoot> repository)
         {
             _hubContext = hubContext;
             _repository = repository;
@@ -57,7 +57,7 @@ namespace Yi.Framework.ChatHub.Domain.Managers
 
         public async Task CreateMessageStoreAsync(MessageContext context)
         {
-            await _repository.InsertAsync(context.Adapt<MessageEntity>());
+            await _repository.InsertAsync(context.Adapt<MessageAggregateRoot>());
         }
 
         public async Task<List<ChatOnlineUserCacheItem>> GetAllUserAsync()

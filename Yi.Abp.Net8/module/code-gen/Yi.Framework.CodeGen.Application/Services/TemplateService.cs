@@ -9,10 +9,10 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.CodeGen.Application.Services;
 
-public class TemplateService : YiCrudAppService<TemplateEntity, TemplateDto, Guid, TemplateGetListInput>, ITemplateService
+public class TemplateService : YiCrudAppService<TemplateAggregateRoot, TemplateDto, Guid, TemplateGetListInput>, ITemplateService
 {
-    private ISqlSugarRepository<TemplateEntity, Guid> _repository;
-    public TemplateService(ISqlSugarRepository<TemplateEntity, Guid> repository) : base(repository)
+    private ISqlSugarRepository<TemplateAggregateRoot, Guid> _repository;
+    public TemplateService(ISqlSugarRepository<TemplateAggregateRoot, Guid> repository) : base(repository)
     {
         _repository = repository;
     }

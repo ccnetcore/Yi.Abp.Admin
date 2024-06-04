@@ -161,7 +161,7 @@
       >
         <template #default="scope">
             <el-button
-            type="text"
+            link
             icon="Edit"
             @click="handleOpen(scope.row)"
       
@@ -169,14 +169,14 @@
           >
 
           <el-button
-            type="text"
+            link
             icon="Edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['bbs:article:edit']"
             >修改</el-button
           >
           <el-button
-            type="text"
+            link
             icon="Delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['bbs:article:remove']"
@@ -204,7 +204,7 @@
             <el-radio
               v-for="dict in sys_normal_disable"
               :key="dict.value"
-              :label="JSON.parse(dict.value)"
+              :value="JSON.parse(dict.value)"
               >{{ dict.label }}</el-radio
             >
           </el-radio-group>

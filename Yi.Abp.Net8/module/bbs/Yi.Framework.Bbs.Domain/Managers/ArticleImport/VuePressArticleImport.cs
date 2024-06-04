@@ -11,7 +11,7 @@ namespace Yi.Framework.Bbs.Domain.Managers.ArticleImport
 {
     internal class VuePressArticleImport : AbstractArticleImport
     {
-        public override List<ArticleEntity> Convert(List<FileObject> fileObjs)
+        public override List<ArticleAggregateRoot> Convert(List<FileObject> fileObjs)
         {
             var logger = LoggerFactory.CreateLogger<VuePressArticleImport>();
 
@@ -65,7 +65,7 @@ namespace Yi.Framework.Bbs.Domain.Managers.ArticleImport
                  f.Content = result;
                  return f;
              });
-            var output = fileContentHandler.Select(x => new ArticleEntity() { Content = x.Content, Name = x.FileName }).ToList();
+            var output = fileContentHandler.Select(x => new ArticleAggregateRoot() { Content = x.Content, Name = x.FileName }).ToList();
 
             return output;
         }

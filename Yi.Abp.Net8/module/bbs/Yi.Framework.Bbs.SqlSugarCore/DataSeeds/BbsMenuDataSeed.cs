@@ -16,8 +16,8 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
     public class BbsMenuDataSeed : IDataSeedContributor, ITransientDependency
     {
         private IGuidGenerator _guidGenerator;
-        private ISqlSugarRepository<MenuEntity, Guid> _repository;
-        public BbsMenuDataSeed(ISqlSugarRepository<MenuEntity,Guid> repository, IGuidGenerator guidGenerator)
+        private ISqlSugarRepository<MenuAggregateRoot, Guid> _repository;
+        public BbsMenuDataSeed(ISqlSugarRepository<MenuAggregateRoot,Guid> repository, IGuidGenerator guidGenerator)
         {
             _repository=repository;
             _guidGenerator=guidGenerator;
@@ -30,11 +30,11 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             }
         }
 
-        public List<MenuEntity> GetSeedData()
+        public List<MenuAggregateRoot> GetSeedData()
         {
-            List<MenuEntity> entities = new List<MenuEntity>();
+            List<MenuAggregateRoot> entities = new List<MenuAggregateRoot>();
             //BBS
-            MenuEntity bbs = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot bbs = new MenuAggregateRoot(_guidGenerator.Create())
             {
                 MenuName = "BBS",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -50,7 +50,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
 
 
             //板块管理
-            MenuEntity plate = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot plate = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "板块管理",
@@ -69,7 +69,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             entities.Add(plate);
 
             //文章管理
-            MenuEntity article = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot article = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "文章管理",

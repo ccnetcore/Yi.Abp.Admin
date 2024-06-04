@@ -12,11 +12,11 @@ namespace Yi.Framework.Rbac.Application.Services
     /// <summary>
     /// Config服务实现
     /// </summary>
-    public class ConfigService : YiCrudAppService<ConfigEntity, ConfigGetOutputDto, ConfigGetListOutputDto, Guid, ConfigGetListInputVo, ConfigCreateInputVo, ConfigUpdateInputVo>,
+    public class ConfigService : YiCrudAppService<ConfigAggregateRoot, ConfigGetOutputDto, ConfigGetListOutputDto, Guid, ConfigGetListInputVo, ConfigCreateInputVo, ConfigUpdateInputVo>,
        IConfigService
     {
-        private ISqlSugarRepository<ConfigEntity, Guid> _repository;
-        public ConfigService(ISqlSugarRepository<ConfigEntity, Guid> repository) : base(repository)
+        private ISqlSugarRepository<ConfigAggregateRoot, Guid> _repository;
+        public ConfigService(ISqlSugarRepository<ConfigAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

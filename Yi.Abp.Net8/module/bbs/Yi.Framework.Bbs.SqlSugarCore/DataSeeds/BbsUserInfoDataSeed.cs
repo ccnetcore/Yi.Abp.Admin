@@ -15,8 +15,8 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
     public class BbsUserInfoDataSeed : IDataSeedContributor, ITransientDependency
     {
         private ISqlSugarRepository<BbsUserExtraInfoEntity> _repository;
-        private ISqlSugarRepository<UserEntity> _userRepository;
-        public BbsUserInfoDataSeed(ISqlSugarRepository<BbsUserExtraInfoEntity> repository, ISqlSugarRepository<UserEntity> userReponse)
+        private ISqlSugarRepository<UserAggregateRoot> _userRepository;
+        public BbsUserInfoDataSeed(ISqlSugarRepository<BbsUserExtraInfoEntity> repository, ISqlSugarRepository<UserAggregateRoot> userReponse)
         {
             _repository = repository;
             _userRepository = userReponse;

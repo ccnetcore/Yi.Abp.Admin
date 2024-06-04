@@ -12,11 +12,11 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// Post服务实现
     /// </summary>
-    public class PostService : YiCrudAppService<PostEntity, PostGetOutputDto, PostGetListOutputDto, Guid, PostGetListInputVo, PostCreateInputVo, PostUpdateInputVo>,
+    public class PostService : YiCrudAppService<PostAggregateRoot, PostGetOutputDto, PostGetListOutputDto, Guid, PostGetListInputVo, PostCreateInputVo, PostUpdateInputVo>,
        IPostService
     {
-        private readonly ISqlSugarRepository<PostEntity, Guid> _repository;
-        public PostService(ISqlSugarRepository<PostEntity, Guid> repository) : base(repository)
+        private readonly ISqlSugarRepository<PostAggregateRoot, Guid> _repository;
+        public PostService(ISqlSugarRepository<PostAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

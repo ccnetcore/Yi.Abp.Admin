@@ -1,6 +1,6 @@
 <Project>
 	<PropertyGroup>
 		<AbpVersion>8.0.5</AbpVersion>
-		<SqlSugarVersion>5.1.4.154-preview01</SqlSugarVersion>
+		<SqlSugarVersion>5.1.4.157</SqlSugarVersion>
 	</PropertyGroup>
 </Project>

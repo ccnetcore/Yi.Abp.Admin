@@ -12,11 +12,11 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// Menu服务实现
     /// </summary>
-    public class MenuService : YiCrudAppService<MenuEntity, MenuGetOutputDto, MenuGetListOutputDto, Guid, MenuGetListInputVo, MenuCreateInputVo, MenuUpdateInputVo>,
+    public class MenuService : YiCrudAppService<MenuAggregateRoot, MenuGetOutputDto, MenuGetListOutputDto, Guid, MenuGetListInputVo, MenuCreateInputVo, MenuUpdateInputVo>,
        IMenuService
     {
-        private readonly ISqlSugarRepository<MenuEntity, Guid> _repository;
-        public MenuService(ISqlSugarRepository<MenuEntity, Guid> repository) : base(repository)
+        private readonly ISqlSugarRepository<MenuAggregateRoot, Guid> _repository;
+        public MenuService(ISqlSugarRepository<MenuAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

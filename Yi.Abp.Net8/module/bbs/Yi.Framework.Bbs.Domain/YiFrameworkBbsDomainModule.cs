@@ -28,7 +28,7 @@ namespace Yi.Framework.Bbs.Domain
 
             var logger = services.GetRequiredService<ILogger<YiFrameworkBbsDomainModule>>();
             logger.LogInformation("正在初始化【BBS-等级数据】......");
-            var levelRepository = services.GetRequiredService<IRepository<LevelEntity>>();
+            var levelRepository = services.GetRequiredService<IRepository<LevelAggregateRoot>>();
             var levelCache = services.GetRequiredService<IDistributedCache<List<LevelCacheItem>>>();
             var cacheItem = (await levelRepository.GetListAsync()).Adapt<List<LevelCacheItem>>();
             await levelCache.SetAsync(LevelConst.LevelCacheKey, cacheItem);

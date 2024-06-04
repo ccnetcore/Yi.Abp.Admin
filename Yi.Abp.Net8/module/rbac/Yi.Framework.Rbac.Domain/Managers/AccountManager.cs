@@ -36,7 +36,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         private readonly RbacOptions _options;
         private IHttpContextAccessor _httpContextAccessor;
         private UserManager _userManager;
-        private ISqlSugarRepository<RoleEntity> _roleRepository;
+        private ISqlSugarRepository<RoleAggregateRoot> _roleRepository;
         private RefreshJwtOptions _refreshJwtOptions;
 
         public AccountManager(IUserRepository repository
@@ -45,7 +45,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             , ILocalEventBus localEventBus
             , UserManager userManager
             , IOptions<RefreshJwtOptions> refreshJwtOptions
-            , ISqlSugarRepository<RoleEntity> roleRepository
+            , ISqlSugarRepository<RoleAggregateRoot> roleRepository
             , IOptions<RbacOptions> options)
         {
             _repository = repository;
@@ -86,7 +86,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             //这里抛出一个登录的事件
             if (_httpContextAccessor.HttpContext is not null)
             {
-                var loginEntity = new LoginLogEntity().GetInfoByHttpContext(_httpContextAccessor.HttpContext);
+                var loginEntity = new LoginLogAggregateRoot().GetInfoByHttpContext(_httpContextAccessor.HttpContext);
                 var loginEto = loginEntity.Adapt<LoginEventArgs>();
                 loginEto.UserName = userInfo.User.UserName;
                 loginEto.UserId = userInfo.User.Id;
@@ -149,9 +149,9 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <param name="password"></param>
         /// <param name="userAction"></param>
         /// <returns></returns>
-        public async Task LoginValidationAsync(string userName, string password, Action<UserEntity> userAction = null)
+        public async Task LoginValidationAsync(string userName, string password, Action<UserAggregateRoot> userAction = null)
         {
-            var user = new UserEntity();
+            var user = new UserAggregateRoot();
             if (await ExistAsync(userName, o => user = o))
             {
                 if (userAction is not null)
@@ -173,7 +173,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <param name="userName"></param>
         /// <param name="userAction"></param>
         /// <returns></returns>
-        public async Task<bool> ExistAsync(string userName, Action<UserEntity> userAction = null)
+        public async Task<bool> ExistAsync(string userName, Action<UserAggregateRoot> userAction = null)
         {
             var user = await _repository.GetFirstAsync(u => u.UserName == userName && u.State == true);
             if (userAction is not null)
@@ -280,7 +280,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <returns></returns>
         public async Task RegisterAsync(string userName, string password, long phone)
         {
-            var user = new UserEntity(userName, password, phone);
+            var user = new UserAggregateRoot(userName, password, phone);
             await _userManager.CreateAsync(user);
             await _userManager.SetDefautRoleAsync(user.Id);
 

@@ -24,15 +24,15 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// User服务实现
     /// </summary>
-    public class UserService : YiCrudAppService<UserEntity, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>, IUserService
+    public class UserService : YiCrudAppService<UserAggregateRoot, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>, IUserService
     //IUserService
     {
-        public UserService(ISqlSugarRepository<UserEntity, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
+        public UserService(ISqlSugarRepository<UserAggregateRoot, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
             =>
             (_userManager, _userRepository, _currentUser, _deptService, _repository, _localEventBus) =
             (userManager, userRepository, currentUser, deptService, repository, localEventBus);
         private UserManager _userManager { get; set; }
-        private ISqlSugarRepository<UserEntity, Guid> _repository;
+        private ISqlSugarRepository<UserAggregateRoot, Guid> _repository;
         private IUserRepository _userRepository { get; set; }
         private IDeptService _deptService { get; set; }
 
@@ -68,7 +68,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
                           .WhereIF(ids is not null, x => ids.Contains(x.Id))
 
 
-                          .LeftJoin<DeptEntity>((user, dept) => user.DeptId == dept.Id)
+                          .LeftJoin<DeptAggregateRoot>((user, dept) => user.DeptId == dept.Id)
                           .OrderByDescending(user => user.CreationTime)
                           .Select((user, dept) => new UserGetListOutputDto(), true)
                           .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
@@ -80,7 +80,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         }
 
 
-        protected override UserEntity MapToEntity(UserCreateInputVo createInput)
+        protected override UserAggregateRoot MapToEntity(UserCreateInputVo createInput)
         {
             var output = base.MapToEntity(createInput);
             output.EncryPassword = new Domain.Entities.ValueObjects.EncryPasswordValueObject(createInput.Password);
@@ -107,7 +107,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
             return result;
         }
 
-        protected override async Task<UserEntity> MapToEntityAsync(UserCreateInputVo createInput)
+        protected override async Task<UserAggregateRoot> MapToEntityAsync(UserCreateInputVo createInput)
         {
             var entitiy = await base.MapToEntityAsync(createInput);
             entitiy.BuildPassword();

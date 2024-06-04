@@ -110,13 +110,13 @@
          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
                <el-button
-                  type="text"
+                  link
                   icon="Edit"
                   @click="handleUpdate(scope.row)"
                   v-hasPermi="['system:dict:edit']"
                >修改</el-button>
                <el-button
-                  type="text"
+                  link
                   icon="Delete"
                   @click="handleDelete(scope.row)"
                   v-hasPermi="['system:dict:remove']"
@@ -163,7 +163,7 @@
             </el-form-item>
             <el-form-item label="状态" prop="state">
                <el-radio-group v-model="form.state">
-                  <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="JSON.parse(dict.value)">{{dict.label}}</el-radio>
+                  <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="JSON.parse(dict.value)">{{dict.label}}</el-radio>
                </el-radio-group>
             </el-form-item>
             <el-form-item label="备注" prop="remark">

@@ -45,8 +45,8 @@ namespace Yi.Framework.Rbac.Test
 
             #region 给默认角色设置一些权限，防止注册后无权限禁止登录
             var roleManager = services.GetRequiredService<RoleManager>();
-            var roleRep = services.GetRequiredService<ISqlSugarRepository<RoleEntity>>();
-            var menuRep = services.GetRequiredService<ISqlSugarRepository<MenuEntity>>();
+            var roleRep = services.GetRequiredService<ISqlSugarRepository<RoleAggregateRoot>>();
+            var menuRep = services.GetRequiredService<ISqlSugarRepository<MenuAggregateRoot>>();
             var defaultRoleEntity = await roleRep._DbQueryable.Where(x => x.RoleCode == UserConst.DefaultRoleCode).FirstAsync();
             var menuIds = await menuRep._DbQueryable.Where(x => x.PermissionCode.Contains("user")).Select(x => x.Id).ToListAsync();
             await roleManager.GiveRoleSetMenuAsync(new List<Guid> { defaultRoleEntity.Id }, menuIds);

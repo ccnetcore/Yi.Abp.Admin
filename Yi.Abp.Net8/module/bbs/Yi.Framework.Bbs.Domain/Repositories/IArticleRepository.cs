@@ -9,8 +9,8 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Bbs.Domain.Repositories
 {
-    public interface IArticleRepository: ISqlSugarRepository<ArticleEntity,Guid>
+    public interface IArticleRepository: ISqlSugarRepository<ArticleAggregateRoot,Guid>
     {
-        Task<List<ArticleEntity>> GetTreeAsync(Expression<Func<ArticleEntity, bool>> where);
+        Task<List<ArticleAggregateRoot>> GetTreeAsync(Expression<Func<ArticleAggregateRoot, bool>> where);
     }
 }

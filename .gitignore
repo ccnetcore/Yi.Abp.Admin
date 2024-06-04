@@ -272,3 +272,4 @@ logs
 /Yi.Abp.Net8/test/Yi.Abp.Test/appsettings.Development.json
 /Yi.Abp.Net8/test/Yi.Abp.Test/appsettings.Production.json
 database_backup
+/Yi.Abp.Net8/src/Yi.Abp.Web/appsettings.Staging.json

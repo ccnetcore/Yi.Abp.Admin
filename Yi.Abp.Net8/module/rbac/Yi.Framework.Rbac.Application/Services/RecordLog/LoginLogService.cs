@@ -9,10 +9,10 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Rbac.Application.Services.RecordLog
 {
-    public class LoginLogService : YiCrudAppService<LoginLogEntity, LoginLogGetListOutputDto, Guid, LoginLogGetListInputVo>
+    public class LoginLogService : YiCrudAppService<LoginLogAggregateRoot, LoginLogGetListOutputDto, Guid, LoginLogGetListInputVo>
     {
-        private readonly ISqlSugarRepository<LoginLogEntity> _repository;
-        public LoginLogService(ISqlSugarRepository<LoginLogEntity, Guid> repository) : base(repository)
+        private readonly ISqlSugarRepository<LoginLogAggregateRoot> _repository;
+        public LoginLogService(ISqlSugarRepository<LoginLogAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

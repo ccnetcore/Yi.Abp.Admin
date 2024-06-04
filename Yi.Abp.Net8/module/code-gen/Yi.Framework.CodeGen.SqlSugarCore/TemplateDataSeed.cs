@@ -8,8 +8,8 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
 {
     public class TemplateDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<TemplateEntity> _repository;
-        public TemplateDataSeed(ISqlSugarRepository<TemplateEntity> repository)
+        private ISqlSugarRepository<TemplateAggregateRoot> _repository;
+        public TemplateDataSeed(ISqlSugarRepository<TemplateAggregateRoot> repository)
         {
             _repository = repository;
         }
@@ -20,10 +20,10 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<TemplateEntity> GetSeedData()
+        public List<TemplateAggregateRoot> GetSeedData()
         {
-            var entities = new List<TemplateEntity>();
-            TemplateEntity entityTemplate = new TemplateEntity()
+            var entities = new List<TemplateAggregateRoot>();
+            TemplateAggregateRoot entityTemplate = new TemplateAggregateRoot()
             {
                 Name = "Entity",
                 BuildPath = "D:\\code\\Entities\\@ModelEntity.cs",
@@ -33,7 +33,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             entities.Add(entityTemplate);
 
 
-            TemplateEntity getListInputTemplate = new TemplateEntity()
+            TemplateAggregateRoot getListInputTemplate = new TemplateAggregateRoot()
             {
                 Name = "GetListInput",
                 BuildPath = "D:\\code\\Dtos\\@Model\\@ModelGetListInput.cs",
@@ -43,7 +43,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             entities.Add(getListInputTemplate);
 
 
-            TemplateEntity getListOutputDtoTemplate = new TemplateEntity()
+            TemplateAggregateRoot getListOutputDtoTemplate = new TemplateAggregateRoot()
             {
                 Name = "GetListOutputDto",
                 BuildPath = "D:\\code\\Dtos\\@Model\\@ModelGetListOutputDto.cs",
@@ -53,7 +53,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             entities.Add(getListOutputDtoTemplate);
 
 
-            TemplateEntity getOutputDtoTemplate = new TemplateEntity()
+            TemplateAggregateRoot getOutputDtoTemplate = new TemplateAggregateRoot()
             {
                 Name = "GetOutputDto",
                 BuildPath = "D:\\code\\Dtos\\@Model\\@ModelGetOutputDto.cs",
@@ -62,7 +62,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             };
             entities.Add(getOutputDtoTemplate);
 
-            TemplateEntity updateInputTemplate = new TemplateEntity()
+            TemplateAggregateRoot updateInputTemplate = new TemplateAggregateRoot()
             {
                 Name = "UpdateInput",
                 BuildPath = "D:\\code\\Dtos\\@Model\\@ModelUpdateInput.cs",
@@ -71,7 +71,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             };
             entities.Add(updateInputTemplate);
 
-            TemplateEntity createInputTemplate = new TemplateEntity()
+            TemplateAggregateRoot createInputTemplate = new TemplateAggregateRoot()
             {
                 Name = "CreateInput",
                 BuildPath = "D:\\code\\Dtos\\@Model\\@ModelCreateInput.cs",
@@ -81,7 +81,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             entities.Add(createInputTemplate);
 
 
-            TemplateEntity iServicesTemplate = new TemplateEntity()
+            TemplateAggregateRoot iServicesTemplate = new TemplateAggregateRoot()
             {
                 Name = "IServices",
                 BuildPath = "D:\\code\\IServices\\I@ModelService.cs",
@@ -92,7 +92,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
 
 
 
-            TemplateEntity servicesTemplate = new TemplateEntity()
+            TemplateAggregateRoot servicesTemplate = new TemplateAggregateRoot()
             {
                 Name = "Service",
                 BuildPath = "D:\\code\\Services\\@ModelService.cs",
@@ -101,7 +101,7 @@ namespace Yi.Framework.CodeGen.SqlSugarCore
             };
             entities.Add(servicesTemplate);
 
-            TemplateEntity apiTemplate = new TemplateEntity()
+            TemplateAggregateRoot apiTemplate = new TemplateAggregateRoot()
             {
                 TemplateStr = "import request from '@/utils/request'\r\n\r\n// 分页查询\r\nexport function listData(query) {\r\n  return request({\r\n    url: '/@model',\r\n    method: 'get',\r\n    params: query\r\n  })\r\n}\r\n\r\n// id查询\r\nexport function getData(id) {\r\n  return request({\r\n    url: `/@model/${id}`,\r\n    method: 'get'\r\n  })\r\n}\r\n\r\n// 新增\r\nexport function addData(data) {\r\n  return request({\r\n    url: '/@model',\r\n    method: 'post',\r\n    data: data\r\n  })\r\n}\r\n\r\n// 修改\r\nexport function updateData(id,data) {\r\n  return request({\r\n    url: `/@model/${id}`,\r\n    method: 'put',\r\n    data: data\r\n  })\r\n}\r\n\r\n// 删除\r\nexport function delData(ids) {\r\n  return request({\r\n    url: `/@model`,\r\n    method: 'delete',\r\n    params:{id:ids}\r\n  })\r\n}\r\n",
                 Name = "api",

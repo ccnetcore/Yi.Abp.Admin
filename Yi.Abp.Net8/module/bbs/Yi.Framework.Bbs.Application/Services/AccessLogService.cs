@@ -10,8 +10,8 @@ namespace Yi.Framework.Bbs.Application.Services
 {
     public class AccessLogService : ApplicationService, IAccessLogService
     {
-        private readonly ISqlSugarRepository<AccessLogEntity> _repository;
-        public AccessLogService(ISqlSugarRepository<AccessLogEntity> repository) { _repository = repository; }
+        private readonly ISqlSugarRepository<AccessLogAggregateRoot> _repository;
+        public AccessLogService(ISqlSugarRepository<AccessLogAggregateRoot> repository) { _repository = repository; }
 
         public DateTime GetWeekFirst()
         {
@@ -71,11 +71,11 @@ namespace Yi.Framework.Bbs.Application.Services
 
             if (last is null || last.CreationTime.Date != DateTime.Today)
             {
-                await _repository.InsertAsync(new AccessLogEntity());
+                await _repository.InsertAsync(new AccessLogAggregateRoot());
             }
             else
             {
-                await _repository._Db.Updateable<AccessLogEntity>().SetColumns(it => it.Number == it.Number + 1).Where(it => it.Id == last.Id).ExecuteCommandAsync();
+                await _repository._Db.Updateable<AccessLogAggregateRoot>().SetColumns(it => it.Number == it.Number + 1).Where(it => it.Id == last.Id).ExecuteCommandAsync();
             }
         }
 
@@ -95,7 +95,7 @@ namespace Yi.Framework.Bbs.Application.Services
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        private AccessLogDto[] WeekTimeHandler(AccessLogEntity[] data)
+        private AccessLogDto[] WeekTimeHandler(AccessLogAggregateRoot[] data)
         {
             data = data.Where(x => x.CreationTime >= GetWeekFirst()).OrderByDescending(x => x.CreationTime).DistinctBy(x => x.CreationTime.DayOfWeek).ToArray();
 

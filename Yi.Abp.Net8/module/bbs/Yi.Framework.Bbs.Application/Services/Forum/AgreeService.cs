@@ -13,7 +13,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     /// </summary>
     public class AgreeService : ApplicationService, IApplicationService
     {
-        public AgreeService(ISqlSugarRepository<AgreeEntity> repository, ISqlSugarRepository<DiscussEntity> discssRepository)
+        public AgreeService(ISqlSugarRepository<AgreeEntity> repository, ISqlSugarRepository<DiscussAggregateRoot> discssRepository)
         {
             _repository = repository;
             _discssRepository = discssRepository;
@@ -21,7 +21,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
 
         private ISqlSugarRepository<AgreeEntity> _repository { get; set; }
 
-        private ISqlSugarRepository<DiscussEntity> _discssRepository { get; set; }
+        private ISqlSugarRepository<DiscussAggregateRoot> _discssRepository { get; set; }
 
 
         /// <summary>
@@ -29,7 +29,6 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// Todo: 可放入领域层
         /// </summary>
         /// <returns></returns>
-        [UnitOfWork]
         [Authorize]
         public async Task<AgreeDto> PostOperateAsync(Guid discussId)
         {
@@ -53,9 +52,8 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             }
             else
             {
-
                 //点赞过，删除即可,修改总点赞数量
-                await _repository.DeleteByIdAsync(entity.Id);
+                await _repository.DeleteAsync(entity);
                 var discussEntity = await _discssRepository.GetByIdAsync(discussId);
                 if (discussEntity is null)
                 {

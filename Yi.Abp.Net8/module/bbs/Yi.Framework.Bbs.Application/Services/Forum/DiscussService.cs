@@ -29,12 +29,12 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     /// <summary>
     /// Discuss应用服务实现,用于参数校验、领域服务业务组合、日志记录、事务处理、账户信息
     /// </summary>
-    public class DiscussService : YiCrudAppService<DiscussEntity, DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
+    public class DiscussService : YiCrudAppService<DiscussAggregateRoot, DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
        IDiscussService
     {
         private ISqlSugarRepository<DiscussTopEntity> _discussTopEntityRepository;
         private BbsUserManager _bbsUserManager;
-        public DiscussService(BbsUserManager bbsUserManager,  ForumManager forumManager, ISqlSugarRepository<DiscussTopEntity> discussTopEntityRepository, ISqlSugarRepository<PlateEntity> plateEntityRepository, ILocalEventBus localEventBus) : base(forumManager._discussRepository)
+        public DiscussService(BbsUserManager bbsUserManager,  ForumManager forumManager, ISqlSugarRepository<DiscussTopEntity> discussTopEntityRepository, ISqlSugarRepository<PlateAggregateRoot> plateEntityRepository, ILocalEventBus localEventBus) : base(forumManager._discussRepository)
         {
             _forumManager = forumManager;
             _plateEntityRepository = plateEntityRepository;
@@ -46,7 +46,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         private ForumManager _forumManager { get; set; }
 
 
-        private ISqlSugarRepository<PlateEntity> _plateEntityRepository { get; set; }
+        private ISqlSugarRepository<PlateAggregateRoot> _plateEntityRepository { get; set; }
 
 
 
@@ -60,9 +60,9 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         {
 
             //查询主题发布 浏览主题 事件，浏览数+1
-            var item = await _forumManager._discussRepository._DbQueryable.LeftJoin<UserEntity>((discuss, user) => discuss.CreatorId == user.Id)
+            var item = await _forumManager._discussRepository._DbQueryable.LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
                 .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
-                .LeftJoin<PlateEntity>((discuss, user, info, plate) => plate.Id == discuss.PlateId)
+                .LeftJoin<PlateAggregateRoot>((discuss, user, info, plate) => plate.Id == discuss.PlateId)
                      .Select((discuss, user, info, plate) => new DiscussGetOutputDto
                      {
                          Id = discuss.Id,
@@ -114,7 +114,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                      .WhereIF(input.PlateId is not null, x => x.PlateId == input.PlateId)
                      .WhereIF(input.IsTop is not null, x => x.IsTop == input.IsTop)
                      .WhereIF(input.UserId is not null,x=>x.CreatorId==input.UserId)
-                     .LeftJoin<UserEntity>((discuss, user) => discuss.CreatorId == user.Id)
+                     .LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
                      .WhereIF(input.UserName is not null, (discuss, user)=>user.UserName==input.UserName!)
 
                      .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
@@ -157,8 +157,8 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <returns></returns>
         public async Task<List<DiscussGetListOutputDto>> GetListTopAsync()
         {
-            var output = await _discussTopEntityRepository._DbQueryable.LeftJoin<DiscussEntity>((top, discuss) => top.DiscussId == discuss.Id)
-                .LeftJoin<UserEntity>((top, discuss, user) => discuss.CreatorId == user.Id)
+            var output = await _discussTopEntityRepository._DbQueryable.LeftJoin<DiscussAggregateRoot>((top, discuss) => top.DiscussId == discuss.Id)
+                .LeftJoin<UserAggregateRoot>((top, discuss, user) => discuss.CreatorId == user.Id)
                 .LeftJoin<BbsUserExtraInfoEntity>((top, discuss, user, info) => user.Id == info.UserId)
                 .OrderByDescending(top => top.OrderNum)
                 .Select((top, discuss, user, info) => new DiscussGetListOutputDto

@@ -116,13 +116,13 @@
          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
                <el-button
-                  type="text"
+                  link
                   icon="Edit"
                   @click="handleUpdate(scope.row)"
                   v-hasPermi="['system:config:edit']"
                >修改</el-button>
                <el-button
-                  type="text"
+                  link
                   icon="Delete"
                   @click="handleDelete(scope.row)"
                   v-hasPermi="['system:config:remove']"
@@ -156,7 +156,7 @@
                   <el-radio
                      v-for="dict in sys_yes_no"
                      :key="dict.value"
-                     :label="dict.value"
+                     :value="dict.value"
                   >{{ dict.label }}</el-radio>
                </el-radio-group>
             </el-form-item>

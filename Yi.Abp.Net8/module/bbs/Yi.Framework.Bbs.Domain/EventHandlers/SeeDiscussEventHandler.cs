@@ -13,8 +13,8 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
 {
     public class SeeDiscussEventHandler : ILocalEventHandler<SeeDiscussEventArgs>, ITransientDependency
     {
-        private IRepository<DiscussEntity, Guid> _repository;
-        public SeeDiscussEventHandler(IRepository<DiscussEntity, Guid> repository)
+        private IRepository<DiscussAggregateRoot, Guid> _repository;
+        public SeeDiscussEventHandler(IRepository<DiscussAggregateRoot, Guid> repository)
         {
             _repository = repository;
         }

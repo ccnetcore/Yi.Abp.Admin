@@ -8,6 +8,7 @@
 <script setup>
 import mainHub from "@/hubs/mainHub.js";
 import noticeSignalR from "@/hubs/noticeHub.js";
+import bbsNoticeSignalR from "@/hubs/bbsNoticeHub.js";
 import useConfigStore from "@/stores/config";
 import { ElConfigProvider } from "element-plus";
 import useUserStore from "@/stores/user.js";
@@ -26,7 +27,12 @@ if (loading !== null) {
 //加载全局信息
 onMounted(async () => {
   await configStore.getConfig();
+
+    //如果登录了，再连接消息通知
+    bbsNoticeSignalR();
   noticeSignalR();
+
+
 });
 
 watch(

@@ -34,7 +34,7 @@ namespace Yi.Framework.Rbac.Application.SignalRHubs
             lock (objLock)
             {
                 var name = CurrentUser.UserName;
-                var loginUser = new LoginLogEntity().GetInfoByHttpContext(_httpContext);
+                var loginUser = new LoginLogAggregateRoot().GetInfoByHttpContext(_httpContext);
 
                 OnlineUserModel user = new(Context.ConnectionId)
                 {

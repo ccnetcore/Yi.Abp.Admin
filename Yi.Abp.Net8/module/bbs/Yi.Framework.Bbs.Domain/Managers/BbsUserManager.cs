@@ -12,10 +12,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
 {
     public class BbsUserManager : DomainService
     {
-        public ISqlSugarRepository<UserEntity> _userRepository;
+        public ISqlSugarRepository<UserAggregateRoot> _userRepository;
         public ISqlSugarRepository<BbsUserExtraInfoEntity> _bbsUserInfoRepository;
         public Dictionary<int,LevelCacheItem> _levelCacheDic;
-        public BbsUserManager(ISqlSugarRepository<UserEntity> userRepository,
+        public BbsUserManager(ISqlSugarRepository<UserAggregateRoot> userRepository,
             ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository,
             IDistributedCache<List<LevelCacheItem>> levelCache
             )

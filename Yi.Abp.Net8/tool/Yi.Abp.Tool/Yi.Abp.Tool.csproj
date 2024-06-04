@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\common.props" />
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.5.0</Version>
+    <Authors>橙子老哥</Authors>
+    <Description>yi-framework框架配套工具</Description>
+    <PackageProjectUrl>https://ccnetcore.com</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://gitee.com/ccnetcore/Yi</RepositoryUrl>
+    <PackageTags>abp;yi</PackageTags>
+    <PackAsTool>True</PackAsTool>
+    <ToolCommandName>yi-abp</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.Autofac" Version="$(AbpVersion)" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Yi.Abp.Tool.HttpApi.Client\Yi.Abp.Tool.HttpApi.Client.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Update="readme.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="nupkg\" />
+	</ItemGroup>
+</Project>

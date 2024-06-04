@@ -12,7 +12,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
     {
         string CreateRefreshToken(Guid userId);
         Task<string> GetTokenByUserIdAsync(Guid userId);
-        Task LoginValidationAsync(string userName, string password, Action<UserEntity> userAction = null);
+        Task LoginValidationAsync(string userName, string password, Action<UserAggregateRoot> userAction = null);
         Task RegisterAsync(string userName, string password, long phone);
         Task<bool> RestPasswordAsync(Guid userId, string password);
         Task UpdatePasswordAsync(Guid userId, string newPassword, string oldPassword);

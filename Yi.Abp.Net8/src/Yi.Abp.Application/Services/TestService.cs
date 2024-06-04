@@ -20,7 +20,7 @@ namespace Yi.Abp.Application.Services
         /// 属性注入
         /// 不推荐，坑太多，容易把自己玩死，简单的东西可以用一用
         /// </summary>
-        public ISqlSugarRepository<BannerEntity> sqlSugarRepository { get; set; }
+        public ISqlSugarRepository<BannerAggregateRoot> sqlSugarRepository { get; set; }
 
         /// <summary>
         /// 动态Api
@@ -62,14 +62,14 @@ namespace Yi.Abp.Application.Services
             {
                 tasks.Add(Task.Run(async () =>
                 {
-                    await sqlSugarRepository.InsertAsync(new BannerEntity { Name = "插入2" });
+                    await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入2" });
                     using (var uow = UnitOfWorkManager.Begin(requiresNew: true, isTransactional: true))
                     {
-                        await sqlSugarRepository.InsertAsync(new BannerEntity { Name = "插入1" });
+                        await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入1" });
                         await uow.CompleteAsync();
                     }
                 }));
-                await sqlSugarRepository.InsertAsync(new BannerEntity { Name = "插入3" });
+                await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入3" });
                 i--;
             }
 
@@ -115,7 +115,7 @@ namespace Yi.Abp.Application.Services
         public void GetMapper()
         {
             //直接无脑Adapt，无需配置
-            var entity = new BannerEntity();
+            var entity = new BannerAggregateRoot();
             var dto = entity.Adapt<BannerGetListOutputDto>();
         }
 

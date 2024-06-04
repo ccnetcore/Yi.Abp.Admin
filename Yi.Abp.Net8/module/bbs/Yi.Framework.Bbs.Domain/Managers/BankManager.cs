@@ -15,11 +15,11 @@ namespace Yi.Framework.Bbs.Domain.Managers
     /// </summary>
     public class BankManager : DomainService
     {
-        private ISqlSugarRepository<BankCardEntity> _repository;
+        private ISqlSugarRepository<BankCardAggregateRoot> _repository;
         private ILocalEventBus _localEventBus;
-        private ISqlSugarRepository<InterestRecordsEntity> _interestRepository;
+        private ISqlSugarRepository<InterestRecordsAggregateRoot> _interestRepository;
         private IBankValueProvider _bankValueProvider;
-        public BankManager(ISqlSugarRepository<BankCardEntity> repository, ILocalEventBus localEventBus, ISqlSugarRepository<InterestRecordsEntity> interestRepository, IBankValueProvider bankValueProvider)
+        public BankManager(ISqlSugarRepository<BankCardAggregateRoot> repository, ILocalEventBus localEventBus, ISqlSugarRepository<InterestRecordsAggregateRoot> interestRepository, IBankValueProvider bankValueProvider)
         {
             _repository = repository;
             _localEventBus = localEventBus;
@@ -72,7 +72,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// 强制创建一个记录，不管时间到没到
         /// </summary>
         /// <returns></returns>
-        public async Task<InterestRecordsEntity> CreateInterestRecordsAsync()
+        public async Task<InterestRecordsAggregateRoot> CreateInterestRecordsAsync()
         {
             //获取最新的实体
             var lastEntity = await _interestRepository._DbQueryable.OrderByDescending(x => x.CreationTime).FirstAsync();
@@ -106,7 +106,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
             //根据上一次的老值进行变化率比较
             var currentValue = oldValue + (oldValue* changeRate);
 
-            var entity = new InterestRecordsEntity(lastThirdPartyStandardValue, currentValue);
+            var entity = new InterestRecordsAggregateRoot(lastThirdPartyStandardValue, currentValue);
             var output = await _interestRepository.InsertReturnEntityAsync(entity);
 
             return output;
@@ -129,7 +129,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// <returns></returns>
         public async Task ApplyingBankCardAsync(Guid userId, int cardNumber)
         {
-            var entities = Enumerable.Range(1, cardNumber).Select(x => new BankCardEntity(userId)).ToList();
+            var entities = Enumerable.Range(1, cardNumber).Select(x => new BankCardAggregateRoot(userId)).ToList();
             await _repository.InsertManyAsync(entities);
         }
 

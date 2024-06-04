@@ -40,7 +40,7 @@ namespace Yi.Abp.Test
         protected virtual void ConfigureAppConfiguration(IConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.AddJsonFile("appsettings.json");
-            //configurationBuilder.AddJsonFile("appsettings.Development.json");
+            configurationBuilder.AddJsonFile("appsettings.Development.json");
             
         }
     }

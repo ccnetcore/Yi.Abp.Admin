@@ -8,16 +8,16 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 {
     public class RoleDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<RoleEntity> _repository;
-        public RoleDataSeed(ISqlSugarRepository<RoleEntity> repository)
+        private ISqlSugarRepository<RoleAggregateRoot> _repository;
+        public RoleDataSeed(ISqlSugarRepository<RoleAggregateRoot> repository)
         {
             _repository = repository;
         }
 
-        public List<RoleEntity> GetSeedData()
+        public List<RoleAggregateRoot> GetSeedData()
         {
-            var entities = new List<RoleEntity>();
-            RoleEntity role1 = new RoleEntity()
+            var entities = new List<RoleAggregateRoot>();
+            RoleAggregateRoot role1 = new RoleAggregateRoot()
             {
 
                 RoleName = "管理员",
@@ -29,7 +29,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(role1);
 
-            RoleEntity role2 = new RoleEntity()
+            RoleAggregateRoot role2 = new RoleAggregateRoot()
             {
 
                 RoleName = "测试角色",
@@ -41,7 +41,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(role2);
 
-            RoleEntity role3 = new RoleEntity()
+            RoleAggregateRoot role3 = new RoleAggregateRoot()
             {
 
                 RoleName = "普通角色",
@@ -53,7 +53,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(role3);
 
-            RoleEntity role4 = new RoleEntity()
+            RoleAggregateRoot role4 = new RoleAggregateRoot()
             {
 
                 RoleName = "默认角色",

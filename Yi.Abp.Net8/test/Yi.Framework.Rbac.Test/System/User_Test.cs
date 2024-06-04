@@ -16,11 +16,11 @@ namespace Yi.Framework.Rbac.Test.System
     public class User_Test : YiTestBase
     {
         private IUserService _userService;
-        private ISqlSugarRepository<UserEntity> _repository;
+        private ISqlSugarRepository<UserAggregateRoot> _repository;
         public User_Test()
         {
             _userService = ServiceProvider.GetRequiredService<IUserService>();
-            _repository = ServiceProvider.GetRequiredService<ISqlSugarRepository<UserEntity>>();
+            _repository = ServiceProvider.GetRequiredService<ISqlSugarRepository<UserAggregateRoot>>();
         }
 
         /// <summary>

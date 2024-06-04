@@ -39,7 +39,7 @@ namespace Yi.Framework.Rbac.Application.Services
         public AccountService(IUserRepository userRepository,
             ICurrentUser currentUser,
             IAccountManager accountManager,
-            ISqlSugarRepository<MenuEntity> menuRepository,
+            ISqlSugarRepository<MenuAggregateRoot> menuRepository,
             IDistributedCache<CaptchaPhoneCacheItem, CaptchaPhoneCacheKey> phoneCache,
             IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache,
             ICaptcha captcha,
@@ -65,7 +65,7 @@ namespace Yi.Framework.Rbac.Application.Services
         private IUserRepository _userRepository;
         private ICurrentUser _currentUser;
         private IAccountManager _accountManager;
-        private ISqlSugarRepository<MenuEntity> _menuRepository;
+        private ISqlSugarRepository<MenuAggregateRoot> _menuRepository;
         /// <summary>
         /// 校验图片登录验证码,无需和账号绑定
         /// </summary>
@@ -100,7 +100,7 @@ namespace Yi.Framework.Rbac.Application.Services
             //校验验证码
             ValidationImageCaptcha(input);
 
-            UserEntity user = new();
+            UserAggregateRoot user = new();
             //校验
             await _accountManager.LoginValidationAsync(input.UserName, input.Password, x => user = x);
 
@@ -267,10 +267,10 @@ namespace Yi.Framework.Rbac.Application.Services
             //为超级管理员直接给全部路由
             if (UserConst.Admin.Equals(data.User.UserName))
             {
-                menus = ObjectMapper.Map<List<MenuEntity>, List<MenuDto>>(await _menuRepository.GetListAsync());
+                menus = ObjectMapper.Map<List<MenuAggregateRoot>, List<MenuDto>>(await _menuRepository.GetListAsync());
             }
             //将后端菜单转换成前端路由，组件级别需要过滤
-            List<Vue3RouterDto> routers = ObjectMapper.Map<List<MenuDto>, List<MenuEntity>>(menus).Vue3RouterBuild();
+            List<Vue3RouterDto> routers = ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus).Vue3RouterBuild();
             return routers;
         }
 

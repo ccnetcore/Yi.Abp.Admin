@@ -22,11 +22,11 @@ namespace Yi.Framework.Rbac.Test.System
     {
 
         private IAccountService _accountService;
-        private ISqlSugarRepository<UserEntity> _userRepository;
+        private ISqlSugarRepository<UserAggregateRoot> _userRepository;
         public Account_Test()
         {
             _accountService = GetRequiredService<IAccountService>();
-            _userRepository = GetRequiredService<ISqlSugarRepository<UserEntity>>();
+            _userRepository = GetRequiredService<ISqlSugarRepository<UserAggregateRoot>>();
         }
 
         /// <summary>

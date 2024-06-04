@@ -13,9 +13,9 @@ namespace Yi.Framework.Bbs.Application.Services.Bank
     {
         private BankManager _bankManager;
         private BbsUserManager _bbsUserManager;
-        private ISqlSugarRepository<BankCardEntity, Guid> _repository;
-        private ISqlSugarRepository<InterestRecordsEntity, Guid> _interestRepository;
-        public BankService(BankManager bankManager, BbsUserManager userManager, ISqlSugarRepository<BankCardEntity, Guid> repository, ISqlSugarRepository<InterestRecordsEntity, Guid> interestRepository)
+        private ISqlSugarRepository<BankCardAggregateRoot, Guid> _repository;
+        private ISqlSugarRepository<InterestRecordsAggregateRoot, Guid> _interestRepository;
+        public BankService(BankManager bankManager, BbsUserManager userManager, ISqlSugarRepository<BankCardAggregateRoot, Guid> repository, ISqlSugarRepository<InterestRecordsAggregateRoot, Guid> interestRepository)
         {
             _bankManager = bankManager;
             _bbsUserManager = userManager;

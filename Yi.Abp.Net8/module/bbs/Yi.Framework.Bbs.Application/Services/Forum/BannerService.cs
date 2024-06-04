@@ -12,11 +12,11 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     /// <summary>
     /// Banner服务实现
     /// </summary>
-    public class BannerService : YiCrudAppService<BannerEntity, BannerGetOutputDto, BannerGetListOutputDto, Guid, BannerGetListInputVo, BannerCreateInputVo, BannerUpdateInputVo>,
+    public class BannerService : YiCrudAppService<BannerAggregateRoot, BannerGetOutputDto, BannerGetListOutputDto, Guid, BannerGetListInputVo, BannerCreateInputVo, BannerUpdateInputVo>,
        IBannerService
     {
-        private ISqlSugarRepository<BannerEntity, Guid> _repository;
-        public BannerService(ISqlSugarRepository<BannerEntity, Guid> repository) : base(repository)
+        private ISqlSugarRepository<BannerAggregateRoot, Guid> _repository;
+        public BannerService(ISqlSugarRepository<BannerAggregateRoot, Guid> repository) : base(repository)
         {
             _repository = repository;
         }

@@ -29,7 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		common.props = common.props
 		end.sh = end.sh
+		logo.png = logo.png
 		start.sh = start.sh
+		tool.bat = tool.bat
 		usings.props = usings.props
 		version.props = version.props
 	EndProjectSection
@@ -147,6 +149,22 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.ChatHub.Application", "module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj", "{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Rbac.Test", "test\Yi.Framework.Rbac.Test\Yi.Framework.Rbac.Test.csproj", "{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tool", "tool", "{084CBEEC-5D37-4716-B9C7-D80D6960DFF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool", "tool\Yi.Abp.Tool\Yi.Abp.Tool.csproj", "{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Web", "tool\Yi.Abp.Tool.Web\Yi.Abp.Tool.Web.csproj", "{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Application", "tool\Yi.Abp.Tool.Application\Yi.Abp.Tool.Application.csproj", "{776590BA-B900-4C8B-986A-5B721FA4B306}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Application.Contracts", "tool\Yi.Abp.Tool.Application.Contracts\Yi.Abp.Tool.Application.Contracts.csproj", "{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Domain", "tool\Yi.Abp.Tool.Domain\Yi.Abp.Tool.Domain.csproj", "{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Domain.Shared", "tool\Yi.Abp.Tool.Domain.Shared\Yi.Abp.Tool.Domain.Shared.csproj", "{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.HttpApi.Client", "tool\Yi.Abp.Tool.HttpApi.Client\Yi.Abp.Tool.HttpApi.Client.csproj", "{C8F97775-D903-4365-A4FF-3DA97E318CD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -374,6 +392,34 @@ Global
 		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{776590BA-B900-4C8B-986A-5B721FA4B306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{776590BA-B900-4C8B-986A-5B721FA4B306}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{776590BA-B900-4C8B-986A-5B721FA4B306}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{776590BA-B900-4C8B-986A-5B721FA4B306}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -441,6 +487,13 @@ Global
 		{C2DCA2FD-BFB4-4E76-967B-0AF8CC4F4D47} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
 		{B7A1A8F3-CFA6-4ECF-A707-0F33FE0A6F1D} = {D8CDDE99-3684-4EED-A5E5-87F2AF4C78AB}
 		{9ECF0841-53BE-4FD8-95D1-A7223C7F3A07} = {0D10EEF2-FBAE-4C72-B816-A52823FC299B}
+		{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{776590BA-B900-4C8B-986A-5B721FA4B306} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{C8F97775-D903-4365-A4FF-3DA97E318CD2} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

@@ -14,11 +14,11 @@ namespace Yi.Framework.Bbs.Domain.Managers
     /// </summary>
     public class ForumManager : DomainService
     {
-        public readonly ISqlSugarRepository<DiscussEntity, Guid> _discussRepository;
-        public readonly ISqlSugarRepository<PlateEntity, Guid> _plateEntityRepository;
-        public readonly ISqlSugarRepository<CommentEntity, Guid> _commentRepository;
-        public readonly ISqlSugarRepository<ArticleEntity, Guid> _articleRepository;
-        public ForumManager(ISqlSugarRepository<DiscussEntity, Guid> discussRepository, ISqlSugarRepository<PlateEntity, Guid> plateEntityRepository, ISqlSugarRepository<CommentEntity, Guid> commentRepository, ISqlSugarRepository<ArticleEntity, Guid> articleRepository)
+        public readonly ISqlSugarRepository<DiscussAggregateRoot, Guid> _discussRepository;
+        public readonly ISqlSugarRepository<PlateAggregateRoot, Guid> _plateEntityRepository;
+        public readonly ISqlSugarRepository<CommentAggregateRoot, Guid> _commentRepository;
+        public readonly ISqlSugarRepository<ArticleAggregateRoot, Guid> _articleRepository;
+        public ForumManager(ISqlSugarRepository<DiscussAggregateRoot, Guid> discussRepository, ISqlSugarRepository<PlateAggregateRoot, Guid> plateEntityRepository, ISqlSugarRepository<CommentAggregateRoot, Guid> commentRepository, ISqlSugarRepository<ArticleAggregateRoot, Guid> articleRepository)
         {
             _discussRepository = discussRepository;
             _plateEntityRepository = plateEntityRepository;
@@ -27,7 +27,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
         }
 
         //主题是不能直接创建的，需要由领域服务统一创建
-        public async Task<DiscussEntity> CreateDiscussAsync(DiscussEntity entity)
+        public async Task<DiscussAggregateRoot> CreateDiscussAsync(DiscussAggregateRoot entity)
         {
             entity.CreationTime = DateTime.Now;
             entity.AgreeNum = 0;
@@ -35,9 +35,9 @@ namespace Yi.Framework.Bbs.Domain.Managers
             return await _discussRepository.InsertReturnEntityAsync(entity);
         }
 
-        public async Task<CommentEntity> CreateCommentAsync(Guid discussId, Guid parentId, Guid rootId, string content)
+        public async Task<CommentAggregateRoot> CreateCommentAsync(Guid discussId, Guid parentId, Guid rootId, string content)
         {
-            var entity = new CommentEntity(discussId);
+            var entity = new CommentAggregateRoot(discussId);
             entity.Content = content;
             entity.ParentId = parentId;
             entity.RootId = rootId;

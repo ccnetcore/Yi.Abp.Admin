@@ -15,9 +15,14 @@ namespace Yi.Framework.AspNetCore.Microsoft.AspNetCore.Middlewares
             context.Response.OnStarting(() =>
             {
                 if (context.Response.StatusCode == StatusCodes.Status200OK
-&& context.Response.Headers["Content-Type"].ToString() == "application/vnd.ms-excel")
+                && context.Response.Headers["Content-Type"].ToString() == "application/vnd.ms-excel")
                 {
                     context.FileAttachmentHandle($"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.xlsx");
+                }
+                if (context.Response.StatusCode == StatusCodes.Status200OK &&
+                context.Response.Headers["Content-Type"].ToString() == "application/x-zip-compressed")
+                {
+                    context.FileAttachmentHandle($"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.zip");
                 }
                 return Task.CompletedTask;
             });

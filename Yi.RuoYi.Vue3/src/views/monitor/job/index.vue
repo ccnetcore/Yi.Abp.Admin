@@ -121,7 +121,7 @@
             <template #default="scope">
                <el-tooltip content="修改" placement="top">
                   <el-button
-                     type="text"
+                     link
                      icon="Edit"
                      @click="handleUpdate(scope.row)"
                      v-hasPermi="['monitor:job:edit']"
@@ -129,7 +129,7 @@
                </el-tooltip>
                <el-tooltip content="删除" placement="top">
                   <el-button
-                     type="text"
+                     link
                      icon="Delete"
                      @click="handleDelete(scope.row)"
                      v-hasPermi="['monitor:job:remove']"
@@ -137,7 +137,7 @@
                </el-tooltip>
                <el-tooltip content="执行一次" placement="top">
                   <el-button
-                     type="text"
+                     link
                      icon="CaretRight"
                      @click="handleRun(scope.row)"
                      v-hasPermi="['monitor:job:changeStatus']"
@@ -145,7 +145,7 @@
                </el-tooltip>
                <el-tooltip content="任务详细" placement="top">
                   <el-button
-                     type="text"
+                     link
                      icon="View"
                      @click="handleView(scope.row)"
                      v-hasPermi="['monitor:job:query']"
@@ -153,7 +153,7 @@
                </el-tooltip>
                <!-- <el-tooltip content="调度日志" placement="top">
                   <el-button
-                     type="text"
+                     link
                      icon="Operation"
                      @click="handleJobLog(scope.row)"
                      v-hasPermi="['monitor:job:query']"
@@ -269,16 +269,16 @@
                <el-col :span="24">
                   <el-form-item label="执行策略" prop="type">
                      <el-radio-group v-model="form.type">
-                        <el-radio-button label="Cron">Cron表达式</el-radio-button>
-                        <el-radio-button label="Millisecond">简单毫秒间隔</el-radio-button>
+                        <el-radio-button value="Cron">Cron表达式</el-radio-button>
+                        <el-radio-button value="Millisecond">简单毫秒间隔</el-radio-button>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
                <el-col :span="12">
                   <el-form-item label="是否并发" prop="concurrent">
                      <el-radio-group v-model="form.concurrent">
-                        <el-radio-button :label=true>允许</el-radio-button>
-                        <el-radio-button :label=false>禁止</el-radio-button>
+                        <el-radio-button :value=true>允许</el-radio-button>
+                        <el-radio-button :value=false>禁止</el-radio-button>
                      </el-radio-group>
                   </el-form-item>
                </el-col>

@@ -7,8 +7,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 {
     public class PostDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<PostEntity> _repository;
-        public PostDataSeed(ISqlSugarRepository<PostEntity> repository)
+        private ISqlSugarRepository<PostAggregateRoot> _repository;
+        public PostDataSeed(ISqlSugarRepository<PostAggregateRoot> repository)
         {
             _repository = repository;
         }
@@ -19,11 +19,11 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<PostEntity> GetSeedData()
+        public List<PostAggregateRoot> GetSeedData()
         {
-            var entites = new List<PostEntity>();
+            var entites = new List<PostAggregateRoot>();
 
-            PostEntity Post1 = new PostEntity()
+            PostAggregateRoot Post1 = new PostAggregateRoot()
             {
 
                 PostName = "董事长",
@@ -33,7 +33,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entites.Add(Post1);
 
-            PostEntity Post2 = new PostEntity()
+            PostAggregateRoot Post2 = new PostAggregateRoot()
             {
 
                 PostName = "项目经理",
@@ -43,7 +43,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entites.Add(Post2);
 
-            PostEntity Post3 = new PostEntity()
+            PostAggregateRoot Post3 = new PostAggregateRoot()
             {
 
                 PostName = "人力资源",
@@ -53,7 +53,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entites.Add(Post3);
 
-            PostEntity Post4 = new PostEntity()
+            PostAggregateRoot Post4 = new PostAggregateRoot()
             {
 
                 PostName = "普通员工",

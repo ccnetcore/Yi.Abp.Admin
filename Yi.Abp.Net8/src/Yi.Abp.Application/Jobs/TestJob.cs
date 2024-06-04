@@ -13,8 +13,8 @@ namespace Yi.Abp.Application.Jobs
     /// </summary>
     public class TestJob : QuartzBackgroundWorkerBase
     {
-        private ISqlSugarRepository<UserEntity> _repository;
-        public TestJob(ISqlSugarRepository<UserEntity> repository)
+        private ISqlSugarRepository<UserAggregateRoot> _repository;
+        public TestJob(ISqlSugarRepository<UserAggregateRoot> repository)
         {
             _repository = repository;
             JobDetail = JobBuilder.Create<TestJob>().WithIdentity(nameof(TestJob)).Build();

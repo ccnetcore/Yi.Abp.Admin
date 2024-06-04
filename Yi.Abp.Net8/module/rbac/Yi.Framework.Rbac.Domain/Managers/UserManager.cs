@@ -21,15 +21,15 @@ namespace Yi.Framework.Rbac.Domain.Managers
 {
     public class UserManager : DomainService
     {
-        public readonly ISqlSugarRepository<UserEntity> _repository;
+        public readonly ISqlSugarRepository<UserAggregateRoot> _repository;
         public readonly ISqlSugarRepository<UserRoleEntity> _repositoryUserRole;
         public readonly ISqlSugarRepository<UserPostEntity> _repositoryUserPost;
-        private readonly ISqlSugarRepository<RoleEntity> _roleRepository;
+        private readonly ISqlSugarRepository<RoleAggregateRoot> _roleRepository;
         private IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> _userCache;
         private readonly IGuidGenerator _guidGenerator;
         private IUserRepository _userRepository;
         private ILocalEventBus _localEventBus;
-        public UserManager(ISqlSugarRepository<UserEntity> repository, ISqlSugarRepository<UserRoleEntity> repositoryUserRole, ISqlSugarRepository<UserPostEntity> repositoryUserPost, IGuidGenerator guidGenerator, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache, IUserRepository userRepository, ILocalEventBus localEventBus, ISqlSugarRepository<RoleEntity> roleRepository) =>
+        public UserManager(ISqlSugarRepository<UserAggregateRoot> repository, ISqlSugarRepository<UserRoleEntity> repositoryUserRole, ISqlSugarRepository<UserPostEntity> repositoryUserPost, IGuidGenerator guidGenerator, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache, IUserRepository userRepository, ILocalEventBus localEventBus, ISqlSugarRepository<RoleAggregateRoot> roleRepository) =>
             (_repository, _repositoryUserRole, _repositoryUserPost, _guidGenerator, _userCache, _userRepository, _localEventBus, _roleRepository) =
             (repository, repositoryUserRole, repositoryUserPost, guidGenerator, userCache, userRepository, localEventBus, roleRepository);
 
@@ -96,7 +96,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// 创建用户
         /// </summary>
         /// <returns></returns>
-        public async Task CreateAsync(UserEntity userEntity)
+        public async Task CreateAsync(UserAggregateRoot userEntity)
         {
             //校验用户名
             ValidateUserName(userEntity);
@@ -139,7 +139,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             }
         }
 
-        private void ValidateUserName(UserEntity input)
+        private void ValidateUserName(UserAggregateRoot input)
         {
             if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)
             {
@@ -217,7 +217,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
 
 
 
-        private UserRoleMenuDto EntityMapToDto(UserEntity user)
+        private UserRoleMenuDto EntityMapToDto(UserAggregateRoot user)
         {
 
             var userRoleMenu = new UserRoleMenuDto();
@@ -259,11 +259,11 @@ namespace Yi.Framework.Rbac.Domain.Managers
                 }
 
                 //刚好可以去除一下多余的导航属性
-                role.Menus = new List<MenuEntity>();
+                role.Menus = new List<MenuAggregateRoot>();
                 userRoleMenu.Roles.Add(role.Adapt<RoleDto>());
             }
 
-            user.Roles = new List<RoleEntity>();
+            user.Roles = new List<RoleAggregateRoot>();
             userRoleMenu.User = user.Adapt<UserDto>();
             userRoleMenu.Menus = userRoleMenu.Menus.OrderByDescending(x => x.OrderNum).ToHashSet();
             return userRoleMenu;

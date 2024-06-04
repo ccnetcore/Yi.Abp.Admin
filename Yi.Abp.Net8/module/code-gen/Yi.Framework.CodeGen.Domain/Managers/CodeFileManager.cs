@@ -11,9 +11,9 @@ namespace Yi.Framework.CodeGen.Domain.Managers
     public class CodeFileManager : DomainService
     {
         private IEnumerable<ITemplateHandler> _templateHandlers;
-        private ISqlSugarRepository<TemplateEntity> _repository;
+        private ISqlSugarRepository<TemplateAggregateRoot> _repository;
         private ISqlSugarRepository<FieldEntity> _fieldRepository;
-        public CodeFileManager(IEnumerable<ITemplateHandler> templateHandlers, ISqlSugarRepository<FieldEntity> fieldRepository, ISqlSugarRepository<TemplateEntity> repository)
+        public CodeFileManager(IEnumerable<ITemplateHandler> templateHandlers, ISqlSugarRepository<FieldEntity> fieldRepository, ISqlSugarRepository<TemplateAggregateRoot> repository)
         {
             _templateHandlers = templateHandlers;
             _repository = repository;

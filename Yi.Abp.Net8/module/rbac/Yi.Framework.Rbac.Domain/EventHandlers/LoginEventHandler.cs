@@ -17,12 +17,12 @@ namespace Yi.Framework.Rbac.Domain.EventHandlers
           ITransientDependency
     {
         private readonly ILogger<LoginEventHandler> _logger;
-        private readonly IRepository<LoginLogEntity> _loginLogRepository;
-        public LoginEventHandler(ILogger<LoginEventHandler> logger, IRepository<LoginLogEntity> loginLogRepository) { _logger = logger; _loginLogRepository = loginLogRepository; }
+        private readonly IRepository<LoginLogAggregateRoot> _loginLogRepository;
+        public LoginEventHandler(ILogger<LoginEventHandler> logger, IRepository<LoginLogAggregateRoot> loginLogRepository) { _logger = logger; _loginLogRepository = loginLogRepository; }
         public async Task HandleEventAsync(LoginEventArgs eventData)
         {
             _logger.LogInformation($"用户【{eventData.UserId}:{eventData.UserName}】登入系统");
-            var loginLogEntity = eventData.Adapt<LoginLogEntity>();
+            var loginLogEntity = eventData.Adapt<LoginLogAggregateRoot>();
             loginLogEntity.LogMsg = eventData.UserName + "登录系统";
             loginLogEntity.LoginUser = eventData.UserName;
             loginLogEntity.CreatorId = eventData.UserId;

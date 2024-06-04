@@ -29,7 +29,7 @@ const props = defineProps({
     default: null,
   },
   // 当前的值
-  value: [Number, String, Array],
+  value: [Number, String, Array,Boolean],
 })
 
 const values = computed(() => {

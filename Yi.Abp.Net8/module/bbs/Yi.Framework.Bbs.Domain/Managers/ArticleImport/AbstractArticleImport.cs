@@ -17,7 +17,7 @@ namespace Yi.Framework.Bbs.Domain.Managers.ArticleImport
             LoggerFactory = loggerFactory;
         }
         protected ILoggerFactory LoggerFactory { get; set; }
-        public virtual List<ArticleEntity> Import(Guid discussId, Guid articleParentId, List<FileObject> fileObjs)
+        public virtual List<ArticleAggregateRoot> Import(Guid discussId, Guid articleParentId, List<FileObject> fileObjs)
         {
             var articles = Convert(fileObjs);
             var orderNum = 0;
@@ -29,6 +29,6 @@ namespace Yi.Framework.Bbs.Domain.Managers.ArticleImport
             });
             return articles;
         }
-        public abstract List<ArticleEntity> Convert(List<FileObject> fileObjs);
+        public abstract List<ArticleAggregateRoot> Convert(List<FileObject> fileObjs);
     }
 }

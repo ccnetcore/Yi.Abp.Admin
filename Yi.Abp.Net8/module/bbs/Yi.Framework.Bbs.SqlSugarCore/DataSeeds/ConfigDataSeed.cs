@@ -15,8 +15,8 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
 {
     public class ConfigDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<ConfigEntity> _repository;
-        public ConfigDataSeed(ISqlSugarRepository<ConfigEntity> repository)
+        private ISqlSugarRepository<ConfigAggregateRoot> _repository;
+        public ConfigDataSeed(ISqlSugarRepository<ConfigAggregateRoot> repository)
         {
             _repository = repository;
         }
@@ -27,10 +27,10 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<ConfigEntity> GetSeedData()
+        public List<ConfigAggregateRoot> GetSeedData()
         {
-            List<ConfigEntity> entities = new List<ConfigEntity>();
-            ConfigEntity config1 = new ConfigEntity()
+            List<ConfigAggregateRoot> entities = new List<ConfigAggregateRoot>();
+            ConfigAggregateRoot config1 = new ConfigAggregateRoot()
             {
                 ConfigKey = "bbs.site.name",
                 ConfigName = "站点名称",
@@ -38,7 +38,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             };
             entities.Add(config1);
 
-            ConfigEntity config2 = new ConfigEntity()
+            ConfigAggregateRoot config2 = new ConfigAggregateRoot()
             {
                 ConfigKey = "bbs.site.author",
                 ConfigName = "站点作者",
@@ -46,7 +46,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             };
             entities.Add(config2);
 
-            ConfigEntity config3 = new ConfigEntity()
+            ConfigAggregateRoot config3 = new ConfigAggregateRoot()
             {
                 ConfigKey = "bbs.site.icp",
                 ConfigName = "站点Icp备案",
@@ -55,7 +55,7 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
             entities.Add(config3);
 
 
-            ConfigEntity config4 = new ConfigEntity()
+            ConfigAggregateRoot config4 = new ConfigAggregateRoot()
             {
                 ConfigKey = "bbs.site.bottom",
                 ConfigName = "站点底部信息",

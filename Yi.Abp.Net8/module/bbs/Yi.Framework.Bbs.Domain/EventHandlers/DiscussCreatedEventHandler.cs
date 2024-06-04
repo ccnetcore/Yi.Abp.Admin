@@ -10,7 +10,7 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
     /// <summary>
     /// 主题创建的领域事件
     /// </summary>
-    public class DiscussCreatedEventHandler : ILocalEventHandler<EntityCreatedEventData<DiscussEntity>>,
+    public class DiscussCreatedEventHandler : ILocalEventHandler<EntityCreatedEventData<DiscussAggregateRoot>>,
           ITransientDependency
     {
         private ISqlSugarRepository<BbsUserExtraInfoEntity> _userRepository;
@@ -18,7 +18,7 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
         {
             _userRepository = userRepository;
         }
-        public async Task HandleEventAsync(EntityCreatedEventData<DiscussEntity> eventData)
+        public async Task HandleEventAsync(EntityCreatedEventData<DiscussAggregateRoot> eventData)
         {
             var disucussEntity = eventData.Entity;
 

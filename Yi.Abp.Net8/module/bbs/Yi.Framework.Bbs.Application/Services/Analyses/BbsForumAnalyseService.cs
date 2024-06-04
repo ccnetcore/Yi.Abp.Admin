@@ -31,7 +31,7 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
         {
             var output = await _forumManager._discussRepository._DbQueryable
                 .Where(discuss=>discuss.PermissionType== DiscussPermissionTypeEnum.Public)
-                     .LeftJoin<UserEntity>((discuss, user) => discuss.CreatorId == user.Id)
+                     .LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
                          .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
 
                             .OrderBy(discuss => SqlFunc.GetRandom())

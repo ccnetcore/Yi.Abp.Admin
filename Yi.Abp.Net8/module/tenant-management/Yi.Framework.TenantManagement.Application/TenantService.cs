@@ -6,6 +6,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Data;
 using Volo.Abp.Modularity;
+using Volo.Abp.Uow;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.SqlSugarCore.Abstractions;
 using Yi.Framework.TenantManagement.Application.Contracts;
@@ -113,6 +114,7 @@ namespace Yi.Framework.TenantManagement.Application
         [HttpPut("tenant/init/{id}")]
         public async Task InitAsync([FromRoute] Guid id)
         {
+            await CurrentUnitOfWork.SaveChangesAsync();
             using (CurrentTenant.Change(id))
             {
                 await CodeFirst(this.LazyServiceProvider);
@@ -124,10 +126,20 @@ namespace Yi.Framework.TenantManagement.Application
         private async Task CodeFirst(IServiceProvider service)
         {
             var moduleContainer = service.GetRequiredService<IModuleContainer>();
-            var db = await _repository.GetDbContextAsync();
 
-            //尝试创建数据库
-            db.DbMaintenance.CreateDatabase();
+            //没有数据库，不能创工作单元，创建库，先关闭
+            ISqlSugarClient db = null;
+            using (var uow = UnitOfWorkManager.Begin(requiresNew: true, isTransactional: false))
+            {
+                db = await _repository.GetDbContextAsync();
+                //尝试创建数据库
+                db.DbMaintenance.CreateDatabase();
+               await uow.CompleteAsync();
+            }
+
+
+
+
 
             List<Type> types = new List<Type>();
             foreach (var module in moduleContainer.Modules)
@@ -135,6 +147,7 @@ namespace Yi.Framework.TenantManagement.Application
                 types.AddRange(module.Assembly.GetTypes()
                     .Where(x => x.GetCustomAttribute<IgnoreCodeFirstAttribute>() == null)
                     .Where(x => x.GetCustomAttribute<SugarTable>() != null)
+                    .Where(x=>x.GetCustomAttribute<DefaultTenantTableAttribute>() is null)
                     .Where(x => x.GetCustomAttribute<SplitTableAttribute>() is null));
             }
             if (types.Count > 0)

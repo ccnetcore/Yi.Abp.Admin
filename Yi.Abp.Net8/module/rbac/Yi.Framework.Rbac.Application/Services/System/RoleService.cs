@@ -19,16 +19,16 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// Role服务实现
     /// </summary>
-    public class RoleService : YiCrudAppService<RoleEntity, RoleGetOutputDto, RoleGetListOutputDto, Guid, RoleGetListInputVo, RoleCreateInputVo, RoleUpdateInputVo>,
+    public class RoleService : YiCrudAppService<RoleAggregateRoot, RoleGetOutputDto, RoleGetListOutputDto, Guid, RoleGetListInputVo, RoleCreateInputVo, RoleUpdateInputVo>,
        IRoleService
     {
-        public RoleService(RoleManager roleManager, ISqlSugarRepository<RoleDeptEntity> roleDeptRepository, ISqlSugarRepository<UserRoleEntity> userRoleRepository, ISqlSugarRepository<RoleEntity, Guid> repository) : base(repository)
+        public RoleService(RoleManager roleManager, ISqlSugarRepository<RoleDeptEntity> roleDeptRepository, ISqlSugarRepository<UserRoleEntity> userRoleRepository, ISqlSugarRepository<RoleAggregateRoot, Guid> repository) : base(repository)
         {
             (_roleManager, _roleDeptRepository, _userRoleRepository, _repository) =
             (roleManager, roleDeptRepository, userRoleRepository, repository);
         }
 
-        private ISqlSugarRepository<RoleEntity, Guid> _repository;
+        private ISqlSugarRepository<RoleAggregateRoot, Guid> _repository;
         private RoleManager _roleManager { get; set; }
 
         private ISqlSugarRepository<RoleDeptEntity> _roleDeptRepository;
@@ -44,7 +44,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
                 var insertEntities = input.DeptIds.Select(x => new RoleDeptEntity { DeptId = x, RoleId = input.RoleId }).ToList();
                 await _roleDeptRepository.InsertRangeAsync(insertEntities);
             }
-            var entity = new RoleEntity() { DataScope = input.DataScope };
+            var entity = new RoleAggregateRoot() { DataScope = input.DataScope };
             EntityHelper.TrySetId(entity, () => input.RoleId);
             await _repository._Db.Updateable(entity).UpdateColumns(x => x.DataScope).ExecuteCommandAsync();
 
@@ -154,7 +154,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         {
             RefAsync<int> total = 0;
             var output = await _userRoleRepository._DbQueryable
-                         .LeftJoin<UserEntity>((ur, u) => ur.UserId == u.Id && ur.RoleId == roleId)
+                         .LeftJoin<UserAggregateRoot>((ur, u) => ur.UserId == u.Id && ur.RoleId == roleId)
                            .Where((ur, u) => ur.RoleId == roleId)
                          .WhereIF(!string.IsNullOrEmpty(input.UserName), (ur, u) => u.UserName.Contains(input.UserName))
                          .WhereIF(input.Phone is not null, (ur, u) => u.Phone.ToString().Contains(input.Phone.ToString()))
@@ -166,7 +166,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         private async Task<PagedResultDto<UserGetListOutputDto>> GetNotAllocatedAuthUserByRoleIdAsync(Guid roleId, RoleAuthUserGetListInput input)
         {
             RefAsync<int> total = 0;
-            var entities = await _userRoleRepository._Db.Queryable<UserEntity>()
+            var entities = await _userRoleRepository._Db.Queryable<UserAggregateRoot>()
                    .Where(u => SqlFunc.Subqueryable<UserRoleEntity>().Where(x => x.RoleId == roleId).Where(x => x.UserId == u.Id).NotAny())
                       .WhereIF(!string.IsNullOrEmpty(input.UserName), u => u.UserName.Contains(input.UserName))
                             .WhereIF(input.Phone is not null, u => u.Phone.ToString().Contains(input.Phone.ToString()))

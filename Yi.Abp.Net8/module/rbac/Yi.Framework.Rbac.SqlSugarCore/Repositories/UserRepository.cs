@@ -10,7 +10,7 @@ using Yi.Framework.SqlSugarCore.Repositories;
 
 namespace Yi.Framework.Rbac.SqlSugarCore.Repositories
 {
-    public class UserRepository : SqlSugarRepository<UserEntity>, IUserRepository, ITransientDependency
+    public class UserRepository : SqlSugarRepository<UserAggregateRoot>, IUserRepository, ITransientDependency
     {
         public UserRepository(ISugarDbContextProvider<ISqlSugarDbContext> sugarDbContextProvider) : base(sugarDbContextProvider)
         {
@@ -21,7 +21,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.Repositories
         /// <param name="userIds"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<List<UserEntity>> GetListUserAllInfoAsync(List<Guid> userIds)
+        public async Task<List<UserAggregateRoot>> GetListUserAllInfoAsync(List<Guid> userIds)
         {
             var users = await _DbQueryable.Where(x => userIds.Contains(x.Id)).Includes(u => u.Roles.Where(r => r.IsDeleted == false).ToList(), r => r.Menus.Where(m => m.IsDeleted == false).ToList()).ToListAsync();
             return users;
@@ -34,7 +34,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.Repositories
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public async Task<UserEntity> GetUserAllInfoAsync(Guid userId)
+        public async Task<UserAggregateRoot> GetUserAllInfoAsync(Guid userId)
         {
             //得到用户
             var user = await _DbQueryable.Includes(u => u.Roles.Where(r => r.IsDeleted == false).ToList(), r => r.Menus.Where(m => m.IsDeleted == false).ToList()).InSingleAsync(userId);

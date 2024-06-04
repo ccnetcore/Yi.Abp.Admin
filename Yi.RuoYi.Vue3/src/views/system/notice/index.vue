@@ -86,7 +86,7 @@
             <template #default="scope">
                             
                <el-button
-                  type="text"
+                  link
                   icon="Promotion"
                   @click="handleOnlineSend(scope.row.id)"
                   v-hasPermi="['system:notice:edit']"
@@ -94,7 +94,7 @@
 
              
                <el-button
-                  type="text"
+                  link
                   icon="Promotion"
                   @click="handleOfflineSend(scope.row.id)"
                   v-hasPermi="['system:notice:edit']"
@@ -102,13 +102,13 @@
 
 
                <el-button
-                  type="text"
+                  link
                   icon="Edit"
                   @click="handleUpdate(scope.row)"
                   v-hasPermi="['system:notice:edit']"
                >修改</el-button>
                <el-button
-                  type="text"
+                  link
                   icon="Delete"
                   @click="handleDelete(scope.row)"
                   v-hasPermi="['system:notice:remove']"
@@ -152,7 +152,7 @@
                         <el-radio
                            v-for="dict in sys_notice_state"
                            :key="dict.value"
-                           :label="dict.value"
+                           :value="dict.value"
                         >{{ dict.label }}</el-radio>
                      </el-radio-group>
                   </el-form-item>

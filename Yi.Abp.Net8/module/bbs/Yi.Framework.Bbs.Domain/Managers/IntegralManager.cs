@@ -10,10 +10,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
 {
     public class IntegralManager : DomainService
     {
-        public ISqlSugarRepository<LevelEntity> _levelRepository;
-        public ISqlSugarRepository<SignInEntity> _signInRepository;
+        public ISqlSugarRepository<LevelAggregateRoot> _levelRepository;
+        public ISqlSugarRepository<SignInAggregateRoot> _signInRepository;
         private readonly ILocalEventBus _localEventBus;
-        public IntegralManager(ISqlSugarRepository<LevelEntity> levelRepository, ISqlSugarRepository<SignInEntity> signInRepository, ILocalEventBus localEventBus)
+        public IntegralManager(ISqlSugarRepository<LevelAggregateRoot> levelRepository, ISqlSugarRepository<SignInAggregateRoot> signInRepository, ILocalEventBus localEventBus)
         {
             _levelRepository = levelRepository;
             _localEventBus = localEventBus;
@@ -56,7 +56,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
 
 
             //插入记录
-            var entity = new SignInEntity() { ContinuousNumber = continuousNumber };
+            var entity = new SignInAggregateRoot() { ContinuousNumber = continuousNumber };
             await _signInRepository.InsertAsync(entity);
 
             //发布一个其他领域的事件
@@ -112,7 +112,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// <summary>
         /// 获取连续次数
         /// </summary>
-        private int GetContinuousNumber(SignInEntity sigInLast)
+        private int GetContinuousNumber(SignInAggregateRoot sigInLast)
         {
             var continuousNumber = 1;
 

@@ -9,9 +9,9 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 {
     public class MenuDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<MenuEntity> _repository;
+        private ISqlSugarRepository<MenuAggregateRoot> _repository;
         private IGuidGenerator _guidGenerator;
-        public MenuDataSeed(ISqlSugarRepository<MenuEntity> repository, IGuidGenerator guidGenerator)
+        public MenuDataSeed(ISqlSugarRepository<MenuAggregateRoot> repository, IGuidGenerator guidGenerator)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
@@ -24,14 +24,14 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<MenuEntity> GetSeedData()
+        public List<MenuAggregateRoot> GetSeedData()
         {
-            List<MenuEntity> entities = new List<MenuEntity>();
+            List<MenuAggregateRoot> entities = new List<MenuAggregateRoot>();
 
 
 
             //系统管理
-            MenuEntity system = new MenuEntity(_guidGenerator.Create(), Guid.Empty)
+            MenuAggregateRoot system = new MenuAggregateRoot(_guidGenerator.Create(), Guid.Empty)
             {
                 MenuName = "系统管理",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -45,7 +45,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(system);
 
             //代码生成
-            MenuEntity code = new MenuEntity(_guidGenerator.Create(), Guid.Empty)
+            MenuAggregateRoot code = new MenuAggregateRoot(_guidGenerator.Create(), Guid.Empty)
             {
                 MenuName = "代码生成",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -59,7 +59,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(code);
 
             //数据表管理
-            MenuEntity table = new MenuEntity(_guidGenerator.Create(), code.Id)
+            MenuAggregateRoot table = new MenuAggregateRoot(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "数据表管理",
                 PermissionCode = "code:table:list",
@@ -76,7 +76,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(table);
 
             //字段管理
-            MenuEntity field = new MenuEntity(_guidGenerator.Create(), code.Id)
+            MenuAggregateRoot field = new MenuAggregateRoot(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "字段管理",
                 PermissionCode = "code:field:list",
@@ -95,7 +95,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //模板管理
-            MenuEntity template = new MenuEntity(_guidGenerator.Create(), code.Id)
+            MenuAggregateRoot template = new MenuAggregateRoot(_guidGenerator.Create(), code.Id)
             {
                 MenuName = "模板管理",
                 PermissionCode = "code:template:list",
@@ -118,7 +118,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //系统监控
-            MenuEntity monitoring = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot monitoring = new MenuAggregateRoot(_guidGenerator.Create())
             {
                 MenuName = "系统监控",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -133,7 +133,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //在线用户
-            MenuEntity online = new MenuEntity(_guidGenerator.Create(), monitoring.Id)
+            MenuAggregateRoot online = new MenuAggregateRoot(_guidGenerator.Create(), monitoring.Id)
             {
                 MenuName = "在线用户",
                 PermissionCode = "monitor:online:list",
@@ -150,7 +150,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(online);
 
             //缓存列表
-            MenuEntity cache = new MenuEntity(_guidGenerator.Create(), monitoring.Id)
+            MenuAggregateRoot cache = new MenuAggregateRoot(_guidGenerator.Create(), monitoring.Id)
             {
                 MenuName = "缓存列表",
                 PermissionCode = "monitor:cache:list",
@@ -167,7 +167,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(cache);
 
             //服务监控
-            MenuEntity server = new MenuEntity(_guidGenerator.Create(), monitoring.Id)
+            MenuAggregateRoot server = new MenuAggregateRoot(_guidGenerator.Create(), monitoring.Id)
             {
                 MenuName = "服务监控",
                 PermissionCode = "monitor:server:list",
@@ -184,7 +184,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(server);
 
             //定时任务
-            MenuEntity task = new MenuEntity(_guidGenerator.Create(), monitoring.Id)
+            MenuAggregateRoot task = new MenuAggregateRoot(_guidGenerator.Create(), monitoring.Id)
             {
                 MenuName = "定时任务",
                 PermissionCode = "monitor:job:list",
@@ -202,7 +202,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //系统工具
-            MenuEntity tool = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tool = new MenuAggregateRoot(_guidGenerator.Create())
             {
                 MenuName = "系统工具",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -215,7 +215,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(tool);
             //swagger文档
-            MenuEntity swagger = new MenuEntity(_guidGenerator.Create(), tool.Id)
+            MenuAggregateRoot swagger = new MenuAggregateRoot(_guidGenerator.Create(), tool.Id)
             {
                 MenuName = "接口文档",
                 MenuType = MenuTypeEnum.Menu,
@@ -230,7 +230,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //ERP
-            MenuEntity erp = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot erp = new MenuAggregateRoot(_guidGenerator.Create())
             {
                 MenuName = "ERP(待更新)",
                 MenuType = MenuTypeEnum.Catalogue,
@@ -246,7 +246,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //供应商定义
-            MenuEntity supplier = new MenuEntity(_guidGenerator.Create(), erp.Id)
+            MenuAggregateRoot supplier = new MenuAggregateRoot(_guidGenerator.Create(), erp.Id)
             {
                 MenuName = "供应商定义",
                 PermissionCode = "erp:supplier:list",
@@ -262,7 +262,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(supplier);
 
-            MenuEntity supplierQuery = new MenuEntity(_guidGenerator.Create(), supplier.Id)
+            MenuAggregateRoot supplierQuery = new MenuAggregateRoot(_guidGenerator.Create(), supplier.Id)
             {
                 MenuName = "供应商查询",
                 PermissionCode = "erp:supplier:query",
@@ -272,7 +272,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(supplierQuery);
 
-            MenuEntity supplierAdd = new MenuEntity(_guidGenerator.Create(), supplier.Id)
+            MenuAggregateRoot supplierAdd = new MenuAggregateRoot(_guidGenerator.Create(), supplier.Id)
             {
                 MenuName = "供应商新增",
                 PermissionCode = "erp:supplier:add",
@@ -283,7 +283,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(supplierAdd);
 
-            MenuEntity supplierEdit = new MenuEntity(_guidGenerator.Create(), supplier.Id)
+            MenuAggregateRoot supplierEdit = new MenuAggregateRoot(_guidGenerator.Create(), supplier.Id)
             {
                 MenuName = "供应商修改",
                 PermissionCode = "erp:supplier:edit",
@@ -293,7 +293,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(supplierEdit);
 
-            MenuEntity supplierRemove = new MenuEntity(_guidGenerator.Create(), supplier.Id)
+            MenuAggregateRoot supplierRemove = new MenuAggregateRoot(_guidGenerator.Create(), supplier.Id)
             {
                 MenuName = "供应商删除",
                 PermissionCode = "erp:supplier:remove",
@@ -305,7 +305,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //仓库定义
-            MenuEntity warehouse = new MenuEntity(_guidGenerator.Create(), erp.Id)
+            MenuAggregateRoot warehouse = new MenuAggregateRoot(_guidGenerator.Create(), erp.Id)
             {
                 MenuName = "仓库定义",
                 PermissionCode = "erp:warehouse:list",
@@ -321,7 +321,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(warehouse);
 
-            MenuEntity warehouseQuery = new MenuEntity(_guidGenerator.Create(), warehouse.Id)
+            MenuAggregateRoot warehouseQuery = new MenuAggregateRoot(_guidGenerator.Create(), warehouse.Id)
             {
                 MenuName = "仓库查询",
                 PermissionCode = "erp:warehouse:query",
@@ -332,7 +332,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(warehouseQuery);
 
-            MenuEntity warehouseAdd = new MenuEntity(_guidGenerator.Create(), warehouse.Id)
+            MenuAggregateRoot warehouseAdd = new MenuAggregateRoot(_guidGenerator.Create(), warehouse.Id)
             {
                 MenuName = "仓库新增",
                 PermissionCode = "erp:warehouse:add",
@@ -342,7 +342,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(warehouseAdd);
 
-            MenuEntity warehouseEdit = new MenuEntity(_guidGenerator.Create(), warehouse.Id)
+            MenuAggregateRoot warehouseEdit = new MenuAggregateRoot(_guidGenerator.Create(), warehouse.Id)
             {
                 MenuName = "仓库修改",
                 PermissionCode = "erp:warehouse:edit",
@@ -352,7 +352,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(warehouseEdit);
 
-            MenuEntity warehouseRemove = new MenuEntity(_guidGenerator.Create(), warehouse.Id)
+            MenuAggregateRoot warehouseRemove = new MenuAggregateRoot(_guidGenerator.Create(), warehouse.Id)
             {
                 MenuName = "仓库删除",
                 PermissionCode = "erp:warehouse:remove",
@@ -364,7 +364,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //单位定义
-            MenuEntity unit = new MenuEntity(_guidGenerator.Create(), erp.Id)
+            MenuAggregateRoot unit = new MenuAggregateRoot(_guidGenerator.Create(), erp.Id)
             {
                 MenuName = "单位定义",
                 PermissionCode = "erp:unit:list",
@@ -380,7 +380,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(unit);
 
-            MenuEntity unitQuery = new MenuEntity(_guidGenerator.Create(), unit.Id)
+            MenuAggregateRoot unitQuery = new MenuAggregateRoot(_guidGenerator.Create(), unit.Id)
             {
                 MenuName = "单位查询",
                 PermissionCode = "erp:unit:query",
@@ -390,7 +390,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(unitQuery);
 
-            MenuEntity unitAdd = new MenuEntity(_guidGenerator.Create(), unit.Id)
+            MenuAggregateRoot unitAdd = new MenuAggregateRoot(_guidGenerator.Create(), unit.Id)
             {
                 MenuName = "单位新增",
                 PermissionCode = "erp:unit:add",
@@ -400,7 +400,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(unitAdd);
 
-            MenuEntity unitEdit = new MenuEntity(_guidGenerator.Create(), unit.Id)
+            MenuAggregateRoot unitEdit = new MenuAggregateRoot(_guidGenerator.Create(), unit.Id)
             {
                 MenuName = "单位修改",
                 PermissionCode = "erp:unit:edit",
@@ -410,7 +410,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(unitEdit);
 
-            MenuEntity unitRemove = new MenuEntity(_guidGenerator.Create(), unit.Id)
+            MenuAggregateRoot unitRemove = new MenuAggregateRoot(_guidGenerator.Create(), unit.Id)
             {
                 MenuName = "单位删除",
                 PermissionCode = "erp:unit:remove",
@@ -422,7 +422,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //物料定义
-            MenuEntity material = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot material = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "物料定义",
@@ -440,7 +440,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(material);
 
-            MenuEntity materialQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot materialQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "物料查询",
@@ -452,7 +452,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(materialQuery);
 
-            MenuEntity materialAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot materialAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "物料新增",
@@ -464,7 +464,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(materialAdd);
 
-            MenuEntity materialEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot materialEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "物料修改",
@@ -476,7 +476,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(materialEdit);
 
-            MenuEntity materialRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot materialRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "物料删除",
@@ -490,7 +490,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //采购订单
-            MenuEntity purchase = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot purchase = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "采购订单",
@@ -508,7 +508,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(purchase);
 
-            MenuEntity purchaseQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot purchaseQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "采购订单查询",
@@ -520,7 +520,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(purchaseQuery);
 
-            MenuEntity purchaseAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot purchaseAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "采购订单新增",
@@ -532,7 +532,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(purchaseAdd);
 
-            MenuEntity purchaseEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot purchaseEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "采购订单修改",
@@ -544,7 +544,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(purchaseEdit);
 
-            MenuEntity purchaseRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot purchaseRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "采购订单删除",
@@ -559,7 +559,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //Yi框架
-            MenuEntity guide = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot guide = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "Yi框架",
@@ -574,7 +574,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(guide);
 
             //租户管理
-            MenuEntity tenant = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tenant = new MenuAggregateRoot(_guidGenerator.Create())
             {
                 MenuName = "租户管理",
                 PermissionCode = "system:tenant:list",
@@ -591,7 +591,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(tenant);
 
-            MenuEntity tenantQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tenantQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "租户查询",
@@ -603,7 +603,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(tenantQuery);
 
-            MenuEntity tenantAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tenantAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "租户新增",
@@ -615,7 +615,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(tenantAdd);
 
-            MenuEntity tenantEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tenantEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "租户修改",
@@ -627,7 +627,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(tenantEdit);
 
-            MenuEntity tenantRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot tenantRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "租户删除",
@@ -651,7 +651,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //用户管理
-            MenuEntity user = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot user = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "用户管理",
@@ -669,7 +669,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(user);
 
-            MenuEntity userQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot userQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "用户查询",
@@ -681,7 +681,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(userQuery);
 
-            MenuEntity userAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot userAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "用户新增",
@@ -693,7 +693,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(userAdd);
 
-            MenuEntity userEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot userEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "用户修改",
@@ -705,7 +705,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(userEdit);
 
-            MenuEntity userRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot userRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "用户删除",
@@ -719,7 +719,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //角色管理
-            MenuEntity role = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot role = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "角色管理",
@@ -737,7 +737,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(role);
 
-            MenuEntity roleQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot roleQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "角色查询",
@@ -749,7 +749,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(roleQuery);
 
-            MenuEntity roleAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot roleAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "角色新增",
@@ -761,7 +761,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(roleAdd);
 
-            MenuEntity roleEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot roleEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "角色修改",
@@ -773,7 +773,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(roleEdit);
 
-            MenuEntity roleRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot roleRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "角色删除",
@@ -787,7 +787,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //菜单管理
-            MenuEntity menu = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot menu = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "菜单管理",
@@ -805,7 +805,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(menu);
 
-            MenuEntity menuQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot menuQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "菜单查询",
@@ -817,7 +817,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(menuQuery);
 
-            MenuEntity menuAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot menuAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "菜单新增",
@@ -829,7 +829,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(menuAdd);
 
-            MenuEntity menuEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot menuEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "菜单修改",
@@ -841,7 +841,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(menuEdit);
 
-            MenuEntity menuRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot menuRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "菜单删除",
@@ -854,7 +854,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(menuRemove);
 
             //部门管理
-            MenuEntity dept = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dept = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "部门管理",
@@ -872,7 +872,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dept);
 
-            MenuEntity deptQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot deptQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "部门查询",
@@ -884,7 +884,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(deptQuery);
 
-            MenuEntity deptAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot deptAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "部门新增",
@@ -896,7 +896,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(deptAdd);
 
-            MenuEntity deptEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot deptEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "部门修改",
@@ -908,7 +908,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(deptEdit);
 
-            MenuEntity deptRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot deptRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "部门删除",
@@ -923,7 +923,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //岗位管理
-            MenuEntity post = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot post = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "岗位管理",
@@ -941,7 +941,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(post);
 
-            MenuEntity postQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot postQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "岗位查询",
@@ -953,7 +953,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(postQuery);
 
-            MenuEntity postAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot postAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "岗位新增",
@@ -965,7 +965,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(postAdd);
 
-            MenuEntity postEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot postEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "岗位修改",
@@ -977,7 +977,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(postEdit);
 
-            MenuEntity postRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot postRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "岗位删除",
@@ -990,7 +990,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(postRemove);
 
             //字典管理
-            MenuEntity dict = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dict = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "字典管理",
@@ -1008,7 +1008,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dict);
 
-            MenuEntity dictQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dictQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "字典查询",
@@ -1020,7 +1020,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dictQuery);
 
-            MenuEntity dictAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dictAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "字典新增",
@@ -1032,7 +1032,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dictAdd);
 
-            MenuEntity dictEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dictEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "字典修改",
@@ -1044,7 +1044,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(dictEdit);
 
-            MenuEntity dictRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot dictRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "字典删除",
@@ -1058,7 +1058,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //参数设置
-            MenuEntity config = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot config = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "参数设置",
@@ -1076,7 +1076,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(config);
 
-            MenuEntity configQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot configQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "参数查询",
@@ -1088,7 +1088,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(configQuery);
 
-            MenuEntity configAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot configAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "参数新增",
@@ -1100,7 +1100,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(configAdd);
 
-            MenuEntity configEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot configEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "参数修改",
@@ -1112,7 +1112,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(configEdit);
 
-            MenuEntity configRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot configRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "参数删除",
@@ -1128,7 +1128,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //通知公告
-            MenuEntity notice = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot notice = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "通知公告",
@@ -1146,7 +1146,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(notice);
 
-            MenuEntity noticeQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot noticeQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "通知查询",
@@ -1158,7 +1158,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(noticeQuery);
 
-            MenuEntity noticeAdd = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot noticeAdd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "通知新增",
@@ -1170,7 +1170,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(noticeAdd);
 
-            MenuEntity noticeEdit = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot noticeEdit = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "通知修改",
@@ -1182,7 +1182,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(noticeEdit);
 
-            MenuEntity noticeRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot noticeRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "通知删除",
@@ -1197,7 +1197,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //日志管理
-            MenuEntity log = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot log = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "日志管理",
@@ -1213,7 +1213,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(log);
 
             //操作日志
-            MenuEntity operationLog = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot operationLog = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "操作日志",
@@ -1231,7 +1231,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(operationLog);
 
-            MenuEntity operationLogQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot operationLogQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "操作查询",
@@ -1243,7 +1243,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(operationLogQuery);
 
-            MenuEntity operationLogRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot operationLogRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "操作删除",
@@ -1257,7 +1257,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
             //登录日志
-            MenuEntity loginLog = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot loginLog = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "登录日志",
@@ -1275,7 +1275,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(loginLog);
 
-            MenuEntity loginLogQuery = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot loginLogQuery = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "登录查询",
@@ -1287,7 +1287,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(loginLogQuery);
 
-            MenuEntity loginLogRemove = new MenuEntity(_guidGenerator.Create())
+            MenuAggregateRoot loginLogRemove = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "登录删除",

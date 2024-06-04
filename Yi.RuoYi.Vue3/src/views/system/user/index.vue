@@ -89,19 +89,19 @@
                <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
                   <template #default="scope">
                      <el-tooltip content="修改" placement="top" v-if="scope.row.userName != 'cc'">
-                        <el-button type="text" icon="Edit" @click="handleUpdate(scope.row)"
+                        <el-button link icon="Edit" @click="handleUpdate(scope.row)"
                            v-hasPermi="['system:user:edit']"></el-button>
                      </el-tooltip>
                      <el-tooltip content="删除" placement="top" v-if="scope.row.userName != 'cc'">
-                        <el-button type="text" icon="Delete" @click="handleDelete(scope.row)"
+                        <el-button link icon="Delete" @click="handleDelete(scope.row)"
                            v-hasPermi="['system:user:remove']"></el-button>
                      </el-tooltip>
                      <el-tooltip content="重置密码" placement="top" v-if="scope.row.userName != 'cc'">
-                        <el-button type="text" icon="Key" @click="handleResetPwd(scope.row)"
+                        <el-button link icon="Key" @click="handleResetPwd(scope.row)"
                            v-hasPermi="['system:user:resetPwd']"></el-button>
                      </el-tooltip>
                      <!-- <el-tooltip content="分配角色" placement="top" v-if="scope.row.userName != 'cc'">
-                        <el-button type="text" icon="CircleCheck" @click="handleAuthRole(scope.row)"
+                        <el-button link icon="CircleCheck" @click="handleAuthRole(scope.row)"
                            v-hasPermi="['system:user:edit']"></el-button>
                      </el-tooltip> -->
                   </template>
@@ -165,7 +165,7 @@
                <el-col :span="12">
                   <el-form-item label="状态">
                      <el-radio-group v-model="form.state">
-                        <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="JSON.parse(dict.value)">{{dict.label}}</el-radio>
+                        <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="JSON.parse(dict.value)">{{dict.label}}</el-radio>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
@@ -528,16 +528,16 @@ function submitForm() {
    proxy.$refs["userRef"].validate(valid => {
       if (valid) {
          if (form.value.id != undefined) {
-            updateUser(form.value.id,form.value).then(response => {
+            updateUser(form.value.id,form.value).then(async response => {
                proxy.$modal.msgSuccess("修改成功");
                open.value = false;
-               getList();
+              await getList();
             });
          } else {
-            addUser(form.value).then(response => {
+            addUser(form.value).then(async response => {
                proxy.$modal.msgSuccess("新增成功");
                open.value = false;
-               getList();
+              await getList();
             });
          }
       }

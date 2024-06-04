@@ -9,9 +9,9 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
     public class DeptDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<DeptEntity> _repository;
+        private ISqlSugarRepository<DeptAggregateRoot> _repository;
         private IGuidGenerator _guidGenerator;
-        public DeptDataSeed(ISqlSugarRepository<DeptEntity> repository, IGuidGenerator guidGenerator)
+        public DeptDataSeed(ISqlSugarRepository<DeptAggregateRoot> repository, IGuidGenerator guidGenerator)
         {
             _repository = repository;
             _guidGenerator = guidGenerator;
@@ -23,11 +23,11 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<DeptEntity> GetSeedData()
+        public List<DeptAggregateRoot> GetSeedData()
         {
-            var entities = new List<DeptEntity>();
+            var entities = new List<DeptAggregateRoot>();
 
-            DeptEntity chengziDept = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot chengziDept = new DeptAggregateRoot(_guidGenerator.Create())
             {
                 DeptName = "橙子科技",
                 DeptCode = "Yi",
@@ -39,7 +39,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(chengziDept);
 
 
-            DeptEntity shenzhenDept = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot shenzhenDept = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "深圳总公司",
@@ -50,7 +50,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(shenzhenDept);
 
 
-            DeptEntity jiangxiDept = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot jiangxiDept = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "江西总公司",
@@ -62,7 +62,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
 
 
-            DeptEntity szDept1 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot szDept1 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "研发部门",
@@ -72,7 +72,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(szDept1);
 
-            DeptEntity szDept2 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot szDept2 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "市场部门",
@@ -82,7 +82,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(szDept2);
 
-            DeptEntity szDept3 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot szDept3 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "测试部门",
@@ -92,7 +92,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(szDept3);
 
-            DeptEntity szDept4 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot szDept4 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "财务部门",
@@ -102,7 +102,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(szDept4);
 
-            DeptEntity szDept5 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot szDept5 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "运维部门",
@@ -113,7 +113,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(szDept5);
 
 
-            DeptEntity jxDept1 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot jxDept1 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "市场部门",
@@ -124,7 +124,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(jxDept1);
 
 
-            DeptEntity jxDept2 = new DeptEntity(_guidGenerator.Create())
+            DeptAggregateRoot jxDept2 = new DeptAggregateRoot(_guidGenerator.Create())
             {
 
                 DeptName = "财务部门",

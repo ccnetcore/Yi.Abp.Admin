@@ -93,24 +93,8 @@ namespace Yi.Framework.TenantManagement.Domain
 
         private ConnectionStrings? MaptoString(string tenantConnectionString)
         {
-
-            //tenantConnectionString = tenantConnectionString.TrimEnd(';');
-            //var strSpiteds = tenantConnectionString.Split(";");
-            //if (strSpiteds.Count() == 0)
-            //{
-            //    return null;
-
-            //}
-
             var connectionStrings = new ConnectionStrings();
-            //foreach (string strSpited in strSpiteds)
-            //{
-            //    var key = strSpited.Split('=')[0];
-            //    var value = strSpited.Split('=')[1];
-            //    connectionStrings[key] = value;
-            //}
-            connectionStrings["test"] = tenantConnectionString;
-
+            connectionStrings[ConnectionStrings.DefaultConnectionStringName] = tenantConnectionString;
             return connectionStrings;
         }
 

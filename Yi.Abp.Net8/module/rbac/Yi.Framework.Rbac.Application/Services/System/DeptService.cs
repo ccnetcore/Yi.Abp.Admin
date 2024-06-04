@@ -13,7 +13,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// Dept服务实现
     /// </summary>
-    public class DeptService : YiCrudAppService<DeptEntity, DeptGetOutputDto, DeptGetListOutputDto, Guid, DeptGetListInputVo, DeptCreateInputVo, DeptUpdateInputVo>, IDeptService
+    public class DeptService : YiCrudAppService<DeptAggregateRoot, DeptGetOutputDto, DeptGetListOutputDto, Guid, DeptGetListInputVo, DeptCreateInputVo, DeptUpdateInputVo>, IDeptService
     {
         private IDeptRepository _deptRepository;
         public DeptService(IDeptRepository deptRepository) : base(deptRepository)

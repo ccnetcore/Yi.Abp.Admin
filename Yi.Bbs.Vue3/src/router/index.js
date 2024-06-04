@@ -58,6 +58,14 @@ const router = createRouter({
           },
         },
         {
+          name: "start",
+          path: "/start",
+          component: () => import("../views/start/Index.vue"),
+          meta: {
+            title: "开始",
+          },
+        },
+        {
           name: "article",
           path: "/article/:discussId/:articleId?",
           component: () => import("../views/Article.vue"),

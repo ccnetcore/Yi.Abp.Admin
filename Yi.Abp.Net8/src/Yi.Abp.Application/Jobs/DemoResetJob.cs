@@ -34,14 +34,14 @@ namespace Yi.Abp.Application.Jobs
                 //定时任务，非常简单
                 _logger.LogWarning("演示环境正在还原！");
                 var db = _dbContext.SqlSugarClient.CopyNew();
-                db.DbMaintenance.TruncateTable<UserEntity>();
+                db.DbMaintenance.TruncateTable<UserAggregateRoot>();
                 db.DbMaintenance.TruncateTable<UserRoleEntity>();
-                db.DbMaintenance.TruncateTable<RoleEntity>();
+                db.DbMaintenance.TruncateTable<RoleAggregateRoot>();
                 db.DbMaintenance.TruncateTable<RoleMenuEntity>();
-                db.DbMaintenance.TruncateTable<MenuEntity>();
+                db.DbMaintenance.TruncateTable<MenuAggregateRoot>();
                 db.DbMaintenance.TruncateTable<RoleDeptEntity>();
-                db.DbMaintenance.TruncateTable<DeptEntity>();
-                db.DbMaintenance.TruncateTable<PostEntity>();
+                db.DbMaintenance.TruncateTable<DeptAggregateRoot>();
+                db.DbMaintenance.TruncateTable<PostAggregateRoot>();
                 db.DbMaintenance.TruncateTable<UserPostEntity>();
 
                 //删除种子数据

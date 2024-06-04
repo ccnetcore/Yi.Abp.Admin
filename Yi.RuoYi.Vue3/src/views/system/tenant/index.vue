@@ -102,11 +102,11 @@ system/tenant : api文件路径,例如：codeGen/tableApi
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template #default="scope">
 
-            <el-button type="text" icon="Edit" @click="handleInit(scope.row.id)"
+            <el-button link icon="Edit" @click="handleInit(scope.row.id)"
                         v-hasPermi="['system:tenant:edit']">初始化</el-button>
-                    <el-button type="text" icon="Edit" @click="handleUpdate(scope.row)"
+                    <el-button link icon="Edit" @click="handleUpdate(scope.row)"
                         v-hasPermi="['system:tenant:edit']">修改</el-button>
-                    <el-button type="text" icon="Delete" @click="handleDelete(scope.row)"
+                    <el-button link icon="Delete" @click="handleDelete(scope.row)"
                         v-hasPermi="['system:tenant:remove']">删除</el-button>
                 </template>
             </el-table-column>
@@ -129,7 +129,7 @@ system/tenant : api文件路径,例如：codeGen/tableApi
                 <el-radio
                   v-for="dict in ['Sqlite','Mysql','Sqlserver']"
                   :key="dict"
-                  :label="dict"
+                  :value="dict"
                   >{{ dict }}</el-radio
                 >
               </el-radio-group>
@@ -214,6 +214,7 @@ function cancel() {
 
 /** 表单重置 */
 function reset() {
+    form.value={};
     proxy.resetForm("dataRef");
 }
 /** 搜索按钮操作 */

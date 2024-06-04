@@ -7,8 +7,8 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
 {
     public class LevelDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<LevelEntity> _repository;
-        public LevelDataSeed(ISqlSugarRepository<LevelEntity> repository)
+        private ISqlSugarRepository<LevelAggregateRoot> _repository;
+        public LevelDataSeed(ISqlSugarRepository<LevelAggregateRoot> repository)
         {
             _repository = repository;
         }
@@ -19,20 +19,20 @@ namespace Yi.Framework.Bbs.SqlSugarCore.DataSeeds
                 await _repository.InsertManyAsync(GetSeedData());
             }
         }
-        public List<LevelEntity> GetSeedData()
+        public List<LevelAggregateRoot> GetSeedData()
         {
-            List<LevelEntity> entities = new List<LevelEntity>()
+            List<LevelAggregateRoot> entities = new List<LevelAggregateRoot>()
             {
-                new LevelEntity(1,"小白",10),
-                new LevelEntity(2,"中白",30),
-                new LevelEntity(3,"大白",100),
-                new LevelEntity(4,"精英",300),
-                new LevelEntity(5,"熟练",600),
-                new LevelEntity(6,"高手",1000),
-                new LevelEntity(7,"老手",1500),
-                new LevelEntity(8,"大佬",2000),
-                new LevelEntity(9,"巨佬",2500),
-                new LevelEntity(10,"大神",3000),
+                new LevelAggregateRoot(1,"小白",10),
+                new LevelAggregateRoot(2,"中白",30),
+                new LevelAggregateRoot(3,"大白",100),
+                new LevelAggregateRoot(4,"精英",300),
+                new LevelAggregateRoot(5,"熟练",600),
+                new LevelAggregateRoot(6,"高手",1000),
+                new LevelAggregateRoot(7,"老手",1500),
+                new LevelAggregateRoot(8,"大佬",2000),
+                new LevelAggregateRoot(9,"巨佬",2500),
+                new LevelAggregateRoot(10,"大神",3000),
             };
 
             return entities;

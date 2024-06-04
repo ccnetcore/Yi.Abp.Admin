@@ -25,7 +25,6 @@ namespace Yi.Framework.SqlSugarCore
         /// </summary>
         public ISqlSugarClient SqlSugarClient { get; private set; }
         public ICurrentUser CurrentUser => LazyServiceProvider.GetRequiredService<ICurrentUser>();
-        private readonly string MasterTenantDbDefaultName = DbConnOptions.MasterTenantName;
         private IAbpLazyServiceProvider LazyServiceProvider { get; }
 
         private IGuidGenerator GuidGenerator => LazyServiceProvider.LazyGetRequiredService<IGuidGenerator>();
@@ -38,6 +37,7 @@ namespace Yi.Framework.SqlSugarCore
 
         public IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
         public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
+        public AbpDbConnectionOptions ConnectionOptions=> LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDbConnectionOptions>>().Value;
         private ISqlSugarDbConnectionCreator _dbConnectionCreator;
 
         public void SetSqlSugarClient(ISqlSugarClient sqlSugarClient)
@@ -69,21 +69,23 @@ namespace Yi.Framework.SqlSugarCore
         /// <returns></returns>
         protected virtual string GetCurrentConnectionString()
         {
+            var defautlUrl = Options.Url ?? ConnectionOptions.GetConnectionStringOrNull(ConnectionStrings.DefaultConnectionStringName);
+            //如果未开启多租户，返回db url 或者 默认连接字符串
+            if (!Options.EnabledSaasMultiTenancy)
+            {
+                return defautlUrl;
+            }
+
+            //开启了多租户
             var connectionStringResolver = LazyServiceProvider.LazyGetRequiredService<IConnectionStringResolver>();
             var connectionString = connectionStringResolver.ResolveAsync().Result;
+
 
             //没有检测到使用多租户功能，默认使用默认库即可
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 Volo.Abp.Check.NotNull(Options.Url, "租户默认库Defalut未找到");
-                connectionString = Options.Url;
-            }
-            //如果当前租户是主库，单独使用主要库
-            if (CurrentTenant.Name == MasterTenantDbDefaultName)
-            {
-                var conStrOrNull = Options.GetMasterSaasMultiTenancy();
-                Volo.Abp.Check.NotNull(conStrOrNull, "租户主库Master未找到");
-                connectionString = conStrOrNull.Url;
+                connectionString = defautlUrl;
             }
             return connectionString!;
         }
@@ -257,6 +259,10 @@ namespace Yi.Framework.SqlSugarCore
         /// <param name="column"></param>
         protected virtual void EntityService(PropertyInfo property, EntityColumnInfo column)
         {
+            if (property.Name == "ConcurrencyStamp")
+            {
+                column.IsIgnore = true;
+            }
             if (property.PropertyType == typeof(ExtraPropertyDictionary))
             {
                 column.IsIgnore = true;

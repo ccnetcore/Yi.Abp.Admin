@@ -10,9 +10,9 @@ namespace Yi.Framework.Bbs.Domain.Managers.ArticleImport
 {
     internal class DefaultArticleImport : AbstractArticleImport
     {
-        public override List<ArticleEntity> Convert(List<FileObject> fileObjs)
+        public override List<ArticleAggregateRoot> Convert(List<FileObject> fileObjs)
         {
-            return fileObjs.OrderBy(x => x.FileName).Select(x => new ArticleEntity { Name = x.FileName, Content = x.Content }).ToList();
+            return fileObjs.OrderBy(x => x.FileName).Select(x => new ArticleAggregateRoot { Name = x.FileName, Content = x.Content }).ToList();
         }
     }
 }

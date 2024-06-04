@@ -14,12 +14,12 @@ namespace Yi.Framework.Rbac.Application.Services
     /// <summary>
     /// Notice服务实现
     /// </summary>
-    public class NoticeService : YiCrudAppService<NoticeEntity, NoticeGetOutputDto, NoticeGetListOutputDto, Guid, NoticeGetListInput, NoticeCreateInput, NoticeUpdateInput>,
+    public class NoticeService : YiCrudAppService<NoticeAggregateRoot, NoticeGetOutputDto, NoticeGetListOutputDto, Guid, NoticeGetListInput, NoticeCreateInput, NoticeUpdateInput>,
        INoticeService
     {
-        private ISqlSugarRepository<NoticeEntity, Guid> _repository;
+        private ISqlSugarRepository<NoticeAggregateRoot, Guid> _repository;
         private IHubContext<NoticeHub> _hubContext;
-        public NoticeService(ISqlSugarRepository<NoticeEntity, Guid> repository, IHubContext<NoticeHub> hubContext) : base(repository)
+        public NoticeService(ISqlSugarRepository<NoticeAggregateRoot, Guid> repository, IHubContext<NoticeHub> hubContext) : base(repository)
         {
             _hubContext = hubContext;
             _repository = repository;

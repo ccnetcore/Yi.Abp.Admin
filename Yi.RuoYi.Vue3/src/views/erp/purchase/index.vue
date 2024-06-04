@@ -215,7 +215,7 @@
       >
         <template #default="scope">
           <el-button
-            type="text"
+            link
             icon="Edit"
             @click="handleGet(scope.row)"
             v-hasPermi="['erp:purchase:edit']"
@@ -223,7 +223,7 @@
           >
 
           <el-button
-            type="text"
+            link
             icon="Edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['erp:purchase:edit']"
@@ -231,14 +231,14 @@
           >
 
           <el-button
-            type="text"
+            link
             icon="Delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['erp:purchase:remove']"
             >结束</el-button
           >
           <el-button
-            type="text"
+            link
             icon="Delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['erp:purchase:remove']"

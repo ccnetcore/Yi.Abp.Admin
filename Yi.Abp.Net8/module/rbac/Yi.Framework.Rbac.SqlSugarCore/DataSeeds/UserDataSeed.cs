@@ -11,9 +11,9 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 {
     public class UserDataSeed : IDataSeedContributor, ITransientDependency
     {
-        private ISqlSugarRepository<UserEntity> _repository;
+        private ISqlSugarRepository<UserAggregateRoot> _repository;
         private RbacOptions _options;
-        public UserDataSeed(ISqlSugarRepository<UserEntity> repository, IOptions<RbacOptions> options)
+        public UserDataSeed(ISqlSugarRepository<UserAggregateRoot> repository, IOptions<RbacOptions> options)
         {
             _repository = repository;
             _options = options.Value;
@@ -22,8 +22,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
         {
             if (!await _repository.IsAnyAsync(x => true))
             {
-                var entities = new List<UserEntity>();
-                UserEntity user1 = new UserEntity()
+                var entities = new List<UserAggregateRoot>();
+                UserAggregateRoot user1 = new UserAggregateRoot()
                 {
                     Name = "大橙子",
                     UserName = "cc",
@@ -42,7 +42,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 user1.BuildPassword();
                 entities.Add(user1);
 
-                UserEntity user2 = new UserEntity()
+                UserAggregateRoot user2 = new UserAggregateRoot()
                 {
 
                     Name = "大测试",
@@ -63,7 +63,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 user2.BuildPassword();
                 entities.Add(user2);
 
-                UserEntity user3 = new UserEntity()
+                UserAggregateRoot user3 = new UserAggregateRoot()
                 {
 
                     Name = "游客",

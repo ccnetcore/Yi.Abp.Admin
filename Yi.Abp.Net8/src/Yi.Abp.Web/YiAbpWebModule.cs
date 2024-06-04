@@ -15,6 +15,7 @@ using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
+using Volo.Abp.Data;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
 using Yi.Abp.Application;
@@ -249,6 +250,8 @@ namespace Yi.Abp.Web
 
             //授权
             context.Services.AddAuthorization();
+
+            Configure<TestOptions>(configuration);
             return Task.CompletedTask;
         }
 
