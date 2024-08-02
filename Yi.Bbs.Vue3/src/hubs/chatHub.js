@@ -13,17 +13,27 @@ const receiveMsg = (connection) => {
     });
     //接受其他用户消息
     connection.on("receiveMsg", (type, content) => {
-        chatStore.addMsg(content);
+        const letChatStore = useChatStore();
+        //如果是ai消息，还要进行流式显示
+       // alert(type)
+        if (type == 3) {
+            letChatStore.addOrUpdateMsg(content);
+        }
+        else {
+            letChatStore.addMsg(content);
+        }
+
+
     });
     //用户状态-正在输入中，无
     connection.on("userStatus", (type) => {
 
     });
 };
-export  function start(){
+export function start() {
     signalR.start(`chat`, receiveMsg);
 }
-export function close(){
+export function close() {
     signalR.SR.stop();
 }
 

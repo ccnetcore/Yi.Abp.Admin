@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections;
+using System.Reflection;
 using System.Security.Policy;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,7 +39,7 @@ namespace Yi.Framework.SqlSugarCore
 
         public IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
         public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
-        public AbpDbConnectionOptions ConnectionOptions=> LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDbConnectionOptions>>().Value;
+        public AbpDbConnectionOptions ConnectionOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDbConnectionOptions>>().Value;
         private ISqlSugarDbConnectionCreator _dbConnectionCreator;
 
         public void SetSqlSugarClient(ISqlSugarClient sqlSugarClient)
@@ -55,10 +57,10 @@ namespace Yi.Framework.SqlSugarCore
             connectionCreator.DataExecuted = DataExecuted;
             connectionCreator.OnLogExecuting = OnLogExecuting;
             connectionCreator.OnLogExecuted = OnLogExecuted;
-            var currentConnection = GetCurrentConnectionString();
             SqlSugarClient = new SqlSugarClient(connectionCreator.Build(action: options =>
             {
-                options.ConnectionString = currentConnection;
+                options.ConnectionString = GetCurrentConnectionString();
+                options.DbType = GetCurrentDbType();
             }));
             connectionCreator.SetDbAop(SqlSugarClient);
         }
@@ -78,7 +80,7 @@ namespace Yi.Framework.SqlSugarCore
 
             //开启了多租户
             var connectionStringResolver = LazyServiceProvider.LazyGetRequiredService<IConnectionStringResolver>();
-            var connectionString = connectionStringResolver.ResolveAsync().Result;
+            var connectionString = connectionStringResolver.ResolveAsync().GetAwaiter().GetResult();
 
 
             //没有检测到使用多租户功能，默认使用默认库即可
@@ -89,6 +91,50 @@ namespace Yi.Framework.SqlSugarCore
             }
             return connectionString!;
         }
+
+        protected virtual DbType GetCurrentDbType()
+        {
+            if (CurrentTenant.Name is not null)
+            {
+                var dbTypeFromTenantName = GetDbTypeFromTenantName(CurrentTenant.Name);
+                if (dbTypeFromTenantName is not null)
+                {
+                    return dbTypeFromTenantName.Value;
+                }
+            }
+            Volo.Abp.Check.NotNull(Options.DbType, "默认DbType未配置！");
+            return Options.DbType!.Value;
+        }
+
+        //根据租户name进行匹配db类型:  Test_Sqlite，[来自AI]
+        private DbType? GetDbTypeFromTenantName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+
+            // 查找下划线的位置
+            int underscoreIndex = name.LastIndexOf('_');
+
+            if (underscoreIndex == -1 || underscoreIndex == name.Length - 1)
+            {
+                return null;
+            }
+
+            // 提取 枚举 部分
+            string enumString = name.Substring(underscoreIndex + 1);
+
+            // 尝试将 尾缀 转换为枚举
+            if (Enum.TryParse<DbType>(enumString, out DbType result))
+            {
+                return result;
+            }
+
+            // 条件不满足时返回 null
+            return null;
+        }
+
 
 
         /// <summary>
@@ -212,7 +258,15 @@ namespace Yi.Framework.SqlSugarCore
                 case DataFilterType.DeleteByObject:
                     if (entityInfo.PropertyName == nameof(IEntity<object>.Id))
                     {
-                        EntityChangeEventHelper.PublishEntityDeletedEvent(entityInfo.EntityValue);
+                        //这里sqlsugar有个特殊，删除会返回批量的结果
+                        if (entityInfo.EntityValue is IEnumerable entityValues)
+                        {
+                            foreach (var entityValue in entityValues)
+                            {
+
+                                EntityChangeEventHelper.PublishEntityDeletedEvent(entityValue);
+                            }
+                        }
                     }
                     break;
             }

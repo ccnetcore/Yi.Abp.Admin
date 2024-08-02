@@ -8,7 +8,7 @@
       >
         <AppHeader />
       </el-header>
-      <el-main class="common-main">
+      <el-main id="main-box" class="common-main">
         <AppBody />
       </el-main>
     </el-container>
@@ -60,6 +60,7 @@ const handleScroll = () => {
   }
   &-main {
     height: calc(100% - 50px);
+    overflow: visible !important;
   }
 }
 

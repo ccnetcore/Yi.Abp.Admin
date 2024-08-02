@@ -17,16 +17,16 @@ namespace Yi.Framework.Bbs.Application.Jobs
             Trigger = TriggerBuilder.Create().WithIdentity(nameof(InterestRecordsJob)).WithCronSchedule("0 0 * * * ?").Build();
 
             //测试
-//            Trigger = TriggerBuilder.Create().WithIdentity(nameof(InterestRecordsJob))
-//.WithSimpleSchedule(x => x
-//    .WithIntervalInSeconds(10)
-//    .RepeatForever())
-//.Build();
+            //            Trigger = TriggerBuilder.Create().WithIdentity(nameof(InterestRecordsJob))
+            //.WithSimpleSchedule(x => x
+            //    .WithIntervalInSeconds(10)
+            //    .RepeatForever())
+            //.Build();
         }
         public override async Task Execute(IJobExecutionContext context)
         {
             //创建一个记录，莫得了
-            await _bankManager.CreateInterestRecordsAsync();
+            await _bankManager.GetCurrentInterestRate();
         }
     }
 }

@@ -12,7 +12,8 @@ namespace Yi.Framework.ChatHub.Domain.Shared.Enums
 
         Personal,
         Group,
-        All
+        All,
+        Ai
 
     }
 }

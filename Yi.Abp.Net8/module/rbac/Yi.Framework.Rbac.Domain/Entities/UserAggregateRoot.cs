@@ -24,7 +24,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
             UserName = userName;
             EncryPassword.Password = password;
             Phone = phone;
-            Nick = nick;
+            Nick = nick+"-"+userName;
             BuildPassword();
         }
 

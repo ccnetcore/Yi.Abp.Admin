@@ -8,6 +8,16 @@ namespace Yi.Framework.Bbs.Domain.Managers.BankValue
 {
     public interface IBankValueProvider
     {
-        public Task<decimal> GetValueAsync();
+        /// <summary>
+        /// 标准值
+        /// </summary>
+        decimal StandardValue { get; }
+
+        /// <summary>
+        /// 获取第三方值
+        /// </summary>
+        /// <returns></returns>
+        Task<decimal> GetValueAsync();
+
     }
 }

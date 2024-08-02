@@ -8,10 +8,11 @@
     <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj" />
     <ProjectReference Include="..\..\module\code-gen\Yi.Framework.CodeGen.Application\Yi.Framework.CodeGen.Application.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Application\Yi.Framework.Rbac.Application.csproj" />
+    <ProjectReference Include="..\..\module\setting-management\Yi.Framework.SettingManagement.Application\Yi.Framework.SettingManagement.Application.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.Application\Yi.Framework.TenantManagement.Application.csproj" />
     <ProjectReference Include="..\Yi.Abp.Application.Contracts\Yi.Abp.Application.Contracts.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain\Yi.Abp.Domain.csproj" />
   </ItemGroup>
-
+	
 
 </Project>

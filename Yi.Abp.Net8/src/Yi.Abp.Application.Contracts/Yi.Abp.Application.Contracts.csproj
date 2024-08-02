@@ -9,7 +9,9 @@
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.Application.Contracts\Yi.Framework.TenantManagement.Application.Contracts.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain.Shared\Yi.Abp.Domain.Shared.csproj" />
   </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="$(AbpVersion)" />
+	</ItemGroup>
   <ItemGroup>
     <Folder Include="Dtos\" />
     <Folder Include="IServices\" />

@@ -1,5 +1,5 @@
 <template>
-  <transition-group name="fade-transform" mode="out-in">
+  <transition-group name="fade-transform">
     <inner-link
       v-for="(item, index) in tagsViewStore.iframeViews"
       :key="item.path"

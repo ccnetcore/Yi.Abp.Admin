@@ -41,7 +41,7 @@ public class SettingManagementStore : ISettingManagementStore, ITransientDepende
         var setting = await SettingRepository.FindAsync(name, providerName, providerKey);
         if (setting == null)
         {
-            setting = new SettingEntity(GuidGenerator.Create(), name, value, providerName, providerKey);
+            setting = new SettingAggregateRoot(GuidGenerator.Create(), name, value, providerName, providerKey);
             await SettingRepository.InsertAsync(setting);
         }
         else

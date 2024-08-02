@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
+	  <PackageReference Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Yi.Abp.Tool.Domain.Shared\Yi.Abp.Tool.Domain.Shared.csproj" />
+	  
   </ItemGroup>
 
 </Project>

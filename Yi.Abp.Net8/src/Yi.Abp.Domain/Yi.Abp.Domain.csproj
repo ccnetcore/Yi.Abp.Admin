@@ -13,11 +13,13 @@
     <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.Domain\Yi.Framework.Bbs.Domain.csproj" />
     <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.Domain\Yi.Framework.ChatHub.Domain.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Domain\Yi.Framework.Rbac.Domain.csproj" />
+    <ProjectReference Include="..\..\module\setting-management\Yi.Framework.SettingManagement.Domain\Yi.Framework.SettingManagement.Domain.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.Domain\Yi.Framework.TenantManagement.Domain.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain.Shared\Yi.Abp.Domain.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+
+	<ItemGroup>
 	  <Folder Include="EventHandlers\" />
     <Folder Include="Entities\" />
     <Folder Include="Managers\" />

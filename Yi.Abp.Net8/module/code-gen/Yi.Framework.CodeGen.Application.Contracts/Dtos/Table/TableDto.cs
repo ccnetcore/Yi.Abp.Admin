@@ -19,6 +19,6 @@ namespace Yi.Framework.CodeGen.Application.Contracts.Dtos.Table
         /// <summary>
         /// 一表多字段
         /// </summary>
-        public List<FieldDto> Fields { get; set; }
+        public List<FieldDto>? Fields { get; set; }
     }
 }

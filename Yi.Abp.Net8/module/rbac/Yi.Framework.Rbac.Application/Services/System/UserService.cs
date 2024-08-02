@@ -134,7 +134,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         /// <param name="input"></param>
         /// <returns></returns>
         [OperLog("更新用户", OperEnum.Update)]
-        [Permission("system:user:update")]
+        [Permission("system:user:edit")]
         public async override Task<UserGetOutputDto> UpdateAsync(Guid id, UserUpdateInputVo input)
         {
             if (input.UserName == UserConst.Admin || input.UserName == UserConst.TenantAdmin)

@@ -1,12 +1,15 @@
-﻿using Mapster;
+﻿using System.Xml.Linq;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Settings;
 using Volo.Abp.Uow;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Banner;
 using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Extensions;
+using Yi.Framework.SettingManagement.Domain;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Abp.Application.Services
@@ -55,9 +58,10 @@ namespace Yi.Abp.Application.Services
             //魔改
             // 用户体验优先，万金油模式，支持高并发。支持单、多线程并发安全，支持多线程工作单元，支持多线程无工作单元，支持。。。
             // 自动在各个情况处理db客户端最优解之一
-            int i = 10;
+            int i = 3;
             List<Task> tasks = new List<Task>();
-
+            await sqlSugarRepository.GetListAsync();
+            await sqlSugarRepository.GetListAsync();
             while (i > 0)
             {
                 tasks.Add(Task.Run(async () =>
@@ -119,7 +123,7 @@ namespace Yi.Abp.Application.Services
             var dto = entity.Adapt<BannerGetListOutputDto>();
         }
 
-
+        private static int RequestNumber { get; set; } = 0;
         /// <summary>
         /// 速率限制
         /// </summary>
@@ -131,6 +135,32 @@ namespace Yi.Abp.Application.Services
             RequestNumber++;
             return RequestNumber;
         }
-        private static int RequestNumber { get; set; } = 0;
+
+
+        public ISettingProvider _settingProvider { get; set; }
+
+        public ISettingManager _settingManager { get; set; }
+        /// <summary>
+        /// 系统配置模块
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetSettingAsync()
+        {
+            //DDD需要提前定义
+            //默认来说，不提供修改操作，配置应该独立
+            var enableOrNull = await _settingProvider.GetOrNullAsync("DDD");
+
+            //如果要进行修改，可使用yi.framework下的ISettingManager
+            await _settingManager.SetGlobalAsync("DDD", "false");
+
+            var enableOrNull2 = await _settingManager.GetOrNullGlobalAsync("DDD");
+
+            //当然，他的独特地方，是支持来自多个模块，例如配置文件？
+            var result = await _settingManager.GetOrNullConfigurationAsync("Test");
+
+
+            return result ?? string.Empty;
+        }
+
     }
 }

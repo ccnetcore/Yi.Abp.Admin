@@ -1,4 +1,5 @@
-﻿using Yi.Abp.Domain.Shared;
+﻿using Volo.Abp.SettingManagement;
+using Yi.Abp.Domain.Shared;
 using Yi.Framework.Bbs.Application.Contracts;
 using Yi.Framework.ChatHub.Application.Contracts;
 using Yi.Framework.Ddd.Application.Contracts;
@@ -13,6 +14,7 @@ namespace Yi.Abp.Application.Contracts
         typeof(YiFrameworkRbacApplicationContractsModule),
         typeof(YiFrameworkBbsApplicationContractsModule),
         typeof(YiFrameworkChatHubApplicationContractsModule),
+        typeof(AbpSettingManagementApplicationContractsModule),
 
         typeof(YiFrameworkTenantManagementApplicationContractsModule),
         typeof(YiFrameworkDddApplicationContractsModule))]

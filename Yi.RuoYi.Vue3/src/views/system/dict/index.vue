@@ -110,7 +110,7 @@
                <!-- <router-link :to="'/system/dict-data/index/' + scope.row.id" class="link-type">
                   
                </router-link> -->
-               <span @click="handleToPath(scope.row.id)">{{ scope.row.dictType }}</span>
+               <span style="color: blue; cursor: pointer; " @click="handleToPath(scope.row.id)">{{ scope.row.dictType }}</span>
             </template>
          </el-table-column>
          <el-table-column label="状态" align="center" prop="state">

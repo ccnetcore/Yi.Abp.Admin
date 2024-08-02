@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Yi.Abp.Tool;
-using Yi.Abp.Tool.Application.Contracts;
 
 class Program
 {
@@ -16,8 +14,10 @@ class Program
         //args = ["-h"];
         //args = [];
         //args = ["12312"];
-        args = ["new", "Acme.Book", "-t", "module", "-csf"];
+        //args = ["new", "Acme.Book", "-t", "module", "-csf"];
         //args = ["new", "Acme.Book", "-t", "module"];
+        //args = ["add-module", "Acme.Demo", "-s", "D:\\code\\csharp\\source\\Yi\\Yi.Abp.Net8", "-modulePath", "D:\\code\\csharp\\source\\Yi\\Yi.Abp.Net8\\module\\acme-demo"];
+        args = ["clear", "-path", "D:\\code\\csharp\\source\\Yi\\Yi.Abp.Net8\\src"];
 #endif
         try
         {

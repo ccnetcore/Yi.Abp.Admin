@@ -54,7 +54,7 @@ export default defineConfig(({ command, mode }) => {
           bypass(req, res, options) {
 
             const proxyUrl = options.target + options.rewrite(req.url);
-            console.log(proxyUrl);
+            // console.log(proxyUrl);
             req.headers['X-req-proxyURL'] = proxyUrl;
             res.setHeader('X-req-proxyURL', proxyUrl);
 

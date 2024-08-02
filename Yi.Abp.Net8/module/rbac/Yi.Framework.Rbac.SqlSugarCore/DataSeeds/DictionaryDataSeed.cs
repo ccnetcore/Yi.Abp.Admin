@@ -27,7 +27,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "男",
-                DictValue = "0",
+                DictValue = "Male",
                 DictType = "sys_user_sex",
                 OrderNum = 100,
                 Remark = "性别男",
@@ -41,7 +41,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "女",
-                DictValue = "1",
+                DictValue = "Woman",
                 DictType = "sys_user_sex",
                 OrderNum = 99,
                 Remark = "性别女",
@@ -54,7 +54,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
 
                 DictLabel = "未知",
-                DictValue = "2",
+                DictValue = "Unknown",
                 DictType = "sys_user_sex",
                 OrderNum = 98,
                 Remark = "性别未知",

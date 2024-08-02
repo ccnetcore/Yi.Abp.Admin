@@ -9,10 +9,15 @@ using Volo.Abp.DependencyInjection;
 
 namespace Yi.Framework.Bbs.Domain.Managers.BankValue
 {
+    [Dependency(TryRegister = true)]
     public class BiyingBankValueProvider : IBankValueProvider, ITransientDependency
     {
         //官网地址：www.biyingapi.com
         private const string Url = "https://api.biyingapi.com/hsrl/ssjy/600519/5579aa4b391945678";
+
+        public decimal StandardValue => 1700;
+
+
         public async Task<decimal> GetValueAsync()
         {
             try
@@ -26,9 +31,10 @@ namespace Yi.Framework.Bbs.Domain.Managers.BankValue
                     return jsonObject["p"].Value<decimal>();
                 }
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception("BiyingBank获取数据异常", ex);
-            
+
             }
 
         }

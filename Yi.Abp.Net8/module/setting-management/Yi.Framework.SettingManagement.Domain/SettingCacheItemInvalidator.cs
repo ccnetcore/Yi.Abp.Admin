@@ -6,7 +6,7 @@ using Volo.Abp.EventBus;
 
 namespace Yi.Framework.SettingManagement.Domain;
 
-public class SettingCacheItemInvalidator : ILocalEventHandler<EntityChangedEventData<SettingEntity>>, ITransientDependency
+public class SettingCacheItemInvalidator : ILocalEventHandler<EntityChangedEventData<SettingAggregateRoot>>, ITransientDependency
 {
     protected IDistributedCache<SettingCacheItem> Cache { get; }
 
@@ -15,7 +15,7 @@ public class SettingCacheItemInvalidator : ILocalEventHandler<EntityChangedEvent
         Cache = cache;
     }
 
-    public virtual async Task HandleEventAsync(EntityChangedEventData<SettingEntity> eventData)
+    public virtual async Task HandleEventAsync(EntityChangedEventData<SettingAggregateRoot> eventData)
     {
         var cacheKey = CalculateCacheKey(
             eventData.Entity.Name,

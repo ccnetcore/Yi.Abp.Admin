@@ -146,7 +146,7 @@ const getHours=(timeString)=>{
 }
 
 const currentRate=computed(()=>{
- return (interestList.value.map(x=>x.value).slice(-1)[0])*100
+ return ((interestList.value.map(x=>x.value).slice(-1)[0])*100).toFixed(2);
 })
 
 

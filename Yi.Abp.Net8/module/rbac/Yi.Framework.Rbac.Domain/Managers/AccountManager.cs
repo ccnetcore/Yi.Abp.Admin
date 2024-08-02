@@ -83,7 +83,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 throw new UserFriendlyException(UserConst.No_Permission);
             }
-            //这里抛出一个登录的事件
+            //这里抛出一个登录的事件,也可以在全部流程走完，在应用层组装
             if (_httpContextAccessor.HttpContext is not null)
             {
                 var loginEntity = new LoginLogAggregateRoot().GetInfoByHttpContext(_httpContextAccessor.HttpContext);

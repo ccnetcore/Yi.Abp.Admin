@@ -18,6 +18,6 @@ namespace Yi.Framework.Bbs.Domain.Shared.Consts
 
         public const string AgreeNotice = "您的主题[{0}]被[{1}]用户点赞！得到一致认可，发现宝藏内容！";
 
-        public const string CommentNotice = "您的主题[{0}]被[{1}]用户评论!评论内容：[{2}]。。。";
+        public const string CommentNotice = "您的主题[{0}]被[{1}]用户评论!评论内容：[{2}]";
     }
 }

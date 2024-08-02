@@ -117,7 +117,7 @@ const codeHandler = (code, language) => {
             // 将代码包裹在 textarea 中，由于防止textarea渲染出现问题，这里将 "<" 用 "&lt;" 代替，不影响复制功能
             let html = `<pre  class='hljs pre'><div class="header"><span class="language">${language}</span><span class="copy" id="${codeIndex}">复制代码</span></div><div class="code-con"><div class="nav">${navCode}</div><code class="code">${preCode}</code></div></pre>`;
             codeCopyDic.push({id: codeIndex,code:code});
-            console.log(codeCopyDic.length);
+            // console.log(codeCopyDic.length);
             return html;
             //<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy${codeIndex}">${code.replace(/<\/textarea>/g, "&lt;/textarea>")}</textarea>
         } catch (error) {

@@ -152,19 +152,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.Rbac.Test", "t
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tool", "tool", "{084CBEEC-5D37-4716-B9C7-D80D6960DFF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool", "tool\Yi.Abp.Tool\Yi.Abp.Tool.csproj", "{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool", "tool\Yi.Abp.Tool\Yi.Abp.Tool.csproj", "{4FEBBDD9-E4F4-4BAF-8599-E2D57C08A74F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Web", "tool\Yi.Abp.Tool.Web\Yi.Abp.Tool.Web.csproj", "{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.Web", "tool\Yi.Abp.Tool.Web\Yi.Abp.Tool.Web.csproj", "{2CE51D4C-1EF9-462B-BA14-7EA01A7E4AF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Application", "tool\Yi.Abp.Tool.Application\Yi.Abp.Tool.Application.csproj", "{776590BA-B900-4C8B-986A-5B721FA4B306}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.Application", "tool\Yi.Abp.Tool.Application\Yi.Abp.Tool.Application.csproj", "{776590BA-B900-4C8B-986A-5B721FA4B306}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Application.Contracts", "tool\Yi.Abp.Tool.Application.Contracts\Yi.Abp.Tool.Application.Contracts.csproj", "{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.Application.Contracts", "tool\Yi.Abp.Tool.Application.Contracts\Yi.Abp.Tool.Application.Contracts.csproj", "{3A3AF1ED-FC7F-48CF-8ACE-9D50426B4675}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Domain", "tool\Yi.Abp.Tool.Domain\Yi.Abp.Tool.Domain.csproj", "{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.Domain", "tool\Yi.Abp.Tool.Domain\Yi.Abp.Tool.Domain.csproj", "{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.Domain.Shared", "tool\Yi.Abp.Tool.Domain.Shared\Yi.Abp.Tool.Domain.Shared.csproj", "{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.Domain.Shared", "tool\Yi.Abp.Tool.Domain.Shared\Yi.Abp.Tool.Domain.Shared.csproj", "{4AE84CDE-2A47-4D68-8E93-86193F72E4E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Abp.Tool.HttpApi.Client", "tool\Yi.Abp.Tool.HttpApi.Client\Yi.Abp.Tool.HttpApi.Client.csproj", "{C8F97775-D903-4365-A4FF-3DA97E318CD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.HttpApi.Client", "tool\Yi.Abp.Tool.HttpApi.Client\Yi.Abp.Tool.HttpApi.Client.csproj", "{C8F97775-D903-4365-A4FF-3DA97E318CD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.SettingManagement.Application", "module\setting-management\Yi.Framework.SettingManagement.Application\Yi.Framework.SettingManagement.Application.csproj", "{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -420,6 +422,10 @@ Global
 		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8F97775-D903-4365-A4FF-3DA97E318CD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -494,6 +500,7 @@ Global
 		{68F73B7B-0F8A-41C1-8092-6D6FFAED32F8} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
 		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
 		{C8F97775-D903-4365-A4FF-3DA97E318CD2} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
+		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956} = {8C68059E-F3B1-4D28-A1C9-A5830F53E5D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23D6FBC9-C970-4641-BC1E-2AEA59F51C18}

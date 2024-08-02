@@ -26,6 +26,7 @@ public class YiTenantConfigurationProvider : ITenantConfigurationProvider, ITran
 
     public virtual async Task<TenantConfiguration?> GetAsync(bool saveResolveResult = false)
     {
+        //租户解析器获取到当前解析成功的租户
         var resolveResult = await TenantResolver.ResolveTenantIdOrNameAsync();
 
         if (saveResolveResult)
@@ -36,6 +37,7 @@ public class YiTenantConfigurationProvider : ITenantConfigurationProvider, ITran
         TenantConfiguration? tenant = null;
         if (resolveResult.TenantIdOrName != null)
         {
+            //根据租户信息获取租户
             tenant = await FindTenantAsync(resolveResult.TenantIdOrName);
 
             if (tenant == null)

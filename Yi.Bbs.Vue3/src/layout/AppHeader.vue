@@ -61,13 +61,21 @@
 
       <div class="notice">
         <el-dropdown trigger="click" :max-height="500">
-          <el-badge :value="noticeStore.noticeForNoReadCount">
+          <el-badge v-if="noticeStore.noticeForNoReadCount>0" :value="noticeStore.noticeForNoReadCount">
             <el-button type="primary">
               <el-icon :size="15">
                 <Bell />
               </el-icon>
             </el-button>
           </el-badge>
+
+         <el-button v-else="noticeStore.noticeForNoReadCount" type="primary">
+              <el-icon :size="15">
+                <Bell />
+              </el-icon>
+            </el-button>
+
+
           <template #dropdown>
             <el-dropdown-menu>
 
@@ -147,7 +155,7 @@ const fetchNoticeData = async () => {
 
 
 const handleSelect = (key, keyPath) => {
-  console.log(key, keyPath);
+  //console.log(key, keyPath);
 };
 const logout = async () => {
   ElMessageBox.confirm(`确定登出系统吗?`, "警告", {
@@ -204,7 +212,7 @@ const hanldeReadClick=async ()=>{
 }
 
 const enterStart=()=>{
-alert("即将发布Yi.Abp.Tool,官方脚手架工具集，敬请期待！")
+  router.push("/start");
 }
 
 </script>

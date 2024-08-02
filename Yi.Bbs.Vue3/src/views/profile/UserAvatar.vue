@@ -247,7 +247,7 @@ watch(
   () => props,
    (val,oldValue) => {
     const userIcon=props.user.icon;
-    console.log(userIcon,"userIcon")
+    //console.log(userIcon,"userIcon")
     options.img=userIcon == "" || userIcon == null
                 ? "/acquiesce.png"
                 : import.meta.env.VITE_APP_BASEAPI + "/file/" + userIcon;

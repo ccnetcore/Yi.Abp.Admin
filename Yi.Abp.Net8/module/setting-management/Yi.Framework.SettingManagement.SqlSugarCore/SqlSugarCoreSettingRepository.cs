@@ -4,14 +4,14 @@ using Yi.Framework.SqlSugarCore.Repositories;
 
 namespace Volo.Abp.SettingManagement.EntityFrameworkCore;
 
-public class SqlSugarCoreSettingRepository : SqlSugarRepository<SettingEntity, Guid>,
+public class SqlSugarCoreSettingRepository : SqlSugarRepository<SettingAggregateRoot, Guid>,
     ISettingRepository
 {
     public SqlSugarCoreSettingRepository(ISugarDbContextProvider<ISqlSugarDbContext> sugarDbContextProvider) : base(sugarDbContextProvider)
     {
     }
 
-    public virtual async Task<SettingEntity> FindAsync(
+    public virtual async Task<SettingAggregateRoot> FindAsync(
         string name,
         string providerName,
         string providerKey,
@@ -23,7 +23,7 @@ public class SqlSugarCoreSettingRepository : SqlSugarRepository<SettingEntity, G
             .FirstAsync();
     }
 
-    public virtual async Task<List<SettingEntity>> GetListAsync(
+    public virtual async Task<List<SettingAggregateRoot>> GetListAsync(
         string providerName,
         string providerKey,
         CancellationToken cancellationToken = default)
@@ -34,7 +34,7 @@ public class SqlSugarCoreSettingRepository : SqlSugarRepository<SettingEntity, G
             ).ToListAsync();
     }
 
-    public virtual async Task<List<SettingEntity>> GetListAsync(
+    public virtual async Task<List<SettingAggregateRoot>> GetListAsync(
         string[] names,
         string providerName,
         string providerKey,

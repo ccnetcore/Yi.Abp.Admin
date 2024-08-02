@@ -118,14 +118,14 @@ const imgAdd = async (pos, $file) => {
   formdata.append('file', $file);
   const response = await upload(formdata)
   const url = `${import.meta.env.VITE_APP_BASEAPI}/file/${response.data[0].id}/true`;
-  console.log(url)
+  //console.log(url)
   md.value.$img2Url(pos, url);
 
 }
 
 //选择表情包
 const onSelectEmoji=(emoji)=>{
-  console.log(emoji.i,"emoji");
+  //console.log(emoji.i,"emoji");
   text.value+=emoji.i
 }
 

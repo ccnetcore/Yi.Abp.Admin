@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Yi.Framework.Rbac.Domain.Shared.Consts;
 
 namespace Yi.Framework.Rbac.Domain.Authorization
 {
+    [DebuggerStepThrough]
     public class RefreshTokenMiddleware : IMiddleware, ITransientDependency
     {
         private AccountManager _accountManager;

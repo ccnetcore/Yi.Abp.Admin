@@ -50,8 +50,8 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
 
             var commentUser = await _userRepository.GetFirstAsync(x => x.Id == commentEntity.CreatorId);
 
-            //截取10个长度
-            var content = commentEntity.Content.Length >= 10 ? commentEntity.Content.Substring(0, 10) : commentEntity.Content;
+            //截取30个长度
+            var content = commentEntity.Content.Length >= 30 ? commentEntity.Content.Substring(0, 30)+"..." : commentEntity.Content;
             //通知主题作者，有人评论
             await _localEventBus.PublishAsync(new BbsNoticeEventArgs(disucssDto.DiscussId, string.Format(DiscussConst.CommentNotice, disucssDto.DiscussTitle, commentUser.UserName, content)), false);
         }

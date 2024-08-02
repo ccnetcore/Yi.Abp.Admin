@@ -83,7 +83,6 @@ const startCallback = () => {
       try
       {
         const ddd=(await luckyWheel()).data;
-        console.log(ddd,"dd");
       index= (await luckyWheel()).data;
       }
       catch

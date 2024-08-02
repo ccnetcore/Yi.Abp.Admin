@@ -60,7 +60,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
             await _signInRepository.InsertAsync(entity);
 
             //发布一个其他领域的事件
-            await _localEventBus.PublishAsync(new MoneyChangeEventArgs() { UserId = userId, Number = value });
+            await _localEventBus.PublishAsync(new MoneyChangeEventArgs() { UserId = userId, Number = value },false);
             return value;
         }
 

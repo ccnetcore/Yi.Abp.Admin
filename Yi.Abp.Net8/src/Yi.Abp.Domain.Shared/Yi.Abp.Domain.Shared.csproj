@@ -12,6 +12,9 @@
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Domain.Shared\Yi.Framework.Rbac.Domain.Shared.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="$(AbpVersion)" />
+	</ItemGroup>
   <ItemGroup>
     <Folder Include="Consts\" />
     <Folder Include="Dtos\" />

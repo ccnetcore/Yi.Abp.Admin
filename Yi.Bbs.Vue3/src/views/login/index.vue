@@ -119,8 +119,8 @@
        
         </div>
         <div class="div-bottom">
-                <span>备案：赣ICP备20008025号-3</span>
-                <span>站长：橙子</span>
+                <span>备案：<span v-html="configStore.icp"></span></span>
+                <span>站长：{{ configStore.author }}</span>
                 <span @click="handleContact">联系我们</span>
                 <span>关于本站</span>
                 <span>建议反馈</span>

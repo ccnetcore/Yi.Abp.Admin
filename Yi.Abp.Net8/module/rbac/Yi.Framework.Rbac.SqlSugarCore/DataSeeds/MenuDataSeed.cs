@@ -1,4 +1,4 @@
-﻿using Volo.Abp.Data;
+using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Guids;
 using Yi.Framework.Rbac.Domain.Entities;
@@ -716,6 +716,19 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false
             };
             entities.Add(userRemove);
+
+
+             MenuAggregateRoot userResetPwd = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "重置密码",
+                PermissionCode = "system:user:resetPwd",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = user.Id,
+                IsDeleted = false
+            };
+            entities.Add(userResetPwd);
 
 
             //角色管理

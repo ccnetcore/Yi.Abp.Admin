@@ -15,6 +15,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
     /// </summary>
     public class BankManager : DomainService
     {
+        private const decimal DefalutRate = 1.3m;
         private ISqlSugarRepository<BankCardAggregateRoot> _repository;
         private ILocalEventBus _localEventBus;
         private ISqlSugarRepository<InterestRecordsAggregateRoot> _interestRepository;
@@ -24,75 +25,56 @@ namespace Yi.Framework.Bbs.Domain.Managers
             _repository = repository;
             _localEventBus = localEventBus;
             _interestRepository = interestRepository;
-            _bankValueProvider=bankValueProvider;
+            _bankValueProvider = bankValueProvider;
         }
 
         /// <summary>
         /// 获取当前银行汇率
         /// </summary>
-        public BankInterestRecordDto CurrentRate => GetCurrentInterestRate();
+        public BankInterestRecordDto CurrentRate => GetCurrentInterestRate().GetAwaiter().GetResult();
 
         /// <summary>
         /// 用于存储当前汇率数据
         /// </summary>
-        private BankInterestRecordDto? _currentRateStore;
+        private static BankInterestRecordDto? _currentRateStore;
 
         /// <summary>
         /// 获取当前的银行汇率，如果为空会从数据库拿最新一条
         /// </summary>
         /// <returns></returns>
-        private BankInterestRecordDto GetCurrentInterestRate()
+        public async Task<BankInterestRecordDto> GetCurrentInterestRate()
         {
             var output = new BankInterestRecordDto();
             //先判断时间是否与当前时间差1小时，小于1小时直接返回即可,可以由一个单例类提供
-            if (this._currentRateStore is null || this._currentRateStore.IsExpire())
+            if (_currentRateStore is null || _currentRateStore.IsExpire())
             {
-                var currentInterestRecords = CreateInterestRecordsAsync().Result;
+                var currentInterestRecords =await CreateInterestRecordsAsync();
                 output.ComparisonValue = currentInterestRecords.ComparisonValue;
                 output.CreationTime = currentInterestRecords.CreationTime;
                 output.Value = currentInterestRecords.Value;
 
-                _currentRateStore=new BankInterestRecordDto() { ComparisonValue= currentInterestRecords .ComparisonValue,
-                CreationTime=currentInterestRecords.CreationTime,Value=currentInterestRecords.Value};
+                _currentRateStore = new BankInterestRecordDto()
+                {
+                    ComparisonValue = currentInterestRecords.ComparisonValue,
+                    CreationTime = currentInterestRecords.CreationTime,
+                    Value = currentInterestRecords.Value
+                };
 
             }
             return output;
         }
 
         /// <summary>
-        /// 获取第三方的值
-        /// </summary>
-        /// <returns></returns>
-        private decimal GetThirdPartyValue()
-        {
-            return _bankValueProvider.GetValueAsync().Result;
-        }
-
-        /// <summary>
         /// 强制创建一个记录，不管时间到没到
         /// </summary>
         /// <returns></returns>
-        public async Task<InterestRecordsAggregateRoot> CreateInterestRecordsAsync()
+        private async Task<InterestRecordsAggregateRoot> CreateInterestRecordsAsync()
         {
-            //获取最新的实体
-            var lastEntity = await _interestRepository._DbQueryable.OrderByDescending(x => x.CreationTime).FirstAsync();
-            decimal oldValue = 1.3m;
+            decimal oldValue = DefalutRate;
 
-            //获取第三方的值
-            var thirdPartyValue = GetThirdPartyValue();
-
-            //获取上一次第三方标准值
-            var lastThirdPartyStandardValue = thirdPartyValue;
-
-
+            var thirdPartyValue = await _bankValueProvider.GetValueAsync();
             //获取实际值的变化率
-            decimal changeRate = 0;
-            //说明不是第一次
-            if (lastEntity is not null)
-            {
-                oldValue = lastEntity.Value;
-                changeRate = (thirdPartyValue - lastEntity.ComparisonValue) / (thirdPartyValue);
-            }
+            decimal changeRate = (thirdPartyValue - _bankValueProvider.StandardValue) / (thirdPartyValue);
 
             //判断市场是否波动
             bool isFluctuate = IsMarketVolatility();
@@ -102,11 +84,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
                 changeRate = 2 * changeRate;
             }
 
-
             //根据上一次的老值进行变化率比较
-            var currentValue = oldValue + (oldValue* changeRate);
+            var currentValue = oldValue + (oldValue * changeRate);
 
-            var entity = new InterestRecordsAggregateRoot(lastThirdPartyStandardValue, currentValue);
+            var entity = new InterestRecordsAggregateRoot(thirdPartyValue, currentValue, isFluctuate);
             var output = await _interestRepository.InsertReturnEntityAsync(entity);
 
             return output;
@@ -171,7 +152,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
                 await _repository.UpdateAsync(entity);
 
                 //打钱，该卡状态钱更新，并提款加到用户钱钱里
-                await _localEventBus.PublishAsync(new MoneyChangeEventArgs(entity.UserId, changeMoney));
+                await _localEventBus.PublishAsync(new MoneyChangeEventArgs(entity.UserId, changeMoney),false);
 
 
 
@@ -195,7 +176,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
             entity.SetStorageMoney(moneyNum);
 
             await _repository.UpdateAsync(entity);
-            await _localEventBus.PublishAsync(new MoneyChangeEventArgs(entity.UserId, -moneyNum));
+            await _localEventBus.PublishAsync(new MoneyChangeEventArgs(entity.UserId, -moneyNum), false);
 
         }
 

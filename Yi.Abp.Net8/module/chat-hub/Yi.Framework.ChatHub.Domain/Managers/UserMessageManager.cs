@@ -48,6 +48,14 @@ namespace Yi.Framework.ChatHub.Domain.Managers
                 case MessageTypeEnum.All:
                     await _hubContext.Clients.All.SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType, context);
                     break;
+                case MessageTypeEnum.Ai:
+                    var userModel2 = await GetUserAsync(context.ReceiveId.Value);
+                    if (userModel2 is not null)
+                    {
+                        await _hubContext.Clients.Client(userModel2.ClientId).SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType, context);
+                    }
+                    break;
+
                 default:
                     break;
             }

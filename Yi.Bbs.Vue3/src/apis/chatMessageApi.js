@@ -21,4 +21,12 @@ export function sendGroupMessage(data) {
       method: "get"
     });
   }
+
+  export function sendAiChat(data) {
+    return request({
+      url: "/ai-chat/chat",
+      method: "post",
+      data
+    });
+  }
   

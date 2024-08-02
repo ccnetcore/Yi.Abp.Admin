@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Yi.Framework.Core.Helper
 
         public static List<string> ImageType { get; set; } = new List<string>
         {
-            ".jpg",".png",".jpge"
+            ".jpg",".png",".jpeg"
         };
 
         private static Hashtable _mimeMappingTable;

@@ -3,7 +3,7 @@
     <el-row :gutter="20" class="top-div">
       <el-col :span="17">
       <div class="chat-hub">  
-        <p @click="onClickToChatHub" >点击前往-最新上线<span>《聊天室》 </span>，探索更多可能，结交更多朋友，闭上眼睛，聆听名刀破碎的声音</p>
+        <p @click="onClickToChatHub" >点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>
         </div>
         <div class="scrollbar">
           <ScrollbarInfo />
@@ -470,11 +470,13 @@ const onClickAccessLog = async () => {
   span{
    color: red;
   }
+  display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+  height: 30px;
   p {
-    cursor: pointer;
-  display: inline-block;
-  padding-left: 100%;
-  animation: marquee 20s linear infinite;
+    margin:0 auto ;
+    cursor:pointer;
 }
 }
  

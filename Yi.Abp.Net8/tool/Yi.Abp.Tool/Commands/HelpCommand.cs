@@ -30,6 +30,9 @@ namespace Yi.Abp.Tool.Commands
                     > help: 查看帮助列表，写下命令` yi-abp help <command> `
                     > new: 创建模块模板` yi-abp new <name> -t module -csf ` 
                     > new: 创建项目模板` yi-abp new <name> -csf `
+                    > add-module: 将内容添加到当前解决方案` yi-abp add-module <moduleName> [-modulePath <path>] [-s <slnPath>] `
+                    > clear: 清除当前目录及子目录下的obj、bin文件夹` yi-abp clear `
+
                 """);
             return Task.CompletedTask;
         }
