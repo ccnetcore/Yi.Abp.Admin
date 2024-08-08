@@ -37,6 +37,12 @@ namespace Yi.Framework.Rbac.Application.Services
         {
             var path = await GetReturnPathAsync(code, isThumbnail);
 
+            if (!File.Exists(path))
+            {
+                throw new UserFriendlyException("文件不存在",code:"404");
+            }
+            
+
             var steam = await File.ReadAllBytesAsync(path);
 
             //考虑从路径中获取

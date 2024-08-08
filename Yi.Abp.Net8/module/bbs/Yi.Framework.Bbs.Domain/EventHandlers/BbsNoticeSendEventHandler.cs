@@ -26,13 +26,13 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
         public async Task HandleEventAsync(BbsNoticeEventArgs eventData)
         {
             //离线存储
-            await _repository.InsertAsync(new BbsNoticeAggregateRoot(eventData.NoticeType, eventData.Message, eventData.AcceptUserId));
+           var entity= await _repository.InsertReturnEntityAsync(new BbsNoticeAggregateRoot(eventData.NoticeType, eventData.Message, eventData.AcceptUserId));
             switch (eventData.NoticeType)
             {
                 case Shared.Enums.NoticeTypeEnum.Personal:
                     if (BbsNoticeHub.HubUserModels.TryGetValue(eventData.AcceptUserId.ToString(), out var hubUserModel))
                     {
-                        _hubContext.Clients.Client(hubUserModel.ConnnectionId).SendAsync(NoticeTypeEnum.Personal.ToString(), eventData.Message);
+                        _hubContext.Clients.Client(hubUserModel.ConnnectionId).SendAsync(NoticeTypeEnum.Personal.ToString(), eventData.Message,entity.CreationTime);
                     }
                     break;
                 case Shared.Enums.NoticeTypeEnum.Broadcast:

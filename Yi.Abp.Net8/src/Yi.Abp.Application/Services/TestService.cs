@@ -57,6 +57,7 @@ namespace Yi.Abp.Application.Services
         {
             //魔改
             // 用户体验优先，万金油模式，支持高并发。支持单、多线程并发安全，支持多线程工作单元，支持多线程无工作单元，支持。。。
+            // 请注意，如果requiresNew: true只有在没有工作单元内使用，嵌套子工作单元，默认值false即可
             // 自动在各个情况处理db客户端最优解之一
             int i = 3;
             List<Task> tasks = new List<Task>();

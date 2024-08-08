@@ -11,9 +11,7 @@
         <el-menu-item index="1" @click="enterIndex">主页</el-menu-item>
 
         <el-menu-item index="2" @click="enterStart"
-        style="color: red;font-weight: bolder;font-size: large;"
-        
-        >开始</el-menu-item>
+          style="color: red;font-weight: bolder;font-size: large;">开始</el-menu-item>
 
         <el-sub-menu index="3">
           <template #title>学习</template>
@@ -61,7 +59,7 @@
 
       <div class="notice">
         <el-dropdown trigger="click" :max-height="500">
-          <el-badge v-if="noticeStore.noticeForNoReadCount>0" :value="noticeStore.noticeForNoReadCount">
+          <el-badge v-if="noticeStore.noticeForNoReadCount > 0" :value="noticeStore.noticeForNoReadCount">
             <el-button type="primary">
               <el-icon :size="15">
                 <Bell />
@@ -69,11 +67,11 @@
             </el-button>
           </el-badge>
 
-         <el-button v-else="noticeStore.noticeForNoReadCount" type="primary">
-              <el-icon :size="15">
-                <Bell />
-              </el-icon>
-            </el-button>
+          <el-button v-else="noticeStore.noticeForNoReadCount" type="primary">
+            <el-icon :size="15">
+              <Bell />
+            </el-icon>
+          </el-button>
 
 
           <template #dropdown>
@@ -84,20 +82,28 @@
                 <el-button type="warning" @click="hanldeReadClick">一键已读</el-button>
               </el-dropdown-item>
 
+              <el-scrollbar max-height="420px">
+              <el-dropdown-item class="notice-item" v-for="(item, index) in noticeList" :key="index">
 
-              <el-dropdown-item v-for="(item, index) in noticeList" :key="index">
-                <div v-if="item.isRead" class="notice-msg" v-html="item.message"></div>
+
+
+                <div v-if="item.isRead" class="notice-msg" style="background-color: #f7f7f7;">
+                  <span class="notice-time">[已读]通知时间： {{ dayjs(item.creationTime).format('YYYY年M月D日 HH时mm分ss秒') }}</span>
+                  <div v-html="item.message"></div>
+                </div>
 
                 <el-badge is-dot v-else >
+
+                  <span class="notice-time">[未读]通知时间： {{ dayjs(item.creationTime).format('YYYY年M月D日 HH时mm分ss秒') }}</span>
                   <div class="notice-msg" v-html="item.message"></div>
                 </el-badge>
-         
-           
+
+
               </el-dropdown-item>
+              </el-scrollbar>
 
 
 
-     
             </el-dropdown-menu>
           </template>
 
@@ -118,6 +124,7 @@
   </div>
 </template>
 <script setup>
+import { dayjs } from 'element-plus'
 import { Bell } from '@element-plus/icons-vue'
 import AvatarInfo from "@/components/AvatarInfo.vue";
 import { computed, onMounted, ref } from "vue";
@@ -141,15 +148,15 @@ const userStore = useUserStore();
 const { money } = storeToRefs(userStore)
 const activeIndex = ref("1");
 const searchText = ref("");
-const noticeForNoReadCount=computed(()=>{
- return noticeList.value.filter(x => x.isRead ==false).length;
+const noticeForNoReadCount = computed(() => {
+  return noticeList.value.filter(x => x.isRead == false).length;
 })
 //加载初始化离线消息
 onMounted(async () => {
   await fetchNoticeData();
 })
 const fetchNoticeData = async () => {
-  const { data } = await getNoticeList({maxResultCount:20});
+  const { data } = await getNoticeList({ maxResultCount: 20 });
   noticeStore.setNotices(data.items);
 }
 
@@ -200,18 +207,18 @@ const handleGithubClick = () => {
   window.open("https://github.com/ccnetcore/Yi.Abp.Admin");
 };
 ///一键已读
-const hanldeReadClick=async ()=>{
+const hanldeReadClick = async () => {
 
- await noticeRead();
- await fetchNoticeData();
+  await noticeRead();
+  await fetchNoticeData();
 
- ElMessage({
-        message: `全部已读`,
-        type: "success",
-      });
+  ElMessage({
+    message: `全部已读`,
+    type: "success",
+  });
 }
 
-const enterStart=()=>{
+const enterStart = () => {
   router.push("/start");
 }
 
@@ -219,10 +226,17 @@ const enterStart=()=>{
 
 
 <style scoped lang="scss">
+.notice-item{
+  padding: 10px 0px 30px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.notice-time{
+  font-size: larger;
+}
 .money {
 
   font-size: small;
-  color: #FED055;
+  color: #ff0000;
   margin: 0 5px;
 
   span {
@@ -302,11 +316,13 @@ const enterStart=()=>{
 
 .notice {
   margin: 0 5px;
+
   &-oper {
-display: flex;
-justify-content: space-between;
-width: 100%;
-}
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   &-msg {
     white-space: wrap !important;
     width: 400px;

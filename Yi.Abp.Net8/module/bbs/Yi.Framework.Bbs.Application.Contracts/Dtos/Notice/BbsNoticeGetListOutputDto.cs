@@ -32,6 +32,6 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Notice
         /// <summary>
         /// 消息创建时间
         /// </summary>
-        public DateTime CreationTime { get; }
+        public DateTime CreationTime { get; set; }
     }
 }

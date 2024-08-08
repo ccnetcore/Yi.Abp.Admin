@@ -38,6 +38,7 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
                    .Select((agree, discuss) =>
                    new
                    {
+                       DiscussId=discuss.Id,
                        DiscussTitle = discuss.Title,
                        DiscussCreatorId = discuss.CreatorId,
                    })
@@ -53,7 +54,7 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
                                         .ExecuteCommandAsync();
 
             //通知主题作者，有人点赞
-            await _localEventBus.PublishAsync(new BbsNoticeEventArgs(discussAndAgreeDto.DiscussCreatorId!.Value, string.Format(DiscussConst.AgreeNotice, discussAndAgreeDto.DiscussTitle, agreeUser.UserName)), false);
+            await _localEventBus.PublishAsync(new BbsNoticeEventArgs(discussAndAgreeDto.DiscussCreatorId!.Value, string.Format(DiscussConst.AgreeNotice, discussAndAgreeDto.DiscussTitle, agreeUser.UserName,discussAndAgreeDto.DiscussId)), false);
 
         }
     }

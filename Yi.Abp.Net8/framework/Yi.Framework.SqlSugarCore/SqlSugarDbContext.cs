@@ -150,7 +150,9 @@ namespace Yi.Framework.SqlSugarCore
             }
             if (IsMultiTenantFilterEnabled)
             {
-                sqlSugarClient.QueryFilter.AddTableFilter<IMultiTenant>(u => u.TenantId == CurrentTenant.Id);
+                //表达式不能放方法
+                Guid? tenantId = CurrentTenant?.Id;
+                sqlSugarClient.QueryFilter.AddTableFilter<IMultiTenant>(u => u.TenantId == tenantId);
             }
             CustomDataFilter(sqlSugarClient);
         }

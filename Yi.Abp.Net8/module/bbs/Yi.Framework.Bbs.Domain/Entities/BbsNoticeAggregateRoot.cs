@@ -34,6 +34,7 @@ namespace Yi.Framework.Bbs.Domain.Entities
         /// <summary>
         /// 消息,支持html
         /// </summary>
+        [SugarColumn(ColumnDataType = StaticConfig.CodeFirst_BigString)]
         public string Message { get; set; }
 
         /// <summary>

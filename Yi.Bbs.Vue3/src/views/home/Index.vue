@@ -2,18 +2,18 @@
   <div class="home-box">
     <el-row :gutter="20" class="top-div">
       <el-col :span="17">
-      <div class="chat-hub">  
-        <p @click="onClickToChatHub" >点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>
+        <div class="chat-hub">
+          <p @click="onClickToChatHub">点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>
         </div>
         <div class="scrollbar">
           <ScrollbarInfo />
         </div>
-     
+
         <el-row class="left-div">
           <el-col :span="8" v-for="i in plateList" :key="i.id" class="plate" :style="{
-            'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
-            'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
-          }">
+      'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
+      'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
+    }">
             <PlateCard :name="i.name" :introduction="i.introduction" :id="i.id" :isPublish="i.isDisableCreateDiscuss" />
           </el-col>
           <template v-if="isDiscussFinished">
@@ -77,20 +77,25 @@
           </div>
           <!-- 签到 -->
           <el-col :span="24">
-            <InfoCard header="每日签到">
+            <InfoCard header="活动">
               <template #content>
-                <div class="signIn">
-                  <div class="left">你好，很高兴今天又遇到你！</div>
-                  <div class="right">
-                    <div class="signIn-btn" @click="handleToSign">去签到</div>
-                  </div>
-                </div>
+                <div class="top">你好，很高兴今天又遇到你呀~</div>
+                <el-row class="active">
+             
+                  <el-col v-for="item in activeList" :span="6" @click="handleToRouter(item.path)">
+
+                    <el-icon color="#70aafb" size="30px" >
+                      <component :is="item.icon"></component>
+                    </el-icon>
+                    <span> {{item.name}}</span>
+                  </el-col>
+                </el-row>
               </template>
             </InfoCard>
           </el-col>
 
           <el-col :span="24">
-            <InfoCard header="访问统计" class="VisitsLineChart" text="(New)全站历史统计" @onClickText="onClickAccessLog">
+            <InfoCard header="访问统计" class="VisitsLineChart" text="全站历史统计" @onClickText="onClickAccessLog">
               <template #content>
                 <VisitsLineChart :option="statisOptions" class="statisChart" />
               </template>
@@ -171,8 +176,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive, computed, nextTick, watch } from "vue";
-import { useRouter } from "vue-router";
+import {onMounted, ref, reactive, computed, nextTick, watch} from "vue";
+import {useRouter} from "vue-router";
 import DisscussCard from "@/components/DisscussCard.vue";
 import InfoCard from "@/components/InfoCard.vue";
 import PlateCard from "@/components/PlateCard.vue";
@@ -180,18 +185,18 @@ import ScrollbarInfo from "@/components/ScrollbarInfo.vue";
 import BottomInfo from "@/components/BottomInfo.vue";
 import VisitsLineChart from "./components/VisitsLineChart/index.vue";
 import AccessLogChart from "./components/AccessLogChart/Index.vue"
-import { access, getAccessList } from "@/apis/accessApi.js";
-import { getList } from "@/apis/plateApi.js";
-import { getList as bannerGetList } from "@/apis/bannerApi.js";
-import { getHomeDiscuss } from "@/apis/discussApi.js";
-import { getWeek } from "@/apis/accessApi.js";
+import {access, getAccessList} from "@/apis/accessApi.js";
+import {getList} from "@/apis/plateApi.js";
+import {getList as bannerGetList} from "@/apis/bannerApi.js";
+import {getHomeDiscuss} from "@/apis/discussApi.js";
+import {getWeek} from "@/apis/accessApi.js";
 import {
   getRecommendedTopic,
   getRecommendedFriend,
   getRankingPoints,
   getUserAnalyse,
 } from "@/apis/analyseApi.js";
-import { getList as getAllDiscussList } from "@/apis/discussApi.js";
+import {getList as getAllDiscussList} from "@/apis/discussApi.js";
 import PointsRanking from "./components/PointsRanking/index.vue";
 import RecommendFriend from "./components/RecommendFriend/index.vue";
 import ThemeData from "./components/RecommendTheme/index.vue";
@@ -219,6 +224,18 @@ const isAllDiscussFinished = ref(false);
 const userAnalyseInfo = ref({});
 const onlineNumber = ref(0);
 
+const activeList = [
+  {name: "签到", path: "/activity/sign", icon: "Present"},
+  {name: "等级", path: "/activity/level", icon: "Ticket"},
+  {name: "大转盘", path: "/activity/lucky", icon: "Sunny"},
+  {name: "银行", path: "/activity/bank", icon: "Money"},
+
+  {name: "任务", path: "/activity/sign", icon: "Memo"},
+  {name: "娱乐城", path: "/activity/sign", icon: "Sunrise"},
+  {name: "开始", path: "/start", icon: "Position"},
+  {name: "聊天室", path: "/chat", icon: "ChatRound"},
+];
+
 //主题查询参数
 const query = reactive({
   skipCount: 1,
@@ -229,34 +246,34 @@ const query = reactive({
 //初始化
 onMounted(async () => {
   access();
-  const { data: plateData } = await getList();
+  const {data: plateData} = await getList();
   plateList.value = plateData.items;
-  const { data: discussData, config: discussConfig } = await getHomeDiscuss();
+  const {data: discussData, config: discussConfig} = await getHomeDiscuss();
   discussList.value = discussData;
   isDiscussFinished.value = discussConfig.isFinish;
-  const { data: bannerData } = await bannerGetList();
+  const {data: bannerData} = await bannerGetList();
   bannerList.value = bannerData.items;
-  const { data: weekData } = await getWeek();
+  const {data: weekData} = await getWeek();
   weekList.value = weekData;
-  const { data: pointData, config: pointConfig } = await getRankingPoints();
+  const {data: pointData, config: pointConfig} = await getRankingPoints();
   pointList.value = pointData;
   isPointFinished.value = pointConfig.isFinish;
-  const { data: friendData, config: friendConfig } =
-    await getRecommendedFriend();
+  const {data: friendData, config: friendConfig} =
+      await getRecommendedFriend();
   friendList.value = friendData;
   isFriendFinished.value = friendConfig.isFinish;
-  const { data: themeData, config: themeConfig } = await getRecommendedTopic();
+  const {data: themeData, config: themeConfig} = await getRecommendedTopic();
   themeList.value = themeData;
   isThemeFinished.value = themeConfig.isFinish;
-  const { data: allDiscussData, config: allDiscussConfig } =
-    await getAllDiscussList({
-      Type: 0,
-      skipCount: 1,
-      maxResultCount: 30,
-    });
+  const {data: allDiscussData, config: allDiscussConfig} =
+      await getAllDiscussList({
+        Type: 0,
+        skipCount: 1,
+        maxResultCount: 30,
+      });
   isAllDiscussFinished.value = allDiscussConfig.isFinish;
   allDiscussList.value = allDiscussData.items;
-  const { data: userAnalyseInfoData } = await getUserAnalyse();
+  const {data: userAnalyseInfoData} = await getUserAnalyse();
   onlineNumber.value = userAnalyseInfoData.onlineNumber;
   userAnalyseInfo.value = userAnalyseInfoData;
 });
@@ -281,36 +298,36 @@ const statisOptions = computed(() => {
 const accessLogOptins = computed(() => {
   return {
     xAxis: {
-      data: accessAllList.value?.map((item,index)=>{
+      data: accessAllList.value?.map((item, index) => {
         return item.creationTime.slice(0, 10);
 
       })
     },
     series: [
       {
-        data: accessAllList.value?.map((item,index)=>{
-        return item.number;
+        data: accessAllList.value?.map((item, index) => {
+          return item.number;
         })
       }
     ]
   }
 });
-const onClickToChatHub=()=>{
+const onClickToChatHub = () => {
   router.push("/chat");
 };
 
-const handleToSign = () => {
-  router.push("/activity/sign");
+const handleToRouter = (path) => {
+  router.push(path);
 };
 
 // 推送的实时人数获取
 const currentOnlineNum = computed(() => useSocketStore().getOnlineNum());
 watch(
-  () => currentOnlineNum.value,
-  (val) => {
-    onlineNumber.value = val;
-  },
-  { deep: true }
+    () => currentOnlineNum.value,
+    (val) => {
+      onlineNumber.value = val;
+    },
+    {deep: true}
 );
 
 const onClickAccessLog = async () => {
@@ -422,12 +439,28 @@ const onClickAccessLog = async () => {
       }
     }
   }
-
-  .signIn {
+  .top{
+  text-align: center;
+    margin-bottom: 20px;
+}
+  .active {
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: #8a919f;
+
+
+    .el-col {
+      flex-direction: column;
+      align-items: center;
+      display: flex;
+      cursor: pointer; 
+      padding: 10px 0px;
+    }
+    .el-col:hover {
+    background-color: #cce1ff; /* 悬浮时背景色变化 */
+    color: #70aafb;           /* 悬浮时文字颜色变化 */
+}
 
     &-btn {
       cursor: pointer;
@@ -457,9 +490,9 @@ const onClickAccessLog = async () => {
     height: 500px;
   }
 }
+
 //走马灯，聊天室链接
-.chat-hub
-{
+.chat-hub {
   background-color: #E6A23C;
   color: #ffffff;
   margin-bottom: 10px;
@@ -467,22 +500,29 @@ const onClickAccessLog = async () => {
   overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
-  span{
-   color: red;
+
+  span {
+    color: red;
   }
+
   display: flex;
-    align-content: center;
-    flex-wrap: wrap;
+  align-content: center;
+  flex-wrap: wrap;
   height: 30px;
+
   p {
-    margin:0 auto ;
-    cursor:pointer;
-}
-}
- 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+    margin: 0 auto;
+    cursor: pointer;
+  }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
 </style>
