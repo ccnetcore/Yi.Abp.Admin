@@ -1,6 +1,6 @@
 <h1 align="center"><img align="left" height="150px" src="https://ccnetcore.com/prod-api/wwwroot/logo.png"> Yi框架</h1>
 <h4 align="center">一套以用户体验出发的.Net8 Web开源框架</h4>
-<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端后台接入Ruoyi Vue3.0</h5>
+<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端后台接入Ruoyi/Pure Vue3.0</h5>
 <h2 align="center">集大成者，终究轮子</h2>
 
 [![star](https://gitee.com/ccnetcore/yi/badge/star.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)
@@ -31,44 +31,45 @@ Yi框架-一套与SqlSugar一样爽的.Net8开源框架。
 
 > 核心特点：简单好用，框架不以打包形式引用，而是直接以项目附带源码给出，自由度拉满，遵循Mit协议，允许随意修改（请注明来源即可）
 
-**分支：**
+**分支目录：**
 
-- (推荐) **Abp**: 基于Abp.vNext分支，DDD领域驱动设计,回归开发本质，极度简单，用起来贼爽
+- 分支**Abp**: 基于Abp.vNext分支，DDD领域驱动设计,回归开发本质，极度简单，一个后台支持以下多个前端
 
--  **Furion**: 基于Furion分支
+- Yi.Abp.Net8：后端
+- Yi.Bbs.Vue3：Bbs社区 前端
+- Yi.Doc.Md: 开源文档教程
+- Yi.Pure.Vue3：Pure ts后台前端
+- Yi.RuoYi.Vue3：RuoYi js后台前端
 
 ****
 
-##  :tw-1f350:  官网及演示地址：
+##  🍊  官网及演示地址：
 
 废话少说直接上地址
 
-Yi社区官网网址：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
+Yi社区官网网址（Bbs社区正式）：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
 
-Rbac后台管理系统：已上线，暂不提供演示地址，可本地部署访问
+Rbac后台演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
 
-App移动端系统：已上线，暂不提供演示地址，可本地部署访问
+Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456）
 
-Rbac演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
-
-
-##  :tw-1f351:  支持:
+##  🍏  支持:
 
 - [x] 完全支持单体应用架构
 - [x] 完全支持分布式应用架构
 - [x] 完全支持微服务架构
 
 ****
-##  :tw-1f352:  详细到爆炸的Yi框架教程导航：
+##  🍇  详细到爆炸的Yi框架教程导航：
 
 1. [框架快速开始教程](https://ccnetcore.com/article/aaa00329-7f35-d3fe-d258-3a0f8380b742)(已完成)
 2. [框架功能模块教程](https://ccnetcore.com/article/8c464ab3-8ba5-2761-a4b0-3a0f83a9f312)(已完成)
-3. [实战演练开发教程](https://ccnetcore.com/article/e89c9593-f337-ada7-d108-3a0f83ae48e6)
+3. [实战演练开发教程](https://ccnetcore.com/article/e89c9593-f337-ada7-d108-3a0f83ae48e6)(已完成)
 4. [橙子运维CICD教程](https://ccnetcore.com/article/6b80ed42-50cd-db15-c073-3a0fa8f7fd77)(已完成)
 5. [版本更新日志](https://ccnetcore.com/article/e9e69a38-ce1e-06f5-7944-3a0fdc942ef3)(已完成)
 
 ****
-##  :tw-1f353:  它的理念:
+##  🍓  它的理念:
 谁说Abp复杂？谁说DDD难？打破常规，化繁为简，新人入门，项目二开，最佳方式之一
 
 > 一百个人，就有一百种DDD，Yi框架不一定是极度严格的DDD，而是站在巨人的肩膀上，经过极多项目的提炼，摸索出一种最佳实践
@@ -78,17 +79,17 @@ Rbac演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
 
 > 一个面向用户的快速开发后端框架
 
-在真正的使用这，你会明白这一点，极致的简单，也是优雅的一种体现。
+在真正的使用过，你会明白这一点，极致的简单，也是优雅的一种体现。
 ****
 
-##  :tw-1f354:  特点
+##  🍍  特点
 - 面向用户的后端框架，使用简单，适合小型、中型、企业级项目
 - 项目直接内置源码，不打包，非常适合进行二开改造
 - 内置包含大量通用场景模块
 - 优雅支持分布式及微服务架构
 - 等等
 
-##  :tw-1f340:  基础设施简介
+##  🫐  基础设施简介
 
 以下全部功能可直接使用：
 
@@ -96,14 +97,14 @@ Rbac演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
 
 - [SqlSugar官网](https://www.donet5.com/home/doc)
 
-##  :tw-1f341:  内置模块简介
-- Rbac权限管理系统（已上线）
+##  🍅  内置模块简介
+- Rbac权限管理系统（已上线）（支持pure、ruoyi前端）
 - Bbs论坛社区系统（已上线）
 
 > 重复的东西，无需再写一遍，这也是优雅的体现之一
 
 ****
-##  :tw-1f31e:  核心技术
+##  🥭  核心技术
 #### 后端
 C# Asp.NetCore 8.0
 - [x] 动态Api：Abp.vNext
@@ -120,7 +121,7 @@ C# Asp.NetCore 8.0
 - [x] 事件总线：Abp.vNext
 
 #### 前端
-js Vue3.2
+js Vue3
 - [x] 异步请求：axios
 - [x] 图表：echarts
 - [x] ui：element-plus
@@ -135,9 +136,9 @@ js Vue3.2
 
 
 ****
-##  :tw-1f366:  业务支持模块：  
+##  🍌  业务支持模块：  
 
-#### :tw-1f42f: RABC权限管理系统（持续更新）
+#### 🍒 RABC权限管理系统（持续更新）
 （采用ruoyi前端）
 - 用户管理
 - 角色管理
@@ -152,9 +153,8 @@ js Vue3.2
 - 定时任务
 - 缓存列表
 - 服务监控
-- WebFirst代码生成工具
 
-#### :tw-1f431: BBS社区论坛系统（持续更新）
+#### 🍐 BBS社区论坛系统（持续更新）
 （采用vue3前端）
 - 文章功能
 - 板块功能
@@ -163,7 +163,7 @@ js Vue3.2
 - 授权中心
 - 权限管理
 
-####  :star: 演示截图： 
+####  🍉 演示截图： 
  <table>
     <tr>
         <td><img src="readme/101.png"/></td>
@@ -174,7 +174,22 @@ js Vue3.2
         <td><img src="readme/104.png"/></td>
     </tr>
 </table>
- 
+
+ <table>
+    <tr>
+        <td><img src="readme/201.png"/></td>
+        <td><img src="readme/202.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="readme/203.png"/></td>
+        <td><img src="readme/204.png"/></td>
+    </tr>
+        <tr>
+        <td><img src="readme/205.png"/></td>
+        <td><img src="readme/206.png"/></td>
+    </tr>
+</table> 
+
  
 <table>
     <tr>
@@ -207,7 +222,7 @@ js Vue3.2
     </tr>
 </table>
 
-##  :tw-1f44f:  感谢：
+##  🌶  感谢：
 
 [橙子]https://ccnetcore.com
 
@@ -228,11 +243,13 @@ js Vue3.2
 [Furion百小僧]https://furion.baiqian.ltd/
 
 ****
-##  :tw-1f438: 联系我们：
+##  🌽 联系我们：
 
 作者QQ：`454313500`，2029年之前作者24小时在线，时刻保持活跃更新。
 
 QQ交流群：官方一群（已满）、官方二群（已满）、官方三群：`786308927`（已满）、官方四群:`498310311`（基本已满）、官方五群:`981136525`（新群）
+
+微信交流群：官方微信一群（已满）、官方微信二群
 
 微信交流群：加作者微信 chengzilaoge520 （橙子老哥520），备注拉群
 
@@ -241,7 +258,7 @@ QQ交流群：官方一群（已满）、官方二群（已满）、官方三群
 官方网址留言区：[ccnetcore.com](https://ccnetcore.com) 
 
 ****
-##  :tw-1f41e: FQA:
+##  🍄 FQA:
 
 前往官网查看留言区
 
