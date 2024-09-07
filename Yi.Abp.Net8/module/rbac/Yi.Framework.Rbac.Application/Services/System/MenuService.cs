@@ -28,6 +28,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
             var entities = await _repository._DbQueryable.WhereIF(!string.IsNullOrEmpty(input.MenuName), x => x.MenuName.Contains(input.MenuName!))
                         .WhereIF(input.State is not null, x => x.State == input.State)
+                        .Where(x=>x.MenuSource==input.MenuSource)
                         .OrderByDescending(x => x.OrderNum)
                         .ToListAsync();
             //.ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
@@ -44,6 +45,16 @@ namespace Yi.Framework.Rbac.Application.Services.System
             var entities = await _repository._DbQueryable.Where(m => SqlFunc.Subqueryable<RoleMenuEntity>().Where(rm => rm.RoleId == roleId && rm.MenuId == m.Id).Any()).ToListAsync();
 
             return await MapToGetListOutputDtosAsync(entities);
+        }
+
+        public override Task<MenuGetOutputDto> UpdateAsync(Guid id, MenuUpdateInputVo input)
+        {
+            return base.UpdateAsync(id, input);
+        }
+
+        public override Task<MenuGetOutputDto> CreateAsync(MenuCreateInputVo input)
+        {
+            return base.CreateAsync(input);
         }
     }
 }

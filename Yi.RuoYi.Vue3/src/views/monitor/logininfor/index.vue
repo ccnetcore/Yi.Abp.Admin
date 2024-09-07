@@ -181,9 +181,13 @@ function handleSelectionChange(selection) {
 }
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {
-  queryParams.value.orderByColumn = column.prop;
-  queryParams.value.isAsc = column.order;
-  getList();
+  if (!column.order) {
+       queryParams.value.orderByColumn = null;
+   } else {
+       queryParams.value.orderByColumn = column.prop;
+   }
+   queryParams.value.isAsc = column.order;
+   getList();
 }
 /** 删除按钮操作 */
 function handleDelete(row) {

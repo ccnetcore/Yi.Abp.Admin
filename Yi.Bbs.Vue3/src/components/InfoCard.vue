@@ -37,7 +37,14 @@ const onClickText=()=>{
 .el-divider {
   margin: 0.2rem 0;
 }
-
+.VisitsLineChart /deep/ .el-card__body{
+  padding: 0 20px;
+}
+ .box-card-info {
+  width: 100%;
+  height: v-bind(height);
+  padding-bottom: 10px;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -52,9 +59,4 @@ const onClickText=()=>{
   margin: 1rem 0;
 }
 
-.box-card {
-  width: 100%;
-  height: v-bind(height);
-  padding-bottom: 10px;
-}
 </style>

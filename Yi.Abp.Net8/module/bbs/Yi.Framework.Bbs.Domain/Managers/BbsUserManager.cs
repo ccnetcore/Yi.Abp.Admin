@@ -14,33 +14,35 @@ namespace Yi.Framework.Bbs.Domain.Managers
     {
         public ISqlSugarRepository<UserAggregateRoot> _userRepository;
         public ISqlSugarRepository<BbsUserExtraInfoEntity> _bbsUserInfoRepository;
-        public Dictionary<int,LevelCacheItem> _levelCacheDic;
+        public Dictionary<int, LevelCacheItem> _levelCacheDic;
+
         public BbsUserManager(ISqlSugarRepository<UserAggregateRoot> userRepository,
             ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository,
-            IDistributedCache<List<LevelCacheItem>> levelCache
-            )
+            LevelManager levelManager
+        )
         {
             _userRepository = userRepository;
             _bbsUserInfoRepository = bbsUserInfoRepository;
-            _levelCacheDic = levelCache.Get(LevelConst.LevelCacheKey).ToDictionary(x => x.CurrentLevel);
+            _levelCacheDic = levelManager.GetCacheMapAsync().Result;
         }
 
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
         {
-            var userInfo = await _userRepository._DbQueryable.LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto
-                     {
-                         Id = user.Id,
-                         Icon = user.Icon,
-                         Level = info.Level,
-                         UserLimit = info.UserLimit,
-                         Money = info.Money,
-                         Experience = info.Experience,
-                         AgreeNumber = info.AgreeNumber,
-                         CommentNumber = info.CommentNumber,
-                         DiscussNumber = info.DiscussNumber
-                     }, true)
-                     .FirstAsync(user => user.Id == userId);
+            var userInfo = await _userRepository._DbQueryable
+                .LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
+                .Select((user, info) => new BbsUserInfoDto
+                {
+                    Id = user.Id,
+                    Icon = user.Icon,
+                    Level = info.Level,
+                    UserLimit = info.UserLimit,
+                    Money = info.Money,
+                    Experience = info.Experience,
+                    AgreeNumber = info.AgreeNumber,
+                    CommentNumber = info.CommentNumber,
+                    DiscussNumber = info.DiscussNumber
+                }, true)
+                .FirstAsync(user => user.Id == userId);
 
             userInfo.LevelName = _levelCacheDic[userInfo.Level].Name;
             return userInfo;
@@ -48,26 +50,25 @@ namespace Yi.Framework.Bbs.Domain.Managers
 
         public async Task<List<BbsUserInfoDto>> GetBbsUserInfoAsync(List<Guid> userIds)
         {
-            var userInfos= await _userRepository._DbQueryable
-                     .Where(user => userIds.Contains(user.Id))
+            var userInfos = await _userRepository._DbQueryable
+                .Where(user => userIds.Contains(user.Id))
                 .LeftJoin<BbsUserExtraInfoEntity>((user, info) => user.Id == info.UserId)
-                     .Select((user, info) => new BbsUserInfoDto
-                     {
-                         Id = user.Id,
-                         Icon = user.Icon,
-                         Level = info.Level,
-                         UserLimit = info.UserLimit,
-                         Money = info.Money,
-                         Experience = info.Experience,
-                         AgreeNumber = info.AgreeNumber,
-                         CommentNumber = info.CommentNumber,
-                         DiscussNumber = info.DiscussNumber
-                     }, true)
-
-                     .ToListAsync();
+                .Select((user, info) => new BbsUserInfoDto
+                {
+                    Id = user.Id,
+                    Icon = user.Icon,
+                    Level = info.Level,
+                    UserLimit = info.UserLimit,
+                    Money = info.Money,
+                    Experience = info.Experience,
+                    AgreeNumber = info.AgreeNumber,
+                    CommentNumber = info.CommentNumber,
+                    DiscussNumber = info.DiscussNumber
+                }, true)
+                .ToListAsync();
             userInfos?.ForEach(userInfo => userInfo.LevelName = _levelCacheDic[userInfo.Level].Name);
-        
-            return userInfos??new List<BbsUserInfoDto>();
+
+            return userInfos ?? new List<BbsUserInfoDto>();
         }
     }
 
@@ -128,6 +129,5 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// 被点赞数
         /// </summary>
         public int AgreeNumber { get; set; }
-
     }
 }

@@ -3,13 +3,17 @@ using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
+using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.AntiForgery;
+using Volo.Abp.AspNetCore.Mvc.ExceptionHandling;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
@@ -24,7 +28,9 @@ using Yi.Framework.AspNetCore.Authentication.OAuth.Gitee;
 using Yi.Framework.AspNetCore.Authentication.OAuth.QQ;
 using Yi.Framework.AspNetCore.Microsoft.AspNetCore.Builder;
 using Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection;
+using Yi.Framework.AspNetCore.UnifyResult;
 using Yi.Framework.Bbs.Application;
+using Yi.Framework.Bbs.Application.Extensions;
 using Yi.Framework.ChatHub.Application;
 using Yi.Framework.CodeGen.Application;
 using Yi.Framework.Rbac.Application;
@@ -38,8 +44,6 @@ namespace Yi.Abp.Web
     [DependsOn(
         typeof(YiAbpSqlSugarCoreModule),
         typeof(YiAbpApplicationModule),
-
-
         typeof(AbpAspNetCoreMultiTenancyModule),
         typeof(AbpAspNetCoreMvcModule),
         typeof(AbpAutofacModule),
@@ -49,11 +53,11 @@ namespace Yi.Abp.Web
         typeof(AbpAspNetCoreAuthenticationJwtBearerModule),
         typeof(YiFrameworkAspNetCoreModule),
         typeof(YiFrameworkAspNetCoreAuthenticationOAuthModule)
-
-        )]
+    )]
     public class YiAbpWebModule : AbpModule
     {
         private const string DefaultCorsPolicyName = "Default";
+
         public override Task ConfigureServicesAsync(ServiceConfigurationContext context)
         {
             var configuration = context.Services.GetConfiguration();
@@ -68,15 +72,28 @@ namespace Yi.Abp.Web
                 optios.AlwaysLogSelectors.Add(x => Task.FromResult(true));
             });
 
+            //采用furion格式的规范化api，默认不开启，使用abp优雅的方式
+            //你没看错。。。
+            //service.AddFurionUnifyResultApi();
+
+            //配置错误处理显示详情
+            Configure<AbpExceptionHandlingOptions>(options => { options.SendExceptionsDetailsToClients = true; });
+
             //动态Api
             Configure<AbpAspNetCoreMvcOptions>(options =>
             {
-                options.ConventionalControllers.Create(typeof(YiAbpApplicationModule).Assembly, options => options.RemoteServiceName = "default");
-                options.ConventionalControllers.Create(typeof(YiFrameworkRbacApplicationModule).Assembly, options => options.RemoteServiceName = "rbac");
-                options.ConventionalControllers.Create(typeof(YiFrameworkBbsApplicationModule).Assembly, options => options.RemoteServiceName = "bbs");
-                options.ConventionalControllers.Create(typeof(YiFrameworkChatHubApplicationModule).Assembly, options => options.RemoteServiceName = "chat-hub");
-                options.ConventionalControllers.Create(typeof(YiFrameworkTenantManagementApplicationModule).Assembly, options => options.RemoteServiceName = "tenant-management");
-                options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly, options => options.RemoteServiceName = "code-gen");
+                options.ConventionalControllers.Create(typeof(YiAbpApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "default");
+                options.ConventionalControllers.Create(typeof(YiFrameworkRbacApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "rbac");
+                options.ConventionalControllers.Create(typeof(YiFrameworkBbsApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "bbs");
+                options.ConventionalControllers.Create(typeof(YiFrameworkChatHubApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "chat-hub");
+                options.ConventionalControllers.Create(typeof(YiFrameworkTenantManagementApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "tenant-management");
+                options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "code-gen");
 
                 //统一前缀
                 options.ConventionalControllers.ConventionalControllerSettings.ForEach(x => x.RootPath = "api/app");
@@ -91,22 +108,20 @@ namespace Yi.Abp.Web
 
             //设置缓存不要过期，默认滑动20分钟
             Configure<AbpDistributedCacheOptions>(cacheOptions =>
-             {
-                 cacheOptions.GlobalCacheEntryOptions.SlidingExpiration = null;
-                 //缓存key前缀
-                 cacheOptions.KeyPrefix = "Yi:";
-             });
-
-
-            Configure<AbpAntiForgeryOptions>(options =>
             {
-                options.AutoValidate = false;
+                cacheOptions.GlobalCacheEntryOptions.SlidingExpiration = null;
+                //缓存key前缀
+                cacheOptions.KeyPrefix = "Yi:";
             });
+
+
+            Configure<AbpAntiForgeryOptions>(options => { options.AutoValidate = false; });
 
             //Swagger
             context.Services.AddYiSwaggerGen<YiAbpWebModule>(options =>
             {
-                options.SwaggerDoc("default", new OpenApiInfo { Title = "Yi.Framework.Abp", Version = "v1", Description = "集大成者" });
+                options.SwaggerDoc("default",
+                    new OpenApiInfo { Title = "Yi.Framework.Abp", Version = "v1", Description = "集大成者" });
             });
 
             //跨域
@@ -145,7 +160,7 @@ namespace Yi.Abp.Web
             //每60秒限制100个请求，滑块添加，分6段
             service.AddRateLimiter(_ =>
             {
-                _.RejectionStatusCode = StatusCodes.Status429TooManyRequests; 
+                _.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
                 _.OnRejected = (context, _) =>
                 {
                     if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
@@ -153,6 +168,7 @@ namespace Yi.Abp.Web
                         context.HttpContext.Response.Headers.RetryAfter =
                             ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
                     }
+
                     context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                     context.HttpContext.Response.WriteAsync("Too many requests. Please try again later.");
 
@@ -161,20 +177,20 @@ namespace Yi.Abp.Web
 
                 //全局使用，链式表达式
                 _.GlobalLimiter = PartitionedRateLimiter.CreateChained(
-                   PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-                   {
-                       var userAgent = httpContext.Request.Headers.UserAgent.ToString();
+                    PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                    {
+                        var userAgent = httpContext.Request.Headers.UserAgent.ToString();
 
-                       return RateLimitPartition.GetSlidingWindowLimiter
-                       (userAgent, _ =>
-                           new SlidingWindowRateLimiterOptions
-                           {
-                               PermitLimit = 1000,
-                               Window = TimeSpan.FromSeconds(60),
-                               SegmentsPerWindow = 6,
-                               QueueProcessingOrder = QueueProcessingOrder.OldestFirst
-                           });
-                   }));
+                        return RateLimitPartition.GetSlidingWindowLimiter
+                        (userAgent, _ =>
+                            new SlidingWindowRateLimiterOptions
+                            {
+                                PermitLimit = 1000,
+                                Window = TimeSpan.FromSeconds(60),
+                                SegmentsPerWindow = 6,
+                                QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                            });
+                    }));
             });
 
 
@@ -196,14 +212,15 @@ namespace Yi.Abp.Web
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-                        if (!string.IsNullOrEmpty(accessToken))
                         {
-                            context.Token = accessToken;
+                            var accessToken = context.Request.Query["access_token"];
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
                         }
-                        return Task.CompletedTask;
-                    }
                     };
                 })
                 .AddJwtBearer(TokenTypeConst.Refresh, options =>
@@ -214,37 +231,32 @@ namespace Yi.Abp.Web
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = refreshJwtOptions.Issuer,
                         ValidAudience = refreshJwtOptions.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshJwtOptions.SecurityKey))
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(refreshJwtOptions.SecurityKey))
                     };
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
-                    {
-                        var refresh_token = context.Request.Headers["refresh_token"];
-                        if (!string.IsNullOrEmpty(refresh_token))
                         {
-                            context.Token = refresh_token;
+                            var refresh_token = context.Request.Headers["refresh_token"];
+                            if (!string.IsNullOrEmpty(refresh_token))
+                            {
+                                context.Token = refresh_token;
+                                return Task.CompletedTask;
+                            }
+
+                            var refreshToken = context.Request.Query["refresh_token"];
+                            if (!string.IsNullOrEmpty(refreshToken))
+                            {
+                                context.Token = refreshToken;
+                            }
+
                             return Task.CompletedTask;
                         }
-                        var refreshToken = context.Request.Query["refresh_token"];
-                        if (!string.IsNullOrEmpty(refreshToken))
-                        {
-                            context.Token = refreshToken;
-                        }
-
-                        return Task.CompletedTask;
-                    }
                     };
-
                 })
-                .AddQQ(options =>
-                {
-                    configuration.GetSection("OAuth:QQ").Bind(options);
-                })
-                .AddGitee(options =>
-                {
-                    configuration.GetSection("OAuth:Gitee").Bind(options);
-                });
+                .AddQQ(options => { configuration.GetSection("OAuth:QQ").Bind(options); })
+                .AddGitee(options => { configuration.GetSection("OAuth:Gitee").Bind(options); });
 
             //授权
             context.Services.AddAuthorization();
@@ -284,6 +296,9 @@ namespace Yi.Abp.Web
             //swagger
             app.UseYiSwagger();
 
+            //流量访问统计,需redis支持，否则不生效
+            app.UseAccessLog();
+
             //请求处理
             app.UseYiApiHandlinge();
 
@@ -292,6 +307,8 @@ namespace Yi.Abp.Web
             app.UseDefaultFiles();
             app.UseDirectoryBrowser("/api/app/wwwroot");
 
+
+            // app.Properties.Add("_AbpExceptionHandlingMiddleware_Added",false);
             //工作单元
             app.UseUnitOfWork();
 

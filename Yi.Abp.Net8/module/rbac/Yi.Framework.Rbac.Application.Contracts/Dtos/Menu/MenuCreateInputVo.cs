@@ -24,5 +24,7 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Menu
         public string? Component { get; set; }
         public string? Query { get; set; }
         public int OrderNum { get; set; }
+        public MenuSourceEnum MenuSource { get; set; } = MenuSourceEnum.Ruoyi;
+        public string? RouterName { get; set; }
     }
 }

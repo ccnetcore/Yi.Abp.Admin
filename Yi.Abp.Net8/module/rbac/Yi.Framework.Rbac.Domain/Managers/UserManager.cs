@@ -162,14 +162,23 @@ namespace Yi.Framework.Rbac.Domain.Managers
         }
 
         /// <summary>
-        /// 查询用户信息，已缓存
+        /// 查询用户信息，取消缓存
         /// </summary>
         /// <returns></returns>
         public async Task<UserRoleMenuDto> GetInfoAsync(Guid userId)
         {
-
-            var output = await GetInfoByCacheAsync(userId);
-            return output;
+            var user = await _userRepository.GetUserAllInfoAsync(userId);
+            var data = EntityMapToDto(user);
+            //系统用户数据被重置，老前端访问重新授权
+            if (data is null)
+            {
+                throw new AbpAuthorizationException();
+            }
+            //data.Menus.Clear();
+            // output = data;
+            return data;
+            // var output = await GetInfoByCacheAsync(userId);
+            // return output;
         }
         private async Task<UserRoleMenuDto> GetInfoByCacheAsync(Guid userId)
         {
@@ -222,10 +231,11 @@ namespace Yi.Framework.Rbac.Domain.Managers
 
             var userRoleMenu = new UserRoleMenuDto();
             //首先获取到该用户全部信息，导航到角色、菜单，(菜单需要去重,完全交给Set来处理即可)
-            //if (user is null)
-            //{
-            //    throw new UserFriendlyException($"数据错误，用户id：{nameof(userId)} 不存在，请重新登录");
-            //}
+            if (user is null)
+            {
+                //为了解决token前端缓存，后端数据库重新dbseed
+                throw new UserFriendlyException($"数据错误，查询用户不存在，请重新登录");
+            }
             user.EncryPassword.Password = string.Empty;
             user.EncryPassword.Salt = string.Empty;
 

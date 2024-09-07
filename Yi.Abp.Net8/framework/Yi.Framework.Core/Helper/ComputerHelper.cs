@@ -94,7 +94,7 @@ namespace Yi.Framework.Core.Helper
                 memoryMetrics.UsedRam = Math.Round(memoryMetrics.Used / 1024, 2) + "GB";
                 memoryMetrics.TotalRAM = Math.Round(memoryMetrics.Total / 1024, 2) + "GB";
                 memoryMetrics.RAMRate = Math.Ceiling(100 * memoryMetrics.Used / memoryMetrics.Total).ToString() + "%";
-                memoryMetrics.CPURate = Math.Ceiling(ParseToDouble(GetCPURate())) + "%";
+                memoryMetrics.CPURate = Math.Ceiling(ParseToDouble(GetCPURate()));
                 return memoryMetrics;
             }
             catch (Exception ex)
@@ -239,7 +239,7 @@ namespace Yi.Framework.Core.Helper
         /// <summary>
         /// CPU使用率%
         /// </summary>
-        public string CPURate { get; set; }
+        public double CPURate { get; set; }
         /// <summary>
         /// 总内存 GB
         /// </summary>

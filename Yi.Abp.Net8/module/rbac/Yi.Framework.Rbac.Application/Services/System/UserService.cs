@@ -6,6 +6,8 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Caching;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Users;
+using Yi.Framework.Bbs.Domain.Shared.Enums;
+using Yi.Framework.Bbs.Domain.Shared.Etos;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.User;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
@@ -24,13 +26,20 @@ namespace Yi.Framework.Rbac.Application.Services.System
     /// <summary>
     /// User服务实现
     /// </summary>
-    public class UserService : YiCrudAppService<UserAggregateRoot, UserGetOutputDto, UserGetListOutputDto, Guid, UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>, IUserService
+    public class UserService : YiCrudAppService<UserAggregateRoot, UserGetOutputDto, UserGetListOutputDto, Guid,
+        UserGetListInputVo, UserCreateInputVo, UserUpdateInputVo>, IUserService
     //IUserService
     {
-        public UserService(ISqlSugarRepository<UserAggregateRoot, Guid> repository, UserManager userManager, IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService, ILocalEventBus localEventBus, IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
+        protected ILocalEventBus LocalEventBus => LazyServiceProvider.LazyGetRequiredService<ILocalEventBus>();
+
+        public UserService(ISqlSugarRepository<UserAggregateRoot, Guid> repository, UserManager userManager,
+            IUserRepository userRepository, ICurrentUser currentUser, IDeptService deptService,
+            ILocalEventBus localEventBus,
+            IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> userCache) : base(repository)
             =>
-            (_userManager, _userRepository, _currentUser, _deptService, _repository, _localEventBus) =
-            (userManager, userRepository, currentUser, deptService, repository, localEventBus);
+                (_userManager, _userRepository, _currentUser, _deptService, _repository, _localEventBus) =
+                (userManager, userRepository, currentUser, deptService, repository, localEventBus);
+
         private UserManager _userManager { get; set; }
         private ISqlSugarRepository<UserAggregateRoot, Guid> _repository;
         private IUserRepository _userRepository { get; set; }
@@ -39,6 +48,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         private ICurrentUser _currentUser { get; set; }
 
         private ILocalEventBus _localEventBus;
+
         /// <summary>
         /// 查询用户
         /// </summary>
@@ -56,22 +66,21 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
 
             List<Guid> ids = input.Ids?.Split(",").Select(x => Guid.Parse(x)).ToList();
-            var outPut = await _repository._DbQueryable.WhereIF(!string.IsNullOrEmpty(input.UserName), x => x.UserName.Contains(input.UserName!))
-                         .WhereIF(input.Phone is not null, x => x.Phone.ToString()!.Contains(input.Phone.ToString()!))
-                          .WhereIF(!string.IsNullOrEmpty(input.Name), x => x.Name!.Contains(input.Name!))
-                          .WhereIF(input.State is not null, x => x.State == input.State)
-                          .WhereIF(input.StartTime is not null && input.EndTime is not null, x => x.CreationTime >= input.StartTime && x.CreationTime <= input.EndTime)
+            var outPut = await _repository._DbQueryable.WhereIF(!string.IsNullOrEmpty(input.UserName),
+                    x => x.UserName.Contains(input.UserName!))
+                .WhereIF(input.Phone is not null, x => x.Phone.ToString()!.Contains(input.Phone.ToString()!))
+                .WhereIF(!string.IsNullOrEmpty(input.Name), x => x.Name!.Contains(input.Name!))
+                .WhereIF(input.State is not null, x => x.State == input.State)
+                .WhereIF(input.StartTime is not null && input.EndTime is not null,
+                    x => x.CreationTime >= input.StartTime && x.CreationTime <= input.EndTime)
 
-                          //这个为过滤当前部门，加入数据权限后，将由数据权限控制
-                          .WhereIF(input.DeptId is not null, x => deptIds.Contains(x.DeptId ?? Guid.Empty))
-
-                          .WhereIF(ids is not null, x => ids.Contains(x.Id))
-
-
-                          .LeftJoin<DeptAggregateRoot>((user, dept) => user.DeptId == dept.Id)
-                          .OrderByDescending(user => user.CreationTime)
-                          .Select((user, dept) => new UserGetListOutputDto(), true)
-                          .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
+                //这个为过滤当前部门，加入数据权限后，将由数据权限控制
+                .WhereIF(input.DeptId is not null, x => deptIds.Contains(x.DeptId ?? Guid.Empty))
+                .WhereIF(ids is not null, x => ids.Contains(x.Id))
+                .LeftJoin<DeptAggregateRoot>((user, dept) => user.DeptId == dept.Id)
+                .OrderByDescending(user => user.CreationTime)
+                .Select((user, dept) => new UserGetListOutputDto(), true)
+                .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
 
             var result = new PagedResultDto<UserGetListOutputDto>();
             result.Items = outPut;
@@ -96,7 +105,6 @@ namespace Yi.Framework.Rbac.Application.Services.System
         [Permission("system:user:add")]
         public async override Task<UserGetOutputDto> CreateAsync(UserCreateInputVo input)
         {
-
             var entitiy = await MapToEntityAsync(input);
 
             await _userManager.CreateAsync(entitiy);
@@ -122,7 +130,8 @@ namespace Yi.Framework.Rbac.Application.Services.System
         public override async Task<UserGetOutputDto> GetAsync(Guid id)
         {
             //使用导航树形查询
-            var entity = await _repository._DbQueryable.Includes(u => u.Roles).Includes(u => u.Posts).Includes(u => u.Dept).InSingleAsync(id);
+            var entity = await _repository._DbQueryable.Includes(u => u.Roles).Includes(u => u.Posts)
+                .Includes(u => u.Dept).InSingleAsync(id);
 
             return await MapToGetOutputDtoAsync(entity);
         }
@@ -141,10 +150,12 @@ namespace Yi.Framework.Rbac.Application.Services.System
             {
                 throw new UserFriendlyException(UserConst.Name_Not_Allowed);
             }
+
             if (await _repository.IsAnyAsync(u => input.UserName!.Equals(u.UserName) && !id.Equals(u.Id)))
             {
                 throw new UserFriendlyException("用户已经存在，更新失败");
             }
+
             var entity = await _repository.GetByIdAsync(id);
             //更新密码，特殊处理
             if (input.Password is not null)
@@ -152,6 +163,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
                 entity.EncryPassword.Password = input.Password;
                 entity.BuildPassword();
             }
+
             await MapToEntityAsync(input, entity);
 
             var res1 = await _repository.UpdateAsync(entity);
@@ -173,6 +185,14 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
             await _repository.UpdateAsync(entity);
             var dto = await MapToGetOutputDtoAsync(entity);
+            //发布更新昵称任务事件
+            if (input.Nick != entity.Icon)
+            {
+                await this.LocalEventBus.PublishAsync(
+                    new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateNick, _currentUser.GetId(), input.Nick),
+                    false);
+            }
+
             return dto;
         }
 
@@ -192,15 +212,16 @@ namespace Yi.Framework.Rbac.Application.Services.System
             {
                 throw new ApplicationException("用户未存在");
             }
+
             entity.State = state;
             await _repository.UpdateAsync(entity);
             return await MapToGetOutputDtoAsync(entity);
         }
+
         [OperLog("删除用户", OperEnum.Delete)]
         [Permission("system:user:delete")]
         public override async Task DeleteAsync(Guid id)
         {
-
             await base.DeleteAsync(id);
         }
 

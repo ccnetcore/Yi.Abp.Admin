@@ -1,4 +1,7 @@
 export const accessLogEchartsConfig = {
+  tooltip: {
+    trigger: 'axis'
+  },
   xAxis: {
     type: 'category',
     boundaryGap: false,

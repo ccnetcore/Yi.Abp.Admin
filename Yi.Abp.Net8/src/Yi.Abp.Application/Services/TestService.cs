@@ -40,6 +40,17 @@ namespace Yi.Abp.Application.Services
         }
 
         /// <summary>
+        /// 异常处理
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("error")]
+        public string GetError()
+        {
+            throw new UserFriendlyException("业务异常");
+            throw new Exception("系统异常");
+        }
+        
+        /// <summary>
         /// SqlSugar
         /// </summary>
         /// <returns></returns>

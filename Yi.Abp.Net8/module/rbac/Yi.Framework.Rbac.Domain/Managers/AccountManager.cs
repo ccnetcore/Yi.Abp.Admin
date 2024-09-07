@@ -34,13 +34,11 @@ namespace Yi.Framework.Rbac.Domain.Managers
         private readonly ILocalEventBus _localEventBus;
         private readonly JwtOptions _jwtOptions;
         private readonly RbacOptions _options;
-        private IHttpContextAccessor _httpContextAccessor;
         private UserManager _userManager;
         private ISqlSugarRepository<RoleAggregateRoot> _roleRepository;
         private RefreshJwtOptions _refreshJwtOptions;
 
         public AccountManager(IUserRepository repository
-            , IHttpContextAccessor httpContextAccessor
             , IOptions<JwtOptions> jwtOptions
             , ILocalEventBus localEventBus
             , UserManager userManager
@@ -49,7 +47,6 @@ namespace Yi.Framework.Rbac.Domain.Managers
             , IOptions<RbacOptions> options)
         {
             _repository = repository;
-            _httpContextAccessor = httpContextAccessor;
             _jwtOptions = jwtOptions.Value;
             _localEventBus = localEventBus;
             _userManager = userManager;
@@ -62,9 +59,10 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// 根据用户id获取token
         /// </summary>
         /// <param name="userId"></param>
+        /// <param name="getUserInfo"></param>
         /// <returns></returns>
         /// <exception cref="UserFriendlyException"></exception>
-        public async Task<string> GetTokenByUserIdAsync(Guid userId)
+        public async Task<string> GetTokenByUserIdAsync(Guid userId,Action<UserRoleMenuDto>? getUserInfo=null)
         {
             //获取用户信息
             var userInfo = await _userManager.GetInfoAsync(userId);
@@ -79,23 +77,18 @@ namespace Yi.Framework.Rbac.Domain.Managers
             {
                 throw new UserFriendlyException(UserConst.No_Role);
             }
-            if (userInfo.PermissionCodes.Count() == 0)
+            if (!userInfo.PermissionCodes.Any())
             {
                 throw new UserFriendlyException(UserConst.No_Permission);
             }
-            //这里抛出一个登录的事件,也可以在全部流程走完，在应用层组装
-            if (_httpContextAccessor.HttpContext is not null)
+
+            if (getUserInfo is not null)
             {
-                var loginEntity = new LoginLogAggregateRoot().GetInfoByHttpContext(_httpContextAccessor.HttpContext);
-                var loginEto = loginEntity.Adapt<LoginEventArgs>();
-                loginEto.UserName = userInfo.User.UserName;
-                loginEto.UserId = userInfo.User.Id;
-                await _localEventBus.PublishAsync(loginEto);
+                getUserInfo(userInfo);
             }
+            
             var accessToken = CreateToken(this.UserInfoToClaim(userInfo));
             //将用户信息添加到缓存中，需要考虑的是更改了用户、角色、菜单等整个体系都需要将缓存进行刷新，看具体业务进行选择
-
-
             return accessToken;
         }
 

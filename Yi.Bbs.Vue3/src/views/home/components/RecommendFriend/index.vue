@@ -9,27 +9,27 @@
           <el-tooltip
             class="box-item"
             effect="dark"
-            :content="friendData.userName"
+            :content="friendData.nick"
             placement="top"
           >
-            {{ friendData.userName }}
+            {{ friendData.nick }}
           </el-tooltip>
         </div>
 
 
 
 
-        <el-tag effect="light" type="success"
+        <!-- <el-tag effect="light" type="success"
           >{{ friendData.level }}-{{friendData.levelName}} 等级</el-tag
-        >
+        > -->
 
         <UserLimitTag :userLimit="friendData.userLimit" />
       </div>
     </div>
     <div class="right">
       <div class="follow">
-        <el-icon class="el-icon--right"><Plus /></el-icon>
-        <div class="text">关注</div>
+       
+        <div class="follow-text"> <el-icon class="el-icon--right"><Plus /></el-icon>关注</div>
       </div>
     </div>
   </div>
@@ -86,7 +86,7 @@ const userImageSrc = computed(() => {
       display: flex;
       align-items: center;
       .name {
-        width: 50px;
+        width: 100px;
         color: #252933;
         margin-left: 5px;
         white-space: nowrap;
@@ -110,5 +110,10 @@ const userImageSrc = computed(() => {
       color: #1171ee;
     }
   }
+}
+.follow-text
+{
+  font-size: small;
+  cursor: pointer;
 }
 </style>

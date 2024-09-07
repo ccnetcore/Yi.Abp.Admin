@@ -106,6 +106,15 @@ const router = createRouter({
             title: "联系我们",
           },
         },
+
+        {
+          name:"money",
+          path:"/money",
+          component: () => import("../views/money/Index.vue"),
+          meta: {
+            title: "钱钱",
+          },
+        },
       ],
     },
     {
@@ -145,6 +154,14 @@ const router = createRouter({
           component: () => import("../views/bank/Index.vue"),
           meta: {
             title: "银行",
+          },
+        },
+        {
+          name: "assignment",
+          path: "assignment",
+          component: () => import("../views/assignment/Index.vue"),
+          meta: {
+            title: "任务",
           },
         },
       ],

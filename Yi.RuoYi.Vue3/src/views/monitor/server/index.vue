@@ -23,11 +23,11 @@
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">系统使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ Math.floor((server.cpu.used/server.cpu.total)*100)}}%</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.cpuRate}}%</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">当前空闲率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ Math.floor((server.cpu.free/server.cpu.total)*100) }}%</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ 100-server.cpu.cpuRate}}%</div></td>
                 </tr>
               </tbody>
             </table>

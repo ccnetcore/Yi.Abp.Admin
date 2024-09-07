@@ -12,14 +12,13 @@
           <div class="nick" :class="{ mt_1: props.time != 'undefined' }">
             <div class="text">{{ userInfo.nick }}</div>
             <div class="level">
-              <el-tag round effect="light" type="success" v-if="userInfo.level"
-                >{{ userInfo.level }}-{{userInfo.levelName}} 等级</el-tag
-              >
+              <el-tag round effect="light" type="success" v-if="userInfo.level">{{ userInfo.level
+                }}-{{ userInfo.levelName }} 等级</el-tag>
             </div>
             <div class="status" v-if="userInfo.userLimit">
 
-<UserLimitTag :userLimit="userInfo.userLimit"/>
-              
+              <UserLimitTag :userLimit="userInfo.userLimit" />
+
             </div>
           </div>
           <div class="remarks" v-if="props.time">{{ props.time }}</div>
@@ -32,13 +31,7 @@
         <el-tag class="ml-2" type="warning">V8</el-tag>
         <el-tag class="ml-2" type="danger">核心</el-tag>
       </div>
-      <el-button
-        v-if="props.showWatching"
-        type="primary"
-        size="small"
-        icon="Plus"
-        >关注</el-button
-      >
+      <el-button v-if="props.showWatching" type="primary" size="small" icon="Plus">关注</el-button>
     </div>
   </div>
 </template>
@@ -71,7 +64,7 @@ const userInfo = reactive({
   id: "",
   level: "",
   userLimit: "",
-  userName:""
+  userName: ""
 });
 const iconUrl = ref("/acquiesce.png");
 const iconUrlHandler = (icon) => {
@@ -109,11 +102,11 @@ const Init = () => {
     userInfo.nick = props.userInfo.nick;
     userInfo.role = props.userInfo.role;
     userInfo.id = props.userInfo.id;
-    userInfo.money=props.userInfo.money;
+    userInfo.money = props.userInfo.money;
     userInfo.level = props.userInfo.level;
     userInfo.userLimit = props.userInfo.userLimit;
-    userInfo.userName= props.userInfo.userName;
-    userInfo.levelName= props.userInfo.levelName;
+    userInfo.userName = props.userInfo.userName;
+    userInfo.levelName = props.userInfo.levelName;
     iconUrl.value = iconUrlHandler(userInfo.icon);
   }
 
@@ -154,6 +147,7 @@ const Init = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 
 .avatar-left,
@@ -161,15 +155,18 @@ const Init = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .content {
     margin-left: 10px;
   }
+
   .nick {
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-weight: bold;
-    > div {
+
+    >div {
       margin-right: 10px;
     }
   }
@@ -179,6 +176,7 @@ const Init = () => {
   display: flex;
   flex: 2;
 }
+
 .el-avatar {
   margin-right: 1rem;
   --el-avatar-bg-color: none;

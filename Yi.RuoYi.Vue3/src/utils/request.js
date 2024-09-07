@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ElNotification, ElMessageBox, ElMessage, ElLoading } from 'element-plus'
-import { getToken,getTenantId } from '@/utils/auth'
+import { getToken,setToken,setRefreshToken,getTenantId } from '@/utils/auth'
+import { refreshToken, isRefreshRequest } from './refreshToken.js'
 import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from '@/utils/ruoyi'
 import cache from '@/plugins/cache'
@@ -10,6 +11,8 @@ import JsonBig from 'json-bigint'
 import qs from 'qs'
 
 let downloadLoadingInstance;
+let isRefreshing = false;
+let waitRequests = [] // 请求队列
 // 是否显示重新登录
 export let isRelogin = { show: false };
 
@@ -22,21 +25,7 @@ const service = axios.create({
   timeout: 10000,
   //处理批零参数
   paramsSerializer:params => {
-    // return qs.stringify(params,{indices:false})
-  //  console.log(params,"params")
-//     if(params.id!=undefined)
-//     {
-//       if(Array.isArray(params.id) )
-//       {
-//         return "id="+params.id.join("&id=")
-//       }
-//       else
-//       {
-//         return "id="+params.id;
-//       }
-    
-//     }
-// return request.param(params);
+
 return qs.stringify(params, {arrayFormat: 'repeat'});
   },
 
@@ -126,16 +115,69 @@ service.interceptors.response.use(res => {
 
   // handler(code, msg);
   return Promise.resolve(res);
-},
-  error => {
+}, async function(error) {
+  console.log(error.response, "error")
+  const errorRes = error.response;
+  console.log('isRefreshingbefore',isRefreshing)
 
-    console.log(error.response,"error")
-    const errorRes=error.response;
-    const code = errorRes.status || 200;
-    const msg = `${errorRes.data?.error?.message}` ;
+  if (errorRes?.status == '401' && !isRefreshRequest(errorRes.config)) { // 如果没有权限且不是刷新token的请求
+    console.log('isRefreshing',isRefreshing,new Date())
+      if (!isRefreshing) {
+          isRefreshing = true
+          let newToken = ''
+          // 刷新token
+          try {
+              const res = await refreshToken()
+              // 保存新的token
+              newToken = res.data.token
+              setToken(newToken)
+              setRefreshToken(res.data.refreshToken)
+             
+          } catch(e) {
+            console.log("触发重新登录",e)
+            ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+              confirmButtonText: '重新登录',
+              cancelButtonText: '取消',
+              type: 'warning'
+            })
+              .then(() => {
+                isRelogin.show = false;
+                useUserStore().logOut().then(() => {
+                  location.href = '/index';
+                })
+              }).catch(() => {
+                isRelogin.show = false;
+              });
+              return Promise.reject(error)
+          }
+          // 有新token后再重新请求
+          errorRes.config.headers['Authorization'] = 'Bearer ' + newToken // 新token
+          // token 刷新后将数组的方法重新执行
+          waitRequests.forEach((cb) => cb(newToken))
+          waitRequests = [] // 重新请求完清空
+          const resp = await service.request(errorRes.config)
+          isRefreshing = false
+          console.log('closseRefreshing',isRefreshing)
+          return Promise.resolve(resp);
+      } else {
+          // 返回未执行 resolve 的 Promise
+          return new Promise(resolve => {
+              // 用函数形式将 resolve 存入，等待刷新后再执行
+              waitRequests.push(token => {
+                  errorRes.config.headers['Authorization'] = 'Bearer ' + `${token}`
+                  resolve(service(errorRes.config))
+              })
+          })
+      }
+  }
+  else
+  {
+    const code = errorRes && errorRes.status || 200;
+    const msg = `${errorRes?.data?.error?.message}`;
     handler(code, msg);
     return Promise.reject(error)
   }
+}
 )
 
 // 通用下载方法
@@ -180,22 +222,22 @@ const handler = (code, msg) => {
           title: msg
         })
         break;
-    //未授权
-    case 401:
-      ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-        confirmButtonText: '重新登录',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          isRelogin.show = false;
-          useUserStore().logOut().then(() => {
-            location.href = '/index';
-          })
-        }).catch(() => {
-          isRelogin.show = false;
-        });
-      break;
+    // //未授权
+    // case 401:
+    //   ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+    //     confirmButtonText: '重新登录',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   })
+    //     .then(() => {
+    //       isRelogin.show = false;
+    //       useUserStore().logOut().then(() => {
+    //         location.href = '/index';
+    //       })
+    //     }).catch(() => {
+    //       isRelogin.show = false;
+    //     });
+    //   break;
     case 404:
       ElMessage({
         message: "404未找到资源",
