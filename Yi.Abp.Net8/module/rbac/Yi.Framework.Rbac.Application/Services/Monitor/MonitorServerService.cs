@@ -21,7 +21,7 @@ namespace Yi.Framework.Rbac.Application.Services.Monitor
         [HttpGet("monitor-server/info")]
         public object GetInfo()
         {
-            int cpuNum = Environment.ProcessorCount;
+      
             string computerName = Environment.MachineName;
             string osName = RuntimeInformation.OSDescription;
             string osArch = RuntimeInformation.OSArchitecture.ToString();
@@ -35,9 +35,10 @@ namespace Yi.Framework.Rbac.Application.Services.Monitor
             string programRunTime = DateTimeHelper.FormatTime(long.Parse((DateTime.Now - programStartTime).TotalMilliseconds.ToString().Split('.')[0]));
             var data = new
             {
-                cpu = ComputerHelper.GetComputerInfo(),
+                memory = ComputerHelper.GetMemoryMetrics(),
+                cpu = ComputerHelper.GetCPUMetrics(),
                 disk = ComputerHelper.GetDiskInfos(),
-                sys = new { cpuNum, computerName, osName, osArch, serverIP, runTime = sysRunTime },
+                sys = new {computerName, osName, osArch, serverIP, runTime = sysRunTime },
                 app = new
                 {
                     name = _hostEnvironment.EnvironmentName,

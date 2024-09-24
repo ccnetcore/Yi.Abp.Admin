@@ -48,7 +48,7 @@ export function updateData(data) {
 // 删除
 export function delData(ids) {
   return request({
-    url: `/field/${ids}`,
+    url: `/field`,
     method: 'delete',
     params:{id:ids}
   })

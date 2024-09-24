@@ -1,8 +1,11 @@
 ﻿using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
+using Microsoft.Extensions.Logging;
 using SqlSugar;
 using Volo.Abp;
 using Volo.Abp.Auditing;
+using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Linq;
@@ -15,7 +18,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
     {
         public ISqlSugarClient _Db => GetDbContextAsync().Result;
 
-        public ISugarQueryable<TEntity> _DbQueryable => GetDbContextAsync().Result.Queryable<TEntity>();
+        public ISugarQueryable<TEntity> _DbQueryable => GetDbContextAsync().ConfigureAwait(false).GetAwaiter().GetResult().Queryable<TEntity>();
 
         private ISugarDbContextProvider<ISqlSugarDbContext> _sugarDbContextProvider;
         public IAsyncQueryableExecuter AsyncExecuter { get; }
@@ -243,7 +246,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
         {
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
-                return await (await GetDbSimpleClientAsync()).AsUpdateable().SetColumns(nameof(ISoftDelete), true).Where(whereExpression).ExecuteCommandAsync() > 0;
+                return await (await GetDbSimpleClientAsync()).AsUpdateable().SetColumns(nameof(ISoftDelete.IsDeleted), true).Where(whereExpression).ExecuteCommandAsync() > 0;
             }
             else
             {
@@ -372,6 +375,20 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         public virtual async Task<bool> UpdateAsync(TEntity updateObj)
         {
+            if (typeof(TEntity).IsAssignableTo<IHasConcurrencyStamp>())//带版本号乐观锁更新
+            {
+                try
+                {
+                    int num =  await (await GetDbSimpleClientAsync())
+                        .Context.Updateable(updateObj).ExecuteCommandWithOptLockAsync(true);
+                    return num>0;
+                }
+                catch (VersionExceptions ex)
+                {
+ 
+                    throw new AbpDbConcurrencyException($"{ex.Message}[更新失败：ConcurrencyStamp不是最新版本],entityInfo：{updateObj}", ex);
+                }
+            }
             return await (await GetDbSimpleClientAsync()).UpdateAsync(updateObj);
         }
 

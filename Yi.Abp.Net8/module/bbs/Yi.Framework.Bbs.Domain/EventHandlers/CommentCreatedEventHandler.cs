@@ -6,6 +6,7 @@ using Volo.Abp.EventBus.Local;
 using Yi.Framework.Bbs.Domain.Entities;
 using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Shared.Consts;
+using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Bbs.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.SqlSugarCore.Abstractions;
@@ -62,6 +63,10 @@ namespace Yi.Framework.Bbs.Domain.EventHandlers
                 await _localEventBus.PublishAsync(new BbsNoticeEventArgs(commentEntity.ParentId, string.Format(DiscussConst.CommentNoticeToReply, disucssDto.DiscussTitle, commentUser.UserName, content,commentEntity.DiscussId)), false);
 
             }
+            
+            //最后发布任务触发事件
+            await _localEventBus.PublishAsync(
+                new AssignmentEventArgs(AssignmentRequirementTypeEnum.Comment, commentUser.Id),false);
          
         }
     }

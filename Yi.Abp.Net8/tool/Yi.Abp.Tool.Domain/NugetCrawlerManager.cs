@@ -8,20 +8,18 @@ namespace Yi.Abp.Tool.Domain
     public class NugetCrawlerManager : ITransientDependency
     {
         private const string NugetVersionUrl = "https://www.nuget.org/packages/Yi.Abp.Tool#versions-body-tab";
+
         public NugetCrawlerManager(IDistributedCache<NugetResult> cache)
         {
             //缓存设置1分钟获取一次结果
-            this.NugetResult = cache.GetOrAdd("NugetResult", () =>
-              {
-                  return InitData();
-              }, () =>
-              {
-                  var options = new DistributedCacheEntryOptions();
-                  options.AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1);
-                  return options;
-              })!;
-
+            this.NugetResult = cache.GetOrAdd("NugetResult", () => { return InitData(); }, () =>
+            {
+                var options = new DistributedCacheEntryOptions();
+                options.AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(1);
+                return options;
+            })!;
         }
+
         private HtmlDocument HtmlDoc { get; set; }
         private NugetResult NugetResult { get; set; } = new NugetResult();
 
@@ -56,11 +54,12 @@ namespace Yi.Abp.Tool.Domain
 
             foreach (var tr in trDoc)
             {
-                var version = tr.ChildNodes.Where(x => x.Name == "td").First().ChildNodes.Where(x => x.Name == "a").First().GetAttributes("title").First().Value;
+                var version = tr.ChildNodes.Where(x => x.Name == "td").First().ChildNodes.Where(x => x.Name == "a")
+                    .First().GetAttributes("title").First().Value;
 
                 versions.Add(version);
-
             }
+
             return versions;
         }
 
@@ -70,8 +69,17 @@ namespace Yi.Abp.Tool.Domain
         /// <returns></returns>
         private long GetDownloadNumber()
         {
-            var spanDoc = HtmlDoc.DocumentNode.SelectNodes("//*[@id=\"skippedToContent\"]/section/div/aside/div[1]/div[2]/div[1]/span[2]");
+            var spanDoc =
+                HtmlDoc.DocumentNode.SelectNodes(
+                    "//*[@id=\"skippedToContent\"]/section/div/aside/div[1]/div[2]/div[1]/span[2]");
             var downLoadNumber = spanDoc.First().InnerText;
+            if (downLoadNumber.Contains("K"))
+            {
+                downLoadNumber = downLoadNumber.TrimEnd('K');
+                return (long)Math.Round(decimal.Parse(downLoadNumber) * 1000);
+            }
+
+
             return long.Parse(downLoadNumber);
         }
     }

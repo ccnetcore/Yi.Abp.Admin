@@ -96,5 +96,15 @@ namespace Yi.Framework.Core.Extensions
         {
             return context.User.Claims.Where(x => x.Type == permissionsName).Select(x => x.Value).ToArray();
         }
+        
+        /// <summary>
+        /// 判断是否是 WebSocket 请求
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static bool IsWebSocketRequest(this HttpContext context)
+        {
+            return context.WebSockets.IsWebSocketRequest || context.Request.Path == "/ws";
+        }
     }
 }

@@ -202,7 +202,8 @@ const data = reactive({
     title: undefined,
     operUser: undefined,
     operType: undefined,
-    state: undefined
+    state: undefined,
+   orderByColumn: undefined
   }
 });
 
@@ -240,8 +241,12 @@ function handleSelectionChange(selection) {
 }
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {
-  queryParams.value.orderByColumn = column.prop;
-  queryParams.value.isAsc = column.order;
+  if (!column.order) {
+       queryParams.value.orderByColumn = null;
+   } else {
+       queryParams.value.orderByColumn = column.prop;
+   }
+   queryParams.value.isAsc = column.order;
   getList();
 }
 /** 详细按钮操作 */

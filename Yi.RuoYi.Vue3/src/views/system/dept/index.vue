@@ -227,7 +227,7 @@ function resetQuery() {
 function handleAdd(row) {
   reset();
   listDept().then(response => {
-    deptOptions.value = proxy.handleTree(response.data, "id");
+    deptOptions.value = proxy.handleTree(response.data.items, "id");
   });
   if (row != undefined) {
    console.log(row.deptId);

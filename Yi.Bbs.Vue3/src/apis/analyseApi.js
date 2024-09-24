@@ -33,9 +33,9 @@ export function getRecommendedFriend(data) {
  */
 export function getRankingPoints(data) {
   return request({
-    url: "/analyse/bbs-user/integral-top",
+    url: "/analyse/bbs-user/money-top",
     method: "get",
-    data,
+    params: data
   });
 }
 
@@ -47,6 +47,20 @@ export function getRankingPoints(data) {
 export function getUserAnalyse(data) {
   return request({
     url: "/analyse/bbs-user",
+    method: "get",
+    data,
+  });
+}
+
+
+/**
+ * 获取注册数量用户分析
+ * @param {*} data
+ * @returns
+ */
+export function getRegisterAnalyse(data) {
+  return request({
+    url: "/analyse/bbs-user/register",
     method: "get",
     data,
   });

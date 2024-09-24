@@ -288,6 +288,20 @@ const onclickUserItem = (userInfo, itemType) => {
   changeInputValue(value);
 }
 
+//输入框按键事件
+const handleKeydownInput=()=>{
+ // 检查是否按下 Shift + Enter
+ if (event.key === 'Enter' && event.shiftKey) {
+        // 允许输入换行
+        return; // 让默认行为继续
+      }
+
+      // 如果只按下 Enter，则阻止默认的提交行为，比如在表单中
+      if (event.key === 'Enter') {
+        onclickSendMsg();
+      }
+}
+
 //点击发送按钮
 const onclickSendMsg = () => {
   if (currentInputValue.value == "") {
@@ -389,7 +403,7 @@ const getLastMessage = ((receiveId, itemType) => {
 <template>
 
   <div style="position: absolute; top: 0;left: 0;" v-show="isShowTipNumber>0">
-    <p>当前版本：1.5.0</p>
+    <p>当前版本：1.5.1</p>
     <p>tip:官方学习交流群每次发送消息消耗 1 钱钱</p>
     <p>tip:点击聊天窗口右上角“X”可退出</p>
     <p>tip:多人同时在聊天室时，左侧可显示其他成员</p>
@@ -553,7 +567,9 @@ const getLastMessage = ((receiveId, itemType) => {
 
         </div> -->
         <textarea class="bottom-input" v-model="currentInputValue" @input="updateInputValue"
-          @keyup.enter="onclickSendMsg()">
+        @keydown="handleKeydownInput"
+
+         >
 
 </textarea>
         <div class="bottom-send">

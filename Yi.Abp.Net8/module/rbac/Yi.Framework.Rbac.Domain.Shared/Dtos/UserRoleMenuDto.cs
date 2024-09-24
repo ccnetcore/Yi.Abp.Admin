@@ -195,6 +195,11 @@ namespace Yi.Framework.Rbac.Domain.Shared.Dtos
     public class MenuDto
     {
         public Guid Id { get;  set; }
+        /// <summary>
+        /// 菜单来源
+        /// </summary>
+        public MenuSourceEnum MenuSource { get; set; } 
+        public string? RouterName { get; set; }
 
         /// <summary>
         /// 逻辑删除

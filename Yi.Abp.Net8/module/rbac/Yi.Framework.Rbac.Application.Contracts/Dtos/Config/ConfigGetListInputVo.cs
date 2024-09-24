@@ -4,17 +4,17 @@ using Yi.Framework.Ddd.Application.Contracts;
 namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Config
 {
     /// <summary>
-    /// ÅäÖÃ²éÑ¯²ÎÊı
+    /// é…ç½®æŸ¥è¯¢å‚æ•°
     /// </summary>
     public class ConfigGetListInputVo : PagedAllResultRequestDto
     {
         /// <summary>
-        /// ÅäÖÃÃû³Æ
+        /// é…ç½®åç§°
         /// </summary>
         public string? ConfigName { get; set; }
 
         /// <summary>
-        /// ÅäÖÃ¼ü
+        /// é…ç½®é”®
         /// </summary>
         public string? ConfigKey { get; set; }
 

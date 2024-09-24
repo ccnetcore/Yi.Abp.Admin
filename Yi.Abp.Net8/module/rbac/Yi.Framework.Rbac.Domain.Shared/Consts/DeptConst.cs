@@ -12,5 +12,6 @@ namespace Yi.Framework.Rbac.Domain.Shared.Consts
 
     public class DeptConst
     {
+        public const string Exist = "该部门已经存在";
     }
 }

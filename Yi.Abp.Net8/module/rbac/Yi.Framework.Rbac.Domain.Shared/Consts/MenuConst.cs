@@ -12,5 +12,6 @@ namespace Yi.Framework.Rbac.Domain.Shared.Consts
 
     public class MenuConst
     {
+        public const string Exist = "该菜单已经存在";
     }
 }

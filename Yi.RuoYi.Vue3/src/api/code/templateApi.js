@@ -37,7 +37,10 @@ export function updateData(id,data) {
 // 删除
 export function delData(ids) {
   return request({
-    url: `template/${ids}`,
+    url: `template`,
     method: 'delete',
+    params: {
+      id: ids
+    }
   })
 }

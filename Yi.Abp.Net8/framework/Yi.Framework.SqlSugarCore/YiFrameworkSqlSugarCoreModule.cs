@@ -39,8 +39,8 @@ namespace Yi.Framework.SqlSugarCore
             service.AddTransient(typeof(ISqlSugarRepository<,>), typeof(SqlSugarRepository<,>));
 
             service.AddTransient(typeof(ISugarDbContextProvider<>), typeof(UnitOfWorkSqlsugarDbContextProvider<>));
-
-
+            //替换Sqlsugar默认序列化器，用来解决.Select()不支持嵌套对象/匿名对象的非公有访问器 值无法绑定,如Id属性
+            context.Services.AddSingleton<ISerializeService,SqlSugarNonPublicSerializer> (); 
             return Task.CompletedTask;
         }
 

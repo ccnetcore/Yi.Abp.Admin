@@ -15,7 +15,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
     /// </summary>
     public class BankManager : DomainService
     {
-        private const decimal DefalutRate = 1.3m;
+        private const decimal DefalutRate = 1.2m;
         private ISqlSugarRepository<BankCardAggregateRoot> _repository;
         private ILocalEventBus _localEventBus;
         private ISqlSugarRepository<InterestRecordsAggregateRoot> _interestRepository;
@@ -61,6 +61,12 @@ namespace Yi.Framework.Bbs.Domain.Managers
                 };
 
             }
+            else
+            {
+                output = _currentRateStore;
+
+            }
+
             return output;
         }
 

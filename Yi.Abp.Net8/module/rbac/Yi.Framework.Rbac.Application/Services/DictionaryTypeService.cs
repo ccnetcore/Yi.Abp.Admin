@@ -6,6 +6,7 @@ using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.DictionaryType;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Rbac.Application.Services
@@ -22,7 +23,7 @@ namespace Yi.Framework.Rbac.Application.Services
             _repository = repository;
         }
 
-        public async override Task<PagedResultDto<DictionaryTypeGetListOutputDto>> GetListAsync(DictionaryTypeGetListInputVo input)
+        public override async Task<PagedResultDto<DictionaryTypeGetListOutputDto>> GetListAsync(DictionaryTypeGetListInputVo input)
         {
 
             RefAsync<int> total = 0;
@@ -37,6 +38,26 @@ namespace Yi.Framework.Rbac.Application.Services
                 TotalCount = total,
                 Items = await MapToGetListOutputDtosAsync(entities)
             };
+        }
+
+        protected override async Task CheckCreateInputDtoAsync(DictionaryTypeCreateInputVo input)
+        {
+            var isExist =
+                await _repository.IsAnyAsync(x => x.DictType == input.DictType);
+            if (isExist)
+            {
+                throw new UserFriendlyException(DictionaryConst.Exist);
+            }
+        }
+
+        protected override async Task CheckUpdateInputDtoAsync(DictionaryTypeAggregateRoot entity, DictionaryTypeUpdateInputVo input)
+        {
+            var isExist = await _repository._DbQueryable.Where(x => x.Id != entity.Id)
+                .AnyAsync(x => x.DictType == input.DictType);
+            if (isExist)
+            {
+                throw new UserFriendlyException(DictionaryConst.Exist);
+            }
         }
     }
 }

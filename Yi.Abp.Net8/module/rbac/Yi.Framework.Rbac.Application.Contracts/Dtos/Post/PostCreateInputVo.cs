@@ -5,12 +5,9 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Post
     /// </summary>
     public class PostCreateInputVo
     {
-        public Guid Id { get; set; }
-        public DateTime CreationTime { get; set; } = DateTime.Now;
-        public long? CreatorId { get; set; }
         public bool? State { get; set; }
-        public string PostCode { get; set; } = string.Empty;
-        public string PostName { get; set; } = string.Empty;
+        public string PostCode { get; set; }
+        public string PostName { get; set; } 
         public string? Remark { get; set; }
     }
 }

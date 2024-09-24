@@ -23,16 +23,6 @@ namespace Yi.Framework.Bbs.Domain
     {
         public override async Task OnPostApplicationInitializationAsync(ApplicationInitializationContext context)
         {
-            //加载等级缓存
-            var services = context.ServiceProvider;
-
-            var logger = services.GetRequiredService<ILogger<YiFrameworkBbsDomainModule>>();
-            logger.LogInformation("正在初始化【BBS-等级数据】......");
-            var levelRepository = services.GetRequiredService<IRepository<LevelAggregateRoot>>();
-            var levelCache = services.GetRequiredService<IDistributedCache<List<LevelCacheItem>>>();
-            var cacheItem = (await levelRepository.GetListAsync()).Adapt<List<LevelCacheItem>>();
-            await levelCache.SetAsync(LevelConst.LevelCacheKey, cacheItem);
-            logger.LogInformation("已完成初始化【BBS-等级数据】");
         }
     }
 }

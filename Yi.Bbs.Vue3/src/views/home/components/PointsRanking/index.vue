@@ -10,25 +10,26 @@
         >
 
         
-        <UserLimitTag :userLimit="pointsData.userLimit" />
+        <!-- <UserLimitTag :userLimit="pointsData.userLimit" /> -->
       </div>
+      
       <div class="bottom">
         <div class="name">
           <el-tooltip
             class="box-item"
             effect="dark"
-            :content="pointsData.userName"
+            :content="pointsData.nick"
             placement="top"
           >
-            {{ pointsData.userName }}
+            {{ pointsData.nick }}
           </el-tooltip>
         </div>
       </div>
     </div>
     <div class="right">
       <div class="follow">
-        <el-icon class="el-icon--right"><Plus /></el-icon>
-        <div class="text">关注</div>
+      
+        <div class="follow-text">  <el-icon class="el-icon--right"><Plus /></el-icon>关注</div>
       </div>
     </div>
   </div>
@@ -110,5 +111,9 @@ const userImageSrc = computed(() => {
       color: #1171ee;
     }
   }
+}
+.follow-text
+{  cursor: pointer;
+  font-size: small;
 }
 </style>

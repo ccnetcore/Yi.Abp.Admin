@@ -12,5 +12,6 @@ namespace Yi.Framework.Rbac.Domain.Shared.Consts
 
     public class PostConst
     {
+        public const string Exist = "该岗位已经存在";
     }
 }

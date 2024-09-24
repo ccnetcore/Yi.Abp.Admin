@@ -1,4 +1,6 @@
-﻿using SqlSugar;
+﻿using System.Web;
+using NUglify.Helpers;
+using SqlSugar;
 using Volo.Abp;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
@@ -15,10 +17,22 @@ namespace Yi.Framework.Rbac.Domain.Entities
     [SugarTable("Menu")]
     public partial class MenuAggregateRoot : AggregateRoot<Guid>, ISoftDelete, IAuditedObject, IOrderNum, IState
     {
-        public MenuAggregateRoot() { }
+        public MenuAggregateRoot()
+        {
+        }
 
-        public MenuAggregateRoot(Guid id) { Id = id; ParentId = Guid.Empty; }
-        public MenuAggregateRoot(Guid id, Guid parentId) { Id = id; ParentId = parentId; }
+        public MenuAggregateRoot(Guid id)
+        {
+            Id = id;
+            ParentId = Guid.Empty;
+        }
+
+        public MenuAggregateRoot(Guid id, Guid parentId)
+        {
+            Id = id;
+            ParentId = parentId;
+        }
+
         /// <summary>
         /// 主键
         /// </summary>
@@ -63,17 +77,25 @@ namespace Yi.Framework.Rbac.Domain.Entities
         /// <summary>
         /// 菜单名
         /// </summary>
-        public string MenuName { get; set; } = string.Empty;
+        public string MenuName { get; set; } 
+
+        /// <summary>
+        /// 路由名称
+        /// </summary>
+        public string? RouterName { get; set; }
+
         /// <summary>
         ///  
         ///</summary>
         [SugarColumn(ColumnName = "MenuType")]
         public MenuTypeEnum MenuType { get; set; } = MenuTypeEnum.Menu;
+
         /// <summary>
         ///  
         ///</summary>
         [SugarColumn(ColumnName = "PermissionCode")]
         public string? PermissionCode { get; set; }
+
         /// <summary>
         ///  
         ///</summary>
@@ -85,21 +107,25 @@ namespace Yi.Framework.Rbac.Domain.Entities
         ///</summary>
         [SugarColumn(ColumnName = "MenuIcon")]
         public string? MenuIcon { get; set; }
+
         /// <summary>
         /// 菜单组件路由 
         ///</summary>
         [SugarColumn(ColumnName = "Router")]
         public string? Router { get; set; }
+
         /// <summary>
         /// 是否为外部链接 
         ///</summary>
         [SugarColumn(ColumnName = "IsLink")]
         public bool IsLink { get; set; }
+
         /// <summary>
         /// 是否缓存 
         ///</summary>
         [SugarColumn(ColumnName = "IsCache")]
         public bool IsCache { get; set; }
+
         /// <summary>
         /// 是否显示 
         ///</summary>
@@ -111,20 +137,25 @@ namespace Yi.Framework.Rbac.Domain.Entities
         ///</summary>
         [SugarColumn(ColumnName = "Remark")]
         public string? Remark { get; set; }
+
         /// <summary>
         /// 组件路径 
         ///</summary>
         [SugarColumn(ColumnName = "Component")]
         public string? Component { get; set; }
+
+        /// <summary>
+        /// 菜单来源
+        /// </summary>
+        public MenuSourceEnum MenuSource { get; set; } = MenuSourceEnum.Ruoyi;
+
         /// <summary>
         /// 路由参数 
         ///</summary>
         [SugarColumn(ColumnName = "Query")]
         public string? Query { get; set; }
 
-        [SugarColumn(IsIgnore = true)]
-        public List<MenuAggregateRoot>? Children { get; set; }
-
+        [SugarColumn(IsIgnore = true)] public List<MenuAggregateRoot>? Children { get; set; }
     }
 
     /// <summary>
@@ -137,13 +168,16 @@ namespace Yi.Framework.Rbac.Domain.Entities
         /// </summary>
         /// <param name="menus"></param>
         /// <returns></returns>
-        public static List<Vue3RouterDto> Vue3RouterBuild(this List<MenuAggregateRoot> menus)
+        public static List<Vue3RouterDto> Vue3RuoYiRouterBuild(this List<MenuAggregateRoot> menus)
         {
-            menus = menus.Where(m => m.MenuType != MenuTypeEnum.Component).ToList();
+            menus = menus
+                .Where(m => m.State == true)
+                .Where(m => m.MenuType != MenuTypeEnum.Component)
+                .Where(m => m.MenuSource == MenuSourceEnum.Ruoyi)
+                .ToList();
             List<Vue3RouterDto> routers = new();
             foreach (var m in menus)
             {
-
                 var r = new Vue3RouterDto();
                 r.OrderNum = m.OrderNum;
                 var routerName = m.Router?.Split("/").LastOrDefault();
@@ -171,6 +205,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
                         r.Component = "ParentView";
                     }
                 }
+
                 if (m.MenuType == MenuTypeEnum.Menu)
                 {
                     r.Redirect = "noRedirect";
@@ -178,6 +213,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
                     r.Component = m.Component!;
                     r.AlwaysShow = false;
                 }
+
                 r.Meta = new Meta
                 {
                     Title = m.MenuName!,
@@ -192,8 +228,62 @@ namespace Yi.Framework.Rbac.Domain.Entities
 
                 routers.Add(r);
             }
-            return TreeHelper.SetTree(routers);
 
+            return TreeHelper.SetTree(routers);
+        }
+
+
+        /// <summary>
+        /// 构建vue3  pure路由
+        /// </summary>
+        /// <param name="menus"></param>
+        /// <returns></returns>
+        public static List<Vue3PureRouterDto> Vue3PureRouterBuild(this List<MenuAggregateRoot> menus)
+        {
+            //pure的菜单为树形
+            var allRouters = menus
+                .Where(m => m.State == true)
+                .Where(m => m.MenuType != MenuTypeEnum.Component)
+                .Where(m => m.MenuSource == MenuSourceEnum.Pure)
+                .Select(m => new Vue3PureRouterDto
+                {
+                    Path =m.Router.StartsWith("/")?m.Router:"/"+m.Router,
+                    Name =m.IsLink==true?"Link": m.RouterName,
+                    component = m.Component,
+                    Meta = new MetaPureRouterDto()
+                    {
+                        showLink = m.IsShow,
+                        FrameSrc = m.IsLink == true ? m.Router : null,
+                        Auths = new List<string>() { m.PermissionCode },
+                        Icon = m.MenuIcon,
+                        Title = m.MenuName,
+                        
+                    },
+                    Children =null,
+                    Id = m.Id,
+                    ParentId = m.ParentId
+                })
+                .ToList();
+
+            
+            var routerDic = allRouters.GroupBy(x => x.ParentId).ToDictionary(x => x.Key,y=>y.ToList());
+            //根路由
+            if (!routerDic.TryGetValue(Guid.Empty, out var rootRouters))
+            {
+                return new List<Vue3PureRouterDto>();
+            }
+            Stack<Vue3PureRouterDto> stack = new Stack<Vue3PureRouterDto>(rootRouters);
+            while (stack.Count > 0)
+            {
+                var currentRouter = stack.Pop();
+                if (routerDic.TryGetValue(currentRouter.Id, out var items))
+                {
+                    currentRouter.Children = items;
+                    items?.ForEach(x => stack.Push(x));
+                }
+            }
+
+            return rootRouters;
         }
     }
 }

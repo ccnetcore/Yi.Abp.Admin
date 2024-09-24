@@ -1,18 +1,38 @@
 import Cookies from 'js-cookie'
 
 const TokenKey = 'Admin-Token'
+const RefreshTokenKey = 'Refresh-Token'
 const TenantIdKey='Tenant-Id'
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return localStorage.getItem(TokenKey)
+  // return Cookies.get(TokenKey)
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+  return localStorage.setItem(TokenKey, token)
+  // return Cookies.set(TokenKey, token)
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return localStorage.removeItem(TokenKey)
+  // return Cookies.remove(TokenKey)
 }
+
+export function getRefreshToken() {
+  return localStorage.getItem(RefreshTokenKey)
+  // return Cookies.get(RefreshTokenKey)
+}
+
+export function setRefreshToken(token) {
+  return localStorage.setItem(RefreshTokenKey, token)
+  // return Cookies.set(RefreshTokenKey, token)
+}
+
+export function removeRefreshToken() {
+  return localStorage.removeItem(RefreshTokenKey)
+  // return Cookies.remove(RefreshTokenKey)
+}
+
 export function getTenantId() {
   return Cookies.get(TenantIdKey)
 }
