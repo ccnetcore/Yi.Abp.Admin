@@ -55,7 +55,7 @@ namespace Yi.Framework.Rbac.Test.System
             }
             catch (UserFriendlyException ex)
             {
-                ex.Message.ShouldBe(UserConst.User_Exist);
+                ex.Message.ShouldBe(UserConst.Exist);
             }
         }
 

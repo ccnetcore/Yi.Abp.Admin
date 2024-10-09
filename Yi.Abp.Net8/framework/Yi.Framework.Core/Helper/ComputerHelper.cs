@@ -78,12 +78,25 @@ namespace Yi.Framework.Core.Helper
                 return 0;
             }
         }
-
+        /// <summary>
+        /// CPU使用情况
+        /// </summary>
+        /// <returns></returns>
+        public static CPUMetrics GetCPUMetrics()
+        {
+            CPUMetrics cpuMetrics = new CPUMetrics();
+           var cpudetail =  GetCPUDetails();
+            cpuMetrics.CoreTotal = cpudetail.Cores;
+            cpuMetrics.LogicalProcessors =cpudetail.LogicalProcessors;
+            cpuMetrics.CPURate = Math.Ceiling(ParseToDouble(GetCPURate()));
+            cpuMetrics.FreeRate = 1 - cpuMetrics.CPURate;
+            return cpuMetrics;
+        }
         /// <summary>
         /// 内存使用情况
         /// </summary>
         /// <returns></returns>
-        public static MemoryMetrics GetComputerInfo()
+        public static MemoryMetrics GetMemoryMetrics()
         {
             try
             {
@@ -94,7 +107,7 @@ namespace Yi.Framework.Core.Helper
                 memoryMetrics.UsedRam = Math.Round(memoryMetrics.Used / 1024, 2) + "GB";
                 memoryMetrics.TotalRAM = Math.Round(memoryMetrics.Total / 1024, 2) + "GB";
                 memoryMetrics.RAMRate = Math.Ceiling(100 * memoryMetrics.Used / memoryMetrics.Total).ToString() + "%";
-                memoryMetrics.CPURate = Math.Ceiling(ParseToDouble(GetCPURate()));
+  
                 return memoryMetrics;
             }
             catch (Exception ex)
@@ -105,7 +118,7 @@ namespace Yi.Framework.Core.Helper
         }
 
         /// <summary>
-        /// 获取内存大小
+        /// 获取磁盘信息
         /// </summary>
         /// <returns></returns>
         public static List<DiskInfo> GetDiskInfos()
@@ -174,7 +187,7 @@ namespace Yi.Framework.Core.Helper
             var isUnix = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             return isUnix;
         }
-
+        
         public static string GetCPURate()
         {
             string cpuRate;
@@ -221,8 +234,69 @@ namespace Yi.Framework.Core.Helper
             }
             return runTime;
         }
-    }
+        
 
+
+        public static CPUInfo GetCPUDetails()
+        {
+            int logicalProcessors = 0;
+            int cores = 0;
+
+            if (IsUnix())
+            {
+                string logicalOutput = ShellHelper.Bash("lscpu | grep '^CPU(s):' | awk '{print $2}'");
+                logicalProcessors = int.Parse(logicalOutput.Trim());
+
+                string coresOutput = ShellHelper.Bash("lscpu | grep 'Core(s) per socket:' | awk '{print $4}'");
+                string socketsOutput = ShellHelper.Bash("lscpu | grep 'Socket(s):' | awk '{print $2}'");
+                cores = int.Parse(coresOutput.Trim()) * int.Parse(socketsOutput.Trim());
+            }
+            else
+            {
+                string output = ShellHelper.Cmd("wmic", "cpu get NumberOfCores,NumberOfLogicalProcessors /format:csv");
+                var lines = output.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (lines.Length > 1)
+                {
+                    var values = lines[1].Split(',');
+                  
+                    cores =  int.Parse(values[1].Trim());
+                    logicalProcessors =int.Parse(values[2].Trim());
+                }
+            }
+
+            return new CPUInfo
+            {
+                LogicalProcessors = logicalProcessors,
+                Cores = cores
+            };
+        }
+    }
+    public class CPUInfo
+    {
+        public int LogicalProcessors { get; set; }
+        public int Cores { get; set; }
+    }
+    public class CPUMetrics
+    {
+        /// <summary>
+        /// 内核数
+        /// </summary>
+        public int CoreTotal { get; set; }
+        /// <summary>
+        /// 逻辑处理器数
+        /// </summary>
+        public int LogicalProcessors { get; set; }
+        /// <summary>
+        /// CPU使用率%
+        /// </summary>
+        public double CPURate { get; set; }
+        /// <summary>
+        /// CPU空闲率%
+        /// </summary>
+        public double FreeRate { get; set; }
+    }
+    
     /// <summary>
     /// 内存信息
     /// </summary>
@@ -236,10 +310,7 @@ namespace Yi.Framework.Core.Helper
         public double Free { get; set; }
 
         public string UsedRam { get; set; }
-        /// <summary>
-        /// CPU使用率%
-        /// </summary>
-        public double CPURate { get; set; }
+   
         /// <summary>
         /// 总内存 GB
         /// </summary>
@@ -306,20 +377,25 @@ namespace Yi.Framework.Core.Helper
         /// <returns></returns>
         public MemoryMetrics GetUnixMetrics()
         {
-            string output = ShellHelper.Bash("free -m | awk '{print $2,$3,$4,$5,$6}'");
+            string output = ShellHelper.Bash(@"
+# 从 /proc/meminfo 文件中提取总内存
+ total_mem=$(cat /proc/meminfo | grep -i ""MemTotal"" | awk '{print $2}')
+ # 从 /proc/meminfo 文件中提取剩余内存
+free_mem=$(cat /proc/meminfo | grep -i ""MemFree"" | awk '{print $2}')
+# 显示提取的信息
+echo $total_mem $used_mem $free_mem
+ ");
             var metrics = new MemoryMetrics();
-            var lines = output.Split('\n', (char)StringSplitOptions.RemoveEmptyEntries);
-
-            if (lines.Length <= 0) return metrics;
-
-            if (lines != null && lines.Length > 0)
+ 
+            if (!string.IsNullOrWhiteSpace(output))
             {
-                var memory = lines[1].Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
-                if (memory.Length >= 3)
+                var memory = output.Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
+                if (memory.Length >= 2)
                 {
-                    metrics.Total = double.Parse(memory[0]);
-                    metrics.Used = double.Parse(memory[1]);
-                    metrics.Free = double.Parse(memory[2]);//m
+                    metrics.Total =  Math.Round(double.Parse(memory[0]) / 1024, 0);
+               
+                    metrics.Free = Math.Round(double.Parse(memory[1])/ 1024, 0);//m
+                    metrics.Used =   metrics.Total   - metrics.Free;
                 }
             }
             return metrics;

@@ -41,8 +41,6 @@ namespace Yi.Framework.Rbac.Application.Services
             return new PagedResultDto<NoticeGetListOutputDto>(total, await MapToGetListOutputDtosAsync(entities));
         }
 
-
-
         /// <summary>
         /// 发送在线消息
         /// </summary>

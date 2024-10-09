@@ -20,7 +20,7 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
+[L]og/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -271,3 +271,6 @@ dist
 /Yi.Abp.Net8/test/Yi.Abp.Test/appsettings.Production.json
 database_backup
 /Yi.Abp.Net8/src/Yi.Abp.Web/appsettings.Staging.json
+/Yi.Abp.Net8/src/Yi.Abp.Web/logs/
+/Yi.Abp.Net8/src/Yi.Abp.Web/yi-abp-dev.db
+

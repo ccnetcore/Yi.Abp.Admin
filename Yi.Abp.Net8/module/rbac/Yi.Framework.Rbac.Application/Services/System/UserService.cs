@@ -127,6 +127,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Permission("system:user:list")]
         public override async Task<UserGetOutputDto> GetAsync(Guid id)
         {
             //使用导航树形查询
@@ -153,12 +154,12 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
             if (await _repository.IsAnyAsync(u => input.UserName!.Equals(u.UserName) && !id.Equals(u.Id)))
             {
-                throw new UserFriendlyException("用户已经存在，更新失败");
+                throw new UserFriendlyException(UserConst.Exist);
             }
 
             var entity = await _repository.GetByIdAsync(id);
             //更新密码，特殊处理
-            if (input.Password is not null)
+            if (!string.IsNullOrWhiteSpace(input.Password))
             {
                 entity.EncryPassword.Password = input.Password;
                 entity.BuildPassword();

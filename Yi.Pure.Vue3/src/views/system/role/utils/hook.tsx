@@ -294,7 +294,7 @@ export function useRole(treeRef: Ref) {
 
   onMounted(async () => {
     onSearch();
-    const data = (await getMenuOption()).data.items;
+    const data = (await getMenuOption({ menusource: "pure" })).data.items;
     treeIds.value = getKeyList(data, "id");
     treeData.value = handleTree(data);
   });

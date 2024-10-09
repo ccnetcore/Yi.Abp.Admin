@@ -37,10 +37,13 @@ watch(
           break;
       }
       try {
+        //state 0 代表使用第三方登录
         if (type.value === "0") {
           const { data } = await authOtherLogin({ code: val }, scheme.value);
           authData.value = data;
-        } else if (type.value === "1") {
+        } 
+        //state 0 代表进行第三方绑定
+        else if (type.value === "1") {
           const { data } = await authOtherBind({ code: val }, scheme.value);
           authData.value = data;
         }

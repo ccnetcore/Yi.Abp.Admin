@@ -1,4 +1,4 @@
-import { login, logout, register } from "@/apis/accountApi";
+import { login, logout, register,retrievePassword } from "@/apis/accountApi";
 import { getUserDetailInfo, getLoginCode } from "@/apis/auth";
 import useAuths from "@/hooks/useAuths";
 import { defineStore } from "pinia";
@@ -122,6 +122,23 @@ const useUserStore = defineStore("user", {
           });
       });
     },
+      //找回密码
+      retrievePassword(userInfo)
+      {
+          const password = userInfo.password.trim();
+          const phone = userInfo.phone;
+          const uuid = userInfo.uuid;
+          const code = userInfo.code;
+          return new Promise((resolve, reject) => {
+              retrievePassword(password, phone, code, uuid)
+                  .then((response) => {
+                      resolve(response);
+                  })
+                  .catch((error) => {
+                      reject(error);
+                  });
+          });
+      },
     // 重置用户信息
     resetInfo() {
       this.roles = [];

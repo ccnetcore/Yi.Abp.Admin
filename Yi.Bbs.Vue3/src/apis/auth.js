@@ -1,5 +1,4 @@
 import request from "@/config/axios/service";
-
 /**
  *  用户登录
  * @param {*} data 账号密码
@@ -19,6 +18,17 @@ export function userLogin(data) {
 export function userRegister(data) {
   return request({
     url: `/account/register`,
+    method: "post",
+    data,
+  });
+}
+/**
+ *  用户找回密码
+ * @param {*} data 账号密码
+ */
+export function userRetrievePassword(data) {
+  return request({
+    url: `/account/retrieve-password`,
     method: "post",
     data,
   });
@@ -44,15 +54,6 @@ export function userLogout() {
   });
 }
 
-/**
- *  获取验证码
- */
-export function getCodeImg() {
-  return request({
-    url: `/account/captcha-image`,
-    method: "get",
-  });
-}
 /**
  *  获取短信验证码
  */

@@ -118,7 +118,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
             var isExist = await _repository.IsAnyAsync(x => x.UserName == userEntity.UserName);
             if (isExist)
             {
-                throw new UserFriendlyException(UserConst.User_Exist);
+                throw new UserFriendlyException(UserConst.Exist);
             }
 
             var entity = await _repository.InsertReturnEntityAsync(userEntity);

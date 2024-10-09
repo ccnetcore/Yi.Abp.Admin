@@ -6,6 +6,7 @@ using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.Dictionary;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 
@@ -14,26 +15,30 @@ namespace Yi.Framework.Rbac.Application.Services
     /// <summary>
     /// Dictionary服务实现
     /// </summary>
-    public class DictionaryService : YiCrudAppService<DictionaryEntity, DictionaryGetOutputDto, DictionaryGetListOutputDto, Guid, DictionaryGetListInputVo, DictionaryCreateInputVo, DictionaryUpdateInputVo>,
-       IDictionaryService
+    public class DictionaryService : YiCrudAppService<DictionaryEntity, DictionaryGetOutputDto,
+            DictionaryGetListOutputDto, Guid, DictionaryGetListInputVo, DictionaryCreateInputVo,
+            DictionaryUpdateInputVo>,
+        IDictionaryService
     {
         private ISqlSugarRepository<DictionaryEntity, Guid> _repository;
+
         public DictionaryService(ISqlSugarRepository<DictionaryEntity, Guid> repository) : base(repository)
         {
-            _repository= repository;
+            _repository = repository;
         }
 
         /// <summary>
         /// 查询
         /// </summary>
-
-        public override async Task<PagedResultDto<DictionaryGetListOutputDto>> GetListAsync(DictionaryGetListInputVo input)
+        public override async Task<PagedResultDto<DictionaryGetListOutputDto>> GetListAsync(
+            DictionaryGetListInputVo input)
         {
             RefAsync<int> total = 0;
-            var entities = await _repository._DbQueryable.WhereIF(input.DictType is not null, x => x.DictType == input.DictType)
-                      .WhereIF(input.DictLabel is not null, x => x.DictLabel!.Contains(input.DictLabel!))
-                      .WhereIF(input.State is not null, x => x.State == input.State)
-                      .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
+            var entities = await _repository._DbQueryable
+                .WhereIF(input.DictType is not null, x => x.DictType == input.DictType)
+                .WhereIF(input.DictLabel is not null, x => x.DictLabel!.Contains(input.DictLabel!))
+                .WhereIF(input.State is not null, x => x.State == input.State)
+                .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
             return new PagedResultDto<DictionaryGetListOutputDto>
             {
                 TotalCount = total,

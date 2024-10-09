@@ -8,9 +8,11 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Yi.Framework.Ddd.Application
 {
-    public abstract class YiCrudAppService<TEntity, TEntityDto, TKey> : YiCrudAppService<TEntity, TEntityDto, TKey, PagedAndSortedResultRequestDto>
-         where TEntity : class, IEntity<TKey>
-         where TEntityDto : IEntityDto<TKey>
+    public abstract class
+        YiCrudAppService<TEntity, TEntityDto, TKey> : YiCrudAppService<TEntity, TEntityDto, TKey,
+        PagedAndSortedResultRequestDto>
+        where TEntity : class, IEntity<TKey>
+        where TEntityDto : IEntityDto<TKey>
     {
         protected YiCrudAppService(IRepository<TEntity, TKey> repository) : base(repository)
         {
@@ -49,14 +51,51 @@ namespace Yi.Framework.Ddd.Application
     }
 
 
-    public abstract class YiCrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
+    public abstract class YiCrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput,
+        TUpdateInput>
         : CrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
-    where TEntity : class, IEntity<TKey>
-    where TGetOutputDto : IEntityDto<TKey>
-    where TGetListOutputDto : IEntityDto<TKey>
+        where TEntity : class, IEntity<TKey>
+        where TGetOutputDto : IEntityDto<TKey>
+        where TGetListOutputDto : IEntityDto<TKey>
     {
         protected YiCrudAppService(IRepository<TEntity, TKey> repository) : base(repository)
         {
+        }
+
+        public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input)
+        {
+            await CheckUpdatePolicyAsync();
+
+            var entity = await GetEntityByIdAsync(id);
+            await CheckUpdateInputDtoAsync(entity,input);
+
+            await MapToEntityAsync(input, entity);
+            await Repository.UpdateAsync(entity, autoSave: true);
+
+            return await MapToGetOutputDtoAsync(entity);
+        }
+
+        protected virtual Task CheckUpdateInputDtoAsync(TEntity entity,TUpdateInput input)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override async Task<TGetOutputDto> CreateAsync(TCreateInput input)
+        {
+            await CheckCreatePolicyAsync();
+            await CheckCreateInputDtoAsync(input);
+            var entity = await MapToEntityAsync(input);
+
+            TryToSetTenantId(entity);
+
+            await Repository.InsertAsync(entity, autoSave: true);
+
+            return await MapToGetOutputDtoAsync(entity);
+        }
+
+        protected virtual Task CheckCreateInputDtoAsync(TCreateInput input)
+        {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -70,12 +109,14 @@ namespace Yi.Framework.Ddd.Application
             //区分多查还是批量查
             if (input is IPagedResultRequest pagedInput)
             {
-                entites = await Repository.GetPagedListAsync(pagedInput.SkipCount, pagedInput.MaxResultCount, string.Empty);
+                entites = await Repository.GetPagedListAsync(pagedInput.SkipCount, pagedInput.MaxResultCount,
+                    string.Empty);
             }
             else
             {
                 entites = await Repository.GetListAsync();
             }
+
             var total = await Repository.GetCountAsync();
             var output = await MapToGetListOutputDtosAsync(entites);
             return new PagedResultDto<TGetListOutputDto>(total, output);

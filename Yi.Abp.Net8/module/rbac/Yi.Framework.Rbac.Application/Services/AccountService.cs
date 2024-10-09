@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using Lazy.Captcha.Core;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +27,7 @@ using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Caches;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Dtos;
+using Yi.Framework.Rbac.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
@@ -44,6 +45,7 @@ namespace Yi.Framework.Rbac.Application.Services
         private IDistributedCache<UserInfoCacheItem, UserInfoCacheKey> _userCache;
         private UserManager _userManager;
         private IHttpContextAccessor _httpContextAccessor;
+
         public AccountService(IUserRepository userRepository,
             ICurrentUser currentUser,
             IAccountManager accountManager,
@@ -127,7 +129,7 @@ namespace Yi.Framework.Rbac.Application.Services
                 loginEto.UserId = userInfo.User.Id;
                 await LocalEventBus.PublishAsync(loginEto);
             }
-            
+
             return new { Token = accessToken, RefreshToken = refreshToken };
         }
 
@@ -178,14 +180,37 @@ namespace Yi.Framework.Rbac.Application.Services
 
 
         /// <summary>
-        /// 注册 手机验证码
+        /// 手机验证码-注册
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("account/captcha-phone")]
+        [AllowAnonymous]
+        public async Task<object> PostCaptchaPhoneForRegisterAsync(PhoneCaptchaImageDto input)
+        {
+            return await PostCaptchaPhoneAsync(ValidationPhoneTypeEnum.Register, input);
+        }
+
+        /// <summary>
+        /// 手机验证码-找回密码
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("account/captcha-phone/repassword")]
+        public async Task<object> PostCaptchaPhoneForRetrievePasswordAsync(PhoneCaptchaImageDto input)
+        {
+            return await PostCaptchaPhoneAsync(ValidationPhoneTypeEnum.RetrievePassword, input);
+        }
+
+        /// <summary>
+        /// 手机验证码
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
-        public async Task<object> PostCaptchaPhone(PhoneCaptchaImageDto input)
+        private async Task<object> PostCaptchaPhoneAsync(ValidationPhoneTypeEnum validationPhoneType,
+            PhoneCaptchaImageDto input)
         {
             await ValidationPhone(input.Phone);
-            var value = await _phoneCache.GetAsync(new CaptchaPhoneCacheKey(input.Phone));
+            var value = await _phoneCache.GetAsync(new CaptchaPhoneCacheKey(validationPhoneType, input.Phone));
 
             //防止暴刷
             if (value is not null)
@@ -200,7 +225,8 @@ namespace Yi.Framework.Rbac.Application.Services
             var uuid = Guid.NewGuid();
             await _aliyunManger.SendSmsAsync(input.Phone, code);
 
-            await _phoneCache.SetAsync(new CaptchaPhoneCacheKey(input.Phone), new CaptchaPhoneCacheItem(code),
+            await _phoneCache.SetAsync(new CaptchaPhoneCacheKey(ValidationPhoneTypeEnum.RetrievePassword, input.Phone),
+                new CaptchaPhoneCacheItem(code),
                 new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(10) });
             return new
             {
@@ -211,18 +237,42 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <summary>
         /// 校验电话验证码，需要与电话号码绑定
         /// </summary>
-        private async Task ValidationPhoneCaptchaAsync(RegisterDto input)
+        private async Task ValidationPhoneCaptchaAsync(ValidationPhoneTypeEnum validationPhoneType, long phone,
+            string code)
         {
-            var item = await _phoneCache.GetAsync(new CaptchaPhoneCacheKey(input.Phone.ToString()));
-            if (item is not null && item.Code.Equals($"{input.Code}"))
+            var item = await _phoneCache.GetAsync(new CaptchaPhoneCacheKey(validationPhoneType, phone.ToString()));
+            if (item is not null && item.Code.Equals($"{code}"))
             {
                 //成功，需要清空
-                await _phoneCache.RemoveAsync(new CaptchaPhoneCacheKey(input.Phone.ToString()));
+                await _phoneCache.RemoveAsync(new CaptchaPhoneCacheKey(validationPhoneType, code.ToString()));
                 return;
             }
 
             throw new UserFriendlyException("验证码错误");
         }
+
+        /// <summary>
+        /// 找回密码
+        /// </summary>
+        /// <param name="input"></param>
+        [AllowAnonymous]
+        [UnitOfWork]
+        public async Task<string> PostRetrievePasswordAsync(RetrievePasswordDto input)
+        {
+            //校验验证码，根据电话号码获取 value，比对验证码已经uuid
+            await ValidationPhoneCaptchaAsync(ValidationPhoneTypeEnum.RetrievePassword, input.Phone, input.Code);
+            
+            var entity = await _userRepository.GetFirstAsync(x => x.Phone == input.Phone);
+            if (entity is null)
+            {
+                throw new UserFriendlyException("该手机号码未注册");
+            }
+
+            await _accountManager.RestPasswordAsync(entity.Id, input.Password);
+            
+            return entity.UserName;
+        }
+
 
         /// <summary>
         /// 注册，需要验证码通过
@@ -241,16 +291,16 @@ namespace Yi.Framework.Rbac.Application.Services
             if (_rbacOptions.EnableCaptcha)
             {
                 //校验验证码，根据电话号码获取 value，比对验证码已经uuid
-                await ValidationPhoneCaptchaAsync(input);
+                await ValidationPhoneCaptchaAsync(ValidationPhoneTypeEnum.Register, input.Phone, input.Code);
             }
 
             //注册领域逻辑
-            await _accountManager.RegisterAsync(input.UserName, input.Password, input.Phone);
+            await _accountManager.RegisterAsync(input.UserName, input.Password, input.Phone, input.Nick);
         }
 
 
         /// <summary>
-        /// 查询已登录的账户信息，已缓存
+        /// 查询已登录的账户信息
         /// </summary>
         /// <returns></returns>
         [Route("account")]
@@ -270,9 +320,6 @@ namespace Yi.Framework.Rbac.Application.Services
         }
 
 
-        
-        
-        
         /// <summary>
         /// 获取当前登录用户的前端路由
         /// 支持ruoyi/pure
@@ -280,7 +327,7 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <returns></returns>
         [Authorize]
         [Route("account/Vue3Router/{routerType?}")]
-        public async Task<object> GetVue3Router([FromRoute]string? routerType)
+        public async Task<object> GetVue3Router([FromRoute] string? routerType)
         {
             var userId = _currentUser.Id;
             if (_currentUser.Id is null)
@@ -298,18 +345,19 @@ namespace Yi.Framework.Rbac.Application.Services
             }
 
             object output = null;
-            if (routerType is null ||routerType=="ruoyi")
+            if (routerType is null || routerType == "ruoyi")
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
                     ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus).Vue3RuoYiRouterBuild();
             }
-            else if (routerType =="pure")
+            else if (routerType == "pure")
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
                     ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus).Vue3PureRouterBuild();
             }
+
             return output;
         }
 
@@ -379,7 +427,10 @@ namespace Yi.Framework.Rbac.Application.Services
         /// <returns></returns>
         public async Task<bool> UpdateIconAsync(UpdateIconDto input)
         {
-            var entity = await _userRepository.GetByIdAsync(_currentUser.Id);
+            Guid userId=input.UserId == null?_currentUser.GetId():input.UserId.Value;
+
+            var entity = await _userRepository.GetByIdAsync(userId);
+
             if (entity.Icon == input.Icon)
             {
                 return false;
@@ -390,7 +441,7 @@ namespace Yi.Framework.Rbac.Application.Services
 
             //发布更新头像任务事件
             await this.LocalEventBus.PublishAsync(
-                new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateIcon, _currentUser.GetId()), false);
+                new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateIcon, userId), false);
             return true;
         }
     }

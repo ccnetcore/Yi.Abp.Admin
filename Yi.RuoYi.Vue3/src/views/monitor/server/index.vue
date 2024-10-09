@@ -15,11 +15,11 @@
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">核心数</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.sys.cpuNum }}</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.sys">{{ server.cpu.coreTotal }}</div></td>
                 </tr>
                 <tr>
-                  <td class="el-table__cell is-leaf"><div class="cell">总Cpu数</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.total }}MB</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell">逻辑处理器</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.logicalProcessors }}</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">系统使用率</div></td>
@@ -49,19 +49,19 @@
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">总内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.totalRAM }}</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.memory.totalRAM }}</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">已用内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.usedRam}}</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.memory.usedRam}}</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">剩余内存</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.cpu.freeRam }}</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu">{{ server.memory.freeRam }}</div></td>
                 </tr>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">使用率</div></td>
-                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu" :class="{'text-danger': server.cpu.ramRate > 80}">{{ server.cpu.ramRate }}</div></td>
+                  <td class="el-table__cell is-leaf"><div class="cell" v-if="server.cpu" :class="{'text-danger': server.memory.ramRate > 80}">{{ server.memory.ramRate }}</div></td>
               
                 </tr>
               </tbody>

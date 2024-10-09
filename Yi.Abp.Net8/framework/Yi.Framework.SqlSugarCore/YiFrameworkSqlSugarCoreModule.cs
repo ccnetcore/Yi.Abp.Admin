@@ -25,7 +25,8 @@ namespace Yi.Framework.SqlSugarCore
         {
             var service = context.Services;
             var configuration = service.GetConfiguration();
-            Configure<DbConnOptions>(configuration.GetSection("DbConnOptions"));
+            var section = configuration.GetSection("DbConnOptions");
+            Configure<DbConnOptions>(section);
 
             service.TryAddScoped<ISqlSugarDbContext, SqlSugarDbContext>();
 
@@ -40,7 +41,12 @@ namespace Yi.Framework.SqlSugarCore
 
             service.AddTransient(typeof(ISugarDbContextProvider<>), typeof(UnitOfWorkSqlsugarDbContextProvider<>));
             //替换Sqlsugar默认序列化器，用来解决.Select()不支持嵌套对象/匿名对象的非公有访问器 值无法绑定,如Id属性
-            context.Services.AddSingleton<ISerializeService,SqlSugarNonPublicSerializer> (); 
+            context.Services.AddSingleton<ISerializeService, SqlSugarNonPublicSerializer>();
+
+            var dbConfig = section.Get<DbConnOptions>();
+            //将默认db传递给abp连接字符串模块
+            Configure<AbpDbConnectionOptions>(x => { x.ConnectionStrings.Default = dbConfig.Url; });
+
             return Task.CompletedTask;
         }
 
@@ -50,8 +56,8 @@ namespace Yi.Framework.SqlSugarCore
             //进行CodeFirst
             var service = context.ServiceProvider;
             var options = service.GetRequiredService<IOptions<DbConnOptions>>().Value;
-            
-           var _logger= service.GetRequiredService<ILogger<YiFrameworkSqlSugarCoreModule>>();
+
+            var logger = service.GetRequiredService<ILogger<YiFrameworkSqlSugarCoreModule>>();
 
 
             StringBuilder sb = new StringBuilder();
@@ -65,13 +71,14 @@ namespace Yi.Framework.SqlSugarCore
             sb.AppendLine("===============================");
 
 
-            _logger.LogInformation(sb.ToString());
+            logger.LogInformation(sb.ToString());
             //Todo：准备支持多租户种子数据及CodeFirst
 
             if (options.EnabledCodeFirst)
             {
                 CodeFirst(service);
             }
+
             if (options.EnabledDbSeed)
             {
                 await DataSeedAsync(service);
@@ -80,7 +87,6 @@ namespace Yi.Framework.SqlSugarCore
 
         private void CodeFirst(IServiceProvider service)
         {
-
             var moduleContainer = service.GetRequiredService<IModuleContainer>();
             var db = service.GetRequiredService<ISqlSugarDbContext>().SqlSugarClient;
 
@@ -95,11 +101,11 @@ namespace Yi.Framework.SqlSugarCore
                     .Where(x => x.GetCustomAttribute<SugarTable>() != null)
                     .Where(x => x.GetCustomAttribute<SplitTableAttribute>() is null));
             }
+
             if (types.Count > 0)
             {
                 db.CopyNew().CodeFirst.InitTables(types.ToArray());
             }
-
         }
 
         private async Task DataSeedAsync(IServiceProvider service)

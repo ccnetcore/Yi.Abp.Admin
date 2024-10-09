@@ -103,13 +103,18 @@ height: 25px;
 .left-lable
 {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     font-size: 12px;
 }
 .left-lable label{
     margin-left: 5px;
 }
-
+.right-forgot{
+    cursor: pointer;
+}
+.right-forgot:hover{
+    color: #7f438c;
+}
 .bottom-div
 {
     font-size: 12px;
@@ -142,17 +147,11 @@ align-items: flex-end;
 {
     margin-left: 20px;
     border: 0.8px solid #000;
-    width: 100px;
-    height: 30px;
+    width: 150px;
+    height: 40px;
     text-align: center;
 }
-.div-bottom
-{
-  position: absolute;
-  bottom: 30px;
-  color:#CAD2D9;
-  font-size: 12px;
-}
+
 .div-bottom span{
     margin: 0 5px;
     cursor: pointer;

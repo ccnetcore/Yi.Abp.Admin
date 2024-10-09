@@ -60,21 +60,22 @@
           />
         </el-form-item>
         <el-form-item label="封面：" v-if="radio == 'discuss'">
-          <!-- 主题封面选择 -->
 
+          <el-image
+              v-if="dialogImageUrl"
+              :src="getUrl"
+              style="width: 178px; height: 178px"
+              class="avatar"
+          />
+          
+          <!-- 主题封面选择 -->
           <el-upload
             class="avatar-uploader"
             :action="fileUploadUrl"
             :show-file-list="false"
             :on-success="onSuccess"
           >
-            <el-image
-              v-if="dialogImageUrl"
-              :src="getUrl(dialogImageUrl)"
-              style="width: 178px; height: 178px"
-              class="avatar"
-            />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            <el-icon  class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
         <el-form-item label="标签：" prop="types">
@@ -128,7 +129,7 @@
 <script setup>
 import MavonEdit from "@/components/MavonEdit.vue";
 import UserSelectInfo from "@/components/UserSelectInfo.vue";
-import { ref, reactive, onMounted } from "vue";
+import {ref, reactive, onMounted, computed} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Plus, Download } from "@element-plus/icons-vue";
 
@@ -162,12 +163,14 @@ const dialogImageUrl = ref("");
 
 //文件上传成功后
 const onSuccess = (response) => {
-  dialogImageUrl.value = response.data[0].id;
+  dialogImageUrl.value = response[0].id;
 };
+
 //封面url
-const getUrl = (str) => {
-  return `${import.meta.env.VITE_APP_BASEAPI}/file/${str}`;
-};
+const getUrl=computed(()=>{
+  return `${import.meta.env.VITE_APP_BASEAPI}/file/${dialogImageUrl.value}`;
+})
+
 
 //整个页面上的表单
 const editForm = reactive({

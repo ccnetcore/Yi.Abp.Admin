@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
-using System.Security.Policy;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SqlSugar;
-using Volo.Abp;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -17,6 +14,7 @@ using Volo.Abp.Guids;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Users;
 using Yi.Framework.SqlSugarCore.Abstractions;
+using Check = Volo.Abp.Check;
 
 namespace Yi.Framework.SqlSugarCore
 {
@@ -26,25 +24,23 @@ namespace Yi.Framework.SqlSugarCore
         /// SqlSugar 客户端
         /// </summary>
         public ISqlSugarClient SqlSugarClient { get; private set; }
-        public ICurrentUser CurrentUser => LazyServiceProvider.GetRequiredService<ICurrentUser>();
+
+        protected ICurrentUser CurrentUser => LazyServiceProvider.GetRequiredService<ICurrentUser>();
         private IAbpLazyServiceProvider LazyServiceProvider { get; }
 
         private IGuidGenerator GuidGenerator => LazyServiceProvider.LazyGetRequiredService<IGuidGenerator>();
-        protected ILoggerFactory Logger => LazyServiceProvider.LazyGetRequiredService<ILoggerFactory>();
+        private ILoggerFactory Logger => LazyServiceProvider.LazyGetRequiredService<ILoggerFactory>();
         private ICurrentTenant CurrentTenant => LazyServiceProvider.LazyGetRequiredService<ICurrentTenant>();
-        public IDataFilter DataFilter => LazyServiceProvider.LazyGetRequiredService<IDataFilter>();
+        protected IDataFilter DataFilter => LazyServiceProvider.LazyGetRequiredService<IDataFilter>();
         protected virtual bool IsMultiTenantFilterEnabled => DataFilter?.IsEnabled<IMultiTenant>() ?? false;
 
         protected virtual bool IsSoftDeleteFilterEnabled => DataFilter?.IsEnabled<ISoftDelete>() ?? false;
 
-        public IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
+        private IEntityChangeEventHelper EntityChangeEventHelper => LazyServiceProvider.LazyGetService<IEntityChangeEventHelper>(NullEntityChangeEventHelper.Instance);
         public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
-        public AbpDbConnectionOptions ConnectionOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDbConnectionOptions>>().Value;
-       
-        public ISerializeService SerializeService=> LazyServiceProvider.LazyGetRequiredService<ISerializeService>();
 
-        private ISqlSugarDbConnectionCreator _dbConnectionCreator;
-
+        private ISerializeService SerializeService=> LazyServiceProvider.LazyGetRequiredService<ISerializeService>();
+        
         public void SetSqlSugarClient(ISqlSugarClient sqlSugarClient)
         {
             SqlSugarClient = sqlSugarClient;
@@ -53,7 +49,6 @@ namespace Yi.Framework.SqlSugarCore
         {
             LazyServiceProvider = lazyServiceProvider;
             var connectionCreator = LazyServiceProvider.LazyGetRequiredService<ISqlSugarDbConnectionCreator>();
-            _dbConnectionCreator = connectionCreator;
             connectionCreator.OnSqlSugarClientConfig = OnSqlSugarClientConfig;
             connectionCreator.EntityService = EntityService;
             connectionCreator.DataExecuting = DataExecuting;
@@ -65,6 +60,7 @@ namespace Yi.Framework.SqlSugarCore
                 options.ConnectionString = GetCurrentConnectionString();
                 options.DbType = GetCurrentDbType();
             }));
+            //统一使用aop处理
             connectionCreator.SetDbAop(SqlSugarClient);
             //替换默认序列化器
             SqlSugarClient.CurrentConnectionConfig.ConfigureExternalServices.SerializeService = SerializeService;
@@ -76,23 +72,12 @@ namespace Yi.Framework.SqlSugarCore
         /// <returns></returns>
         protected virtual string GetCurrentConnectionString()
         {
-            var defautlUrl = Options.Url ?? ConnectionOptions.GetConnectionStringOrNull(ConnectionStrings.DefaultConnectionStringName);
-            //如果未开启多租户，返回db url 或者 默认连接字符串
-            if (!Options.EnabledSaasMultiTenancy)
-            {
-                return defautlUrl;
-            }
-
-            //开启了多租户
             var connectionStringResolver = LazyServiceProvider.LazyGetRequiredService<IConnectionStringResolver>();
-            var connectionString = connectionStringResolver.ResolveAsync().GetAwaiter().GetResult();
+            var connectionString = connectionStringResolver.ResolveAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-
-            //没有检测到使用多租户功能，默认使用默认库即可
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                Volo.Abp.Check.NotNull(Options.Url, "租户默认库Defalut未找到");
-                connectionString = defautlUrl;
+                Check.NotNull(Options.Url, "dbUrl未配置");
             }
             return connectionString!;
         }
@@ -107,7 +92,7 @@ namespace Yi.Framework.SqlSugarCore
                     return dbTypeFromTenantName.Value;
                 }
             }
-            Volo.Abp.Check.NotNull(Options.DbType, "默认DbType未配置！");
+            Check.NotNull(Options.DbType, "默认DbType未配置！");
             return Options.DbType!.Value;
         }
 
@@ -210,23 +195,22 @@ namespace Yi.Framework.SqlSugarCore
                     if (entityInfo.PropertyName.Equals(nameof(IAuditedObject.CreationTime)))
                     {
                         //为空或者为默认最小值
-                        if (oldValue is null || DateTime.MinValue.Equals(oldValue))
+                        if (DateTime.MinValue.Equals(oldValue))
                         {
                             entityInfo.SetValue(DateTime.Now);
                         }
                     }
                     if (entityInfo.PropertyName.Equals(nameof(IAuditedObject.CreatorId)))
                     {
-                        if (CurrentUser.Id != null)
+                        if (CurrentUser.Id is not null)
                         {
                             entityInfo.SetValue(CurrentUser.Id);
                         }
                     }
-
-                    //插入时，需要租户id,先预留
+                    
                     if (entityInfo.PropertyName.Equals(nameof(IMultiTenant.TenantId)))
                     {
-                        if (CurrentTenant is not null)
+                        if (CurrentTenant.Id is not null)
                         {
                             entityInfo.SetValue(CurrentTenant.Id);
                         }

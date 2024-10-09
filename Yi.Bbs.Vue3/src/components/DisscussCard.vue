@@ -4,6 +4,10 @@
       <div class="card-header">
         <AvatarInfo :userInfo="discuss.user" />
       </div>
+      
+      <div style="display: flex;
+    justify-content: space-between;">
+        <div>
       <div v-if="discuss.isBan" class="item item-title">
         <el-link size="100" :underline="false" style="color: #f56c6c">{{
           discuss.title
@@ -17,18 +21,21 @@
           >{{ discuss.title }}</el-link
         >
       </div>
-      <div>
+
         <div class="item item-description">
           {{ discuss.introduction }}
         </div>
-      </div>
-      <div style="display: flex; justify-content: center">
+        </div>
+        
+      <div style="display: flex; margin-right: 40px;position: relative;
+    top: -20px;">
         <el-image
           :preview-src-list="[getUrl(discuss.cover)]"
           v-if="discuss.cover"
           :src="getUrl(discuss.cover)"
-          style="width: 100px; height: 100px"
+          style="width: 90px; height: 90px"
         />
+      </div>
       </div>
       <!-- 底部 -->
       <div class="item item-bottom">
@@ -73,9 +80,7 @@ const discuss = reactive({
   agreeNum: 0,
   isAgree: false,
   cover: "",
-  isBan: false,
-  isAgree: false,
-  agreeNum: 0,
+  isBan: false
 });
 const router = useRouter();
 const spacer = h(ElDivider, { direction: "vertical" });

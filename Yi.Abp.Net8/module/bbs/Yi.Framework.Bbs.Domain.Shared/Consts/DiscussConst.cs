@@ -11,6 +11,7 @@ namespace Yi.Framework.Bbs.Domain.Shared.Consts
     /// </summary>
     public class DiscussConst
     {
+     public const string Repeat = "创建主题重复";
         public const string No_Exist = "传入的主题id不存在";
 
         public const string Privacy = "【私密】您无该主题权限，可联系作者申请开放";

@@ -19,12 +19,12 @@ namespace Yi.Framework.Rbac.Domain.Entities
         {
 
         }
-        public UserAggregateRoot(string userName, string password, long phone, string nick = "萌新")
+        public UserAggregateRoot(string userName, string password, long phone, string? nick = null)
         {
             UserName = userName;
             EncryPassword.Password = password;
             Phone = phone;
-            Nick = nick+"-"+userName;
+            Nick =string.IsNullOrWhiteSpace(nick)?"萌新-"+userName:nick.Trim();
             BuildPassword();
         }
 

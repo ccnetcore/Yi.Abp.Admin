@@ -1,8 +1,9 @@
-﻿using IPTools.Core;
+using IPTools.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Users;
@@ -25,9 +26,9 @@ namespace Yi.Framework.Rbac.Domain.Operlog
             _currentUser = currentUser;
         }
 
-        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var resultContext = await next.Invoke();
+            var resultContext = await next();
             //执行后
 
             //判断标签是在方法上
@@ -84,7 +85,8 @@ namespace Yi.Framework.Rbac.Domain.Operlog
             if (operLogAttribute.IsSaveRequestData)
             {
                 //不建议保存，吃性能
-                //logEntity.RequestParam = context.HttpContext.GetRequestValue(logEntity.RequestMethod);
+                //保存请求参数
+                logEntity.RequestParam = JsonConvert.SerializeObject(context.ActionArguments);
             }
 
             await _repository.InsertAsync(logEntity);

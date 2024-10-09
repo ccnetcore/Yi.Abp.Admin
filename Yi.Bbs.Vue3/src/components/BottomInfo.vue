@@ -9,9 +9,10 @@
     <a
       ><el-icon><View /></el-icon>关于本站</a
     >
-    <a @click="handleContact"
+    <a v-if="!isIcp" @click="handleContact"
       ><el-icon><Link /></el-icon>联系我们</a
     >
+    
     <a
       ><el-icon><Message /></el-icon>建议反馈</a
     >
@@ -24,7 +25,7 @@
 <script setup>
 import useConfigStore from "@/stores/config";
 import { useRouter } from "vue-router";
-
+const isIcp=import.meta.env.VITE_APP_ICP==="true";
 const router = useRouter();
 const configStore = useConfigStore();
 

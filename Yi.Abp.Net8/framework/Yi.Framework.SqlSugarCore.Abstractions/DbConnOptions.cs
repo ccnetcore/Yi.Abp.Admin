@@ -19,7 +19,10 @@ namespace Yi.Framework.SqlSugarCore.Abstractions
         /// </summary>
         public bool EnabledDbSeed { get; set; } = false;
 
-
+        /// <summary>
+        /// 开启驼峰转下划线
+        /// </summary>
+        public bool EnableUnderLine { get; set; } = false;
 
         /// <summary>
         /// 开启codefirst

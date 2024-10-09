@@ -64,6 +64,12 @@ namespace Yi.Framework.SqlSugarCore
                 //设置codefirst非空值判断
                 ConfigureExternalServices = new ConfigureExternalServices
                 {
+                    // 处理表
+                    EntityNameService = (type, entity) =>
+                    {
+                        if (dbConnOptions.EnableUnderLine && !entity.DbTableName.Contains('_'))
+                            entity.DbTableName = UtilMethods.ToUnderLine(entity.DbTableName);// 驼峰转下划线
+                    },
                     EntityService = (c, p) =>
                     {
                         if (new NullabilityInfoContext()
@@ -71,6 +77,9 @@ namespace Yi.Framework.SqlSugarCore
                         {
                             p.IsNullable = true;
                         }
+
+                        if (dbConnOptions.EnableUnderLine && !p.IsIgnore && !p.DbColumnName.Contains('_'))
+                            p.DbColumnName = UtilMethods.ToUnderLine(p.DbColumnName);// 驼峰转下划线
 
                         EntityService(c, p);
                     }

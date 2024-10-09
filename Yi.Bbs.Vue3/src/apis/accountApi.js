@@ -18,6 +18,24 @@ export function login(username, password, code, uuid) {
   });
 }
 
+
+//找回密码
+export function retrievePassword(password, phone, code, uuid) {
+  const data = {
+    password,
+    phone,
+    code,
+    uuid,
+  };
+  return request({
+    url: "/account/retrieve-password",
+    headers: {
+      isToken: false,
+    },
+    method: "post",
+    data: data,
+  });
+}
 // 注册方法
 export function register(userName, password, phone, code, uuid) {
   const data = {
@@ -68,6 +86,18 @@ export function getCodeImg() {
 export function getCodePhone(phone) {
   return request({
     url: "/account/captcha-phone",
+    headers: {
+      isToken: false,
+    },
+    method: "post",
+    timeout: 20000,
+    data: { phone },
+  });
+}
+// 获取短信验证码-为了重置密码
+export function getCodePhoneForRetrievePassword(phone) {
+  return request({
+    url: "/account/captcha-phone/repassword",
     headers: {
       isToken: false,
     },

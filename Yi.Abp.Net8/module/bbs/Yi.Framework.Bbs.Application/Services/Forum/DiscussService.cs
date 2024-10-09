@@ -29,26 +29,32 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     /// <summary>
     /// Discuss应用服务实现,用于参数校验、领域服务业务组合、日志记录、事务处理、账户信息
     /// </summary>
-    public class DiscussService : YiCrudAppService<DiscussAggregateRoot, DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
-       IDiscussService
+    public class DiscussService : YiCrudAppService<DiscussAggregateRoot, DiscussGetOutputDto, DiscussGetListOutputDto,
+            Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
+        IDiscussService
     {
-        private ISqlSugarRepository<DiscussTopEntity> _discussTopEntityRepository;
+        private ISqlSugarRepository<DiscussTopEntity> _discussTopRepository;
+        private ISqlSugarRepository<AgreeEntity> _agreeRepository;
         private BbsUserManager _bbsUserManager;
-        public DiscussService(BbsUserManager bbsUserManager,  ForumManager forumManager, ISqlSugarRepository<DiscussTopEntity> discussTopEntityRepository, ISqlSugarRepository<PlateAggregateRoot> plateEntityRepository, ILocalEventBus localEventBus) : base(forumManager._discussRepository)
+
+        public DiscussService(BbsUserManager bbsUserManager, ForumManager forumManager,
+            ISqlSugarRepository<DiscussTopEntity> discussTopRepository,
+            ISqlSugarRepository<PlateAggregateRoot> plateEntityRepository, ILocalEventBus localEventBus,
+            ISqlSugarRepository<AgreeEntity> agreeRepository) : base(forumManager._discussRepository)
         {
             _forumManager = forumManager;
             _plateEntityRepository = plateEntityRepository;
             _localEventBus = localEventBus;
-            _discussTopEntityRepository = discussTopEntityRepository;
-            _bbsUserManager=bbsUserManager;
+            _agreeRepository = agreeRepository;
+            _discussTopRepository = discussTopRepository;
+            _bbsUserManager = bbsUserManager;
         }
+
         private readonly ILocalEventBus _localEventBus;
         private ForumManager _forumManager { get; set; }
 
 
         private ISqlSugarRepository<PlateAggregateRoot> _plateEntityRepository { get; set; }
-
-
 
 
         /// <summary>
@@ -58,42 +64,43 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <returns></returns>
         public async override Task<DiscussGetOutputDto> GetAsync(Guid id)
         {
-
             //查询主题发布 浏览主题 事件，浏览数+1
-            var item = await _forumManager._discussRepository._DbQueryable.LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
+            var item = await _forumManager._discussRepository._DbQueryable
+                .LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
                 .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
                 .LeftJoin<PlateAggregateRoot>((discuss, user, info, plate) => plate.Id == discuss.PlateId)
-                     .Select((discuss, user, info, plate) => new DiscussGetOutputDto
-                     {
-                         Id = discuss.Id,
-                         IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null, x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
-                         User = new BbsUserGetListOutputDto()
-                         {
-                             UserName = user.UserName,
-                             Nick = user.Nick,
-                             Icon = user.Icon,
-                             Id = user.Id,
-                             Level = info.Level,
-                             UserLimit = info.UserLimit,
-                             Money=info.Money,
-                             Experience=info.Experience
-                         },
-                         Plate = new Contracts.Dtos.Plate.PlateGetOutputDto()
-                         {
-                             Name = plate.Name,
-                             Id = plate.Id,
-                             Code = plate.Code,
-                             Introduction = plate.Introduction,
-                             Logo = plate.Logo
-
-                         }
-                     }, true)
-                     .SingleAsync(discuss => discuss.Id == id);
+                .Select((discuss, user, info, plate) => new DiscussGetOutputDto
+                {
+                    Id = discuss.Id,
+                    IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null,
+                        x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
+                    User = new BbsUserGetListOutputDto()
+                    {
+                        UserName = user.UserName,
+                        Nick = user.Nick,
+                        Icon = user.Icon,
+                        Id = user.Id,
+                        Level = info.Level,
+                        UserLimit = info.UserLimit,
+                        Money = info.Money,
+                        Experience = info.Experience
+                    },
+                    Plate = new Contracts.Dtos.Plate.PlateGetOutputDto()
+                    {
+                        Name = plate.Name,
+                        Id = plate.Id,
+                        Code = plate.Code,
+                        Introduction = plate.Introduction,
+                        Logo = plate.Logo
+                    }
+                }, true)
+                .SingleAsync(discuss => discuss.Id == id);
 
             if (item is not null)
             {
                 await VerifyDiscussPermissionAsync(item.Id);
-                await _localEventBus.PublishAsync(new SeeDiscussEventArgs { DiscussId = item.Id, OldSeeNum = item.SeeNum });
+                await _localEventBus.PublishAsync(new SeeDiscussEventArgs
+                    { DiscussId = item.Id, OldSeeNum = item.SeeNum });
             }
 
             return item;
@@ -105,49 +112,65 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public override async Task<PagedResultDto<DiscussGetListOutputDto>> GetListAsync([FromQuery] DiscussGetListInputVo input)
+        public override async Task<PagedResultDto<DiscussGetListOutputDto>> GetListAsync(
+            [FromQuery] DiscussGetListInputVo input)
         {
             //需要关联创建者用户
             RefAsync<int> total = 0;
             var items = await _forumManager._discussRepository._DbQueryable
-                 .WhereIF(!string.IsNullOrEmpty(input.Title), x => x.Title.Contains(input.Title))
-                     .WhereIF(input.PlateId is not null, x => x.PlateId == input.PlateId)
-                     .WhereIF(input.IsTop is not null, x => x.IsTop == input.IsTop)
-                     .WhereIF(input.UserId is not null,x=>x.CreatorId==input.UserId)
-                     .LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
-                     .WhereIF(input.UserName is not null, (discuss, user)=>user.UserName==input.UserName!)
-
-                     .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
-                     
-                         .OrderByDescending(discuss => discuss.OrderNum)
-                      .OrderByIF(input.Type == QueryDiscussTypeEnum.New, discuss => discuss.CreationTime, OrderByType.Desc)
-                     .OrderByIF(input.Type == QueryDiscussTypeEnum.Host, discuss => discuss.SeeNum, OrderByType.Desc)
-                      .OrderByIF(input.Type == QueryDiscussTypeEnum.Suggest, discuss => discuss.AgreeNum, OrderByType.Desc)
-
-                     .Select((discuss, user, info) => new DiscussGetListOutputDto
-                     {
-                         Id = discuss.Id,
-                         IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null, x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
-
-                         User = new BbsUserGetListOutputDto()
-                         {
-                             Id = user.Id,
-                             UserName = user.UserName,
-                             Nick = user.Nick,
-                             Icon = user.Icon,
-                             Level = info.Level,
-                             UserLimit = info.UserLimit,
-                             Money = info.Money,
-                             Experience = info.Experience
-                         }
-
-                     }, true)
+                .WhereIF(!string.IsNullOrEmpty(input.Title), x => x.Title.Contains(input.Title))
+                .WhereIF(input.PlateId is not null, x => x.PlateId == input.PlateId)
+                .WhereIF(input.IsTop is not null, x => x.IsTop == input.IsTop)
+                .WhereIF(input.UserId is not null, x => x.CreatorId == input.UserId)
+                .LeftJoin<UserAggregateRoot>((discuss, user) => discuss.CreatorId == user.Id)
+                .WhereIF(input.UserName is not null, (discuss, user) => user.UserName == input.UserName!)
+                .LeftJoin<BbsUserExtraInfoEntity>((discuss, user, info) => user.Id == info.UserId)
+                .OrderByDescending(discuss => discuss.OrderNum)
+                .OrderByIF(input.Type == QueryDiscussTypeEnum.New, discuss => discuss.CreationTime, OrderByType.Desc)
+                .OrderByIF(input.Type == QueryDiscussTypeEnum.Host, discuss => discuss.SeeNum, OrderByType.Desc)
+                .OrderByIF(input.Type == QueryDiscussTypeEnum.Suggest, discuss => discuss.AgreeNum, OrderByType.Desc)
+                .Select((discuss, user, info) => new DiscussGetListOutputDto
+                {
+                    Id = discuss.Id,
+                    // 优化查询，不使用子查询
+                    // IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null, x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
+                    User = new BbsUserGetListOutputDto()
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Nick = user.Nick,
+                        Icon = user.Icon,
+                        Level = info.Level,
+                        UserLimit = info.UserLimit,
+                        Money = info.Money,
+                        Experience = info.Experience
+                    }
+                }, true)
                 .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
+            var discussId = items.Select(x => x.Id);
+
+            //点赞字典，key为主题id，y为用户ids
+            var agreeDic =
+                (await _agreeRepository._DbQueryable.Where(x => discussId.Contains(x.DiscussId)).ToListAsync())
+                .GroupBy(x => x.DiscussId)
+                .ToDictionary(x => x.Key, y => y.Select(y => y.CreatorId).ToList());
 
             //查询完主题之后，要过滤一下私有的主题信息
             items.ApplyPermissionTypeFilter(CurrentUser.Id ?? Guid.Empty);
 
-            items?.ForEach(x => x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name);
+            //等级、是否点赞赋值
+            items?.ForEach(x =>
+            {
+                x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name;
+                if (CurrentUser.Id is not null)
+                {
+                    //默认fasle
+                    if (agreeDic.TryGetValue(x.Id,out var userIds))
+                    {
+                        x.IsAgree = userIds.Contains(CurrentUser.Id);
+                    }
+                }
+            });
             return new PagedResultDto<DiscussGetListOutputDto>(total, items);
         }
 
@@ -157,14 +180,16 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <returns></returns>
         public async Task<List<DiscussGetListOutputDto>> GetListTopAsync()
         {
-            var output = await _discussTopEntityRepository._DbQueryable.LeftJoin<DiscussAggregateRoot>((top, discuss) => top.DiscussId == discuss.Id)
+            var output = await _discussTopRepository._DbQueryable
+                .LeftJoin<DiscussAggregateRoot>((top, discuss) => top.DiscussId == discuss.Id)
                 .LeftJoin<UserAggregateRoot>((top, discuss, user) => discuss.CreatorId == user.Id)
                 .LeftJoin<BbsUserExtraInfoEntity>((top, discuss, user, info) => user.Id == info.UserId)
                 .OrderByDescending(top => top.OrderNum)
                 .Select((top, discuss, user, info) => new DiscussGetListOutputDto
                 {
                     Id = discuss.Id,
-                    IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null, x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
+                    IsAgree = SqlFunc.Subqueryable<AgreeEntity>().WhereIF(CurrentUser.Id != null,
+                        x => x.CreatorId == CurrentUser.Id && x.DiscussId == discuss.Id).Any(),
                     User = new BbsUserGetListOutputDto
                     {
                         Id = user.Id,
@@ -206,6 +231,11 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 throw new UserFriendlyException(PlateConst.No_Exist);
             }
 
+            if (await _forumManager._discussRepository.IsAnyAsync(x => x.Title == input.Title))
+            {
+                throw new UserFriendlyException(DiscussConst.Repeat);
+            }
+
             //如果开启了禁用创建主题
             if (plate.IsDisableCreateDiscuss == true)
             {
@@ -233,6 +263,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             {
                 throw new UserFriendlyException(DiscussConst.No_Exist);
             }
+
             if (discuss.PermissionType == DiscussPermissionTypeEnum.Oneself)
             {
                 if (discuss.CreatorId != CurrentUser.Id)
@@ -240,9 +271,11 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                     throw new UserFriendlyException(DiscussConst.Privacy);
                 }
             }
+
             if (discuss.PermissionType == DiscussPermissionTypeEnum.User)
             {
-                if (discuss.CreatorId != CurrentUser.Id && !discuss.PermissionUserIds.Contains(CurrentUser.Id ?? Guid.Empty))
+                if (discuss.CreatorId != CurrentUser.Id &&
+                    !discuss.PermissionUserIds.Contains(CurrentUser.Id ?? Guid.Empty))
                 {
                     throw new UserFriendlyException(DiscussConst.Privacy);
                 }

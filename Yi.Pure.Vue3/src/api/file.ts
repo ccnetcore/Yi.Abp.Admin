@@ -2,11 +2,15 @@
 import type { ResultFile } from "@/api/result";
 
 /** 上传文件*/
-export const uploadFile = (data?: object) => {
-  return http.request<ResultFile>("post", "/file", {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-    },
-    data
-  });
+export const uploadFile = data => {
+  return http.request<ResultFile>(
+    "post",
+    "/file",
+    { data },
+    {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    }
+  );
 };

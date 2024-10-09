@@ -14,7 +14,7 @@ export function useDict(...args) {
         res.value[dictType] = dicts;
       } else {
         getDicts(dictType).then(resp => {
-          res.value[dictType] = resp.data.map(p => ({ label: p.dictLabel, value: p.dictValue, elTagType: p.listClass, elTagClass: p.cssClass }))
+          res.value[dictType] = resp.data.map(p => ({ label: p.dictLabel, value: p.dictValue, elTagType: p.listClass ?? "primary", elTagClass: p.cssClass }))
           useDictStore().setDict(dictType, res.value[dictType]);
         })
       }

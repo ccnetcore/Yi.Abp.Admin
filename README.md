@@ -1,6 +1,6 @@
 <h1 align="center"><img align="left" height="150px" src="https://ccnetcore.com/prod-api/wwwroot/logo.png"> Yi框架</h1>
 <h4 align="center">一套以用户体验出发的.Net8 Web开源框架</h4>
-<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端后台接入Ruoyi/Pure Vue3.0</h5>
+<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端接入Ruoyi/Pure Vue</h5>
 <h2 align="center">集大成者，终究轮子</h2>
 
 [![star](https://gitee.com/ccnetcore/yi/badge/star.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)
@@ -9,7 +9,7 @@
 
 [English](README-en.md) | 简体中文
 ****
-##  :tw-1f34e:  简介:
+##  🍍  简介:
 YiFramework是一个基于.Net8+Abp.vNext+SqlSugar的DDD领域驱动设计后端开源框架
 
 谁说Abp复杂？谁说DDD难？`打破常规，化繁为简`，新人入门，项目二开，最佳方式之一
@@ -89,7 +89,7 @@ Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456�
 - 优雅支持分布式及微服务架构
 - 等等
 
-##  🫐  基础设施简介
+##  🍍  基础设施简介
 
 以下全部功能可直接使用：
 
