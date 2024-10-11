@@ -48,10 +48,18 @@ namespace Yi.Framework.Rbac.Domain.Operlog
             //获取Ip
             string ip = resultContext.HttpContext.GetClientIp();
 
-            //根据ip获取地址
+             //根据ip获取地址
+            string location = "";
+            try
+            {
+                var ipTool = IpTool.Search(ip);
+                location = ipTool.Province + " " + ipTool.City;
+            }
+            catch
+            {
+                location = "搜索地址失败，可能是内网地址:" + ip;
+            }
 
-            var ipTool = IpTool.Search(ip);
-            string location = ipTool.Province + " " + ipTool.City;
 
             //日志服务插入一条操作记录即可
 

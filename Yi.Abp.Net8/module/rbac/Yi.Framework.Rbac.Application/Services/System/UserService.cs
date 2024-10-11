@@ -159,7 +159,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
             var entity = await _repository.GetByIdAsync(id);
             //更新密码，特殊处理
-            if (input.Password is not null)
+            if (!string.IsNullOrWhiteSpace(input.Password))
             {
                 entity.EncryPassword.Password = input.Password;
                 entity.BuildPassword();

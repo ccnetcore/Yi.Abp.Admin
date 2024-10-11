@@ -9,11 +9,11 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
     public class DiscussGetListOutputDto : EntityDto<Guid>
     {
         /// <summary>
-        /// ÊÇ·ñ½ûÖ¹ÆÀÂÛ´´½¨¹¦ÄÜ
+        /// æ˜¯å¦ç¦æ­¢è¯„è®ºåˆ›å»ºåŠŸèƒ½
         /// </summary>
         public bool IsDisableCreateComment { get; set; }
         /// <summary>
-        /// ÊÇ·ñÒÑµãÔŞ£¬Ä¬ÈÏÎ´µÇÂ¼²»µãÔŞ
+        /// æ˜¯å¦å·²ç‚¹èµï¼Œé»˜è®¤æœªç™»å½•ä¸ç‚¹èµ
         /// </summary>
         public bool IsAgree { get; set; } = false;
         public string Title { get; set; }
@@ -23,26 +23,26 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public int AgreeNum { get; set; }
         public int SeeNum { get; set; }
 
-        //ÅúÁ¿²éÑ¯£¬²»¸øÄÚÈİ£¬ĞÔÄÜ¿¼ÂÇ
+        //æ‰¹é‡æŸ¥è¯¢ï¼Œä¸ç»™å†…å®¹ï¼Œæ€§èƒ½è€ƒè™‘
         //public string Content { get; set; }
         public string? Color { get; set; }
 
         public Guid PlateId { get; set; }
 
-        //ÊÇ·ñÖÃ¶¥£¬Ä¬ÈÏfalse
+        //æ˜¯å¦ç½®é¡¶ï¼Œé»˜è®¤false
         public bool IsTop { get; set; }
 
         public DiscussPermissionTypeEnum PermissionType { get; set; }
-        //ÊÇ·ñ½ûÖ¹£¬Ä¬ÈÏfalse
+        //æ˜¯å¦ç¦æ­¢ï¼Œé»˜è®¤false
         public bool IsBan { get; set; }
 
 
         /// <summary>
-        /// ·âÃæ
+        /// å°é¢
         /// </summary>
         public string? Cover { get; set; }
 
-        //Ë½ÓĞĞèÒªÅĞ¶ÏcodeÈ¨ÏŞ
+        //ç§æœ‰éœ€è¦åˆ¤æ–­codeæƒé™
         public string? PrivateCode { get; set; }
         public DateTime CreationTime { get; set; }
 
@@ -55,7 +55,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
             Title = DiscussConst.Privacy;
             Introduction = "";
             Cover = null;
-            //±»½ûÖ¹
+            //è¢«ç¦æ­¢
             IsBan = true;
         }
     }
@@ -73,14 +73,14 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
                     case DiscussPermissionTypeEnum.Public:
                         break;
                     case DiscussPermissionTypeEnum.Oneself:
-                        //µ±Ç°Ö÷ÌâÊÇ½ö×Ô¼º¿É¼û£¬Í¬Ê±²»ÊÇµ±Ç°µÇÂ¼ÓÃ»§
+                        //å½“å‰ä¸»é¢˜æ˜¯ä»…è‡ªå·±å¯è§ï¼ŒåŒæ—¶ä¸æ˜¯å½“å‰ç™»å½•ç”¨æˆ·
                         if (dto.User.Id != userId)
                         {
                             dto.SetBan();
                         }
                         break;
                     case DiscussPermissionTypeEnum.User:
-                        //µ±Ç°Ö÷ÌâÎª²¿·Ö¿É¼û£¬Í¬Ê±²»ÊÇµ±Ç°µÇÂ¼ÓÃ»§ Ò² ²»ÔÚ¿É¼ûÓÃ»§ÁĞ±íÖĞ
+                        //å½“å‰ä¸»é¢˜ä¸ºéƒ¨åˆ†å¯è§ï¼ŒåŒæ—¶ä¸æ˜¯å½“å‰ç™»å½•ç”¨æˆ· ä¹Ÿ ä¸åœ¨å¯è§ç”¨æˆ·åˆ—è¡¨ä¸­
                         if (dto.User.Id != userId && !dto.PermissionUserIds.Contains(userId))
                         {
                             dto.SetBan();

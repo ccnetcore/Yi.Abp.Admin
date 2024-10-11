@@ -180,6 +180,8 @@ namespace Yi.Framework.Rbac.Domain.Managers
             }
             return false;
         }
+        
+        
 
         /// <summary>
         /// 令牌转换
@@ -250,7 +252,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         }
 
         /// <summary>
-        /// 重置密码
+        /// 重置密码,也可以是找回密码
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="password"></param>
@@ -258,7 +260,6 @@ namespace Yi.Framework.Rbac.Domain.Managers
         public async Task<bool> RestPasswordAsync(Guid userId, string password)
         {
             var user = await _repository.GetByIdAsync(userId);
-            // EntityHelper.TrySetId(user, () => GuidGenerator.Create(), true);
             user.EncryPassword.Password = password;
             user.BuildPassword();
             return await _repository.UpdateAsync(user);
@@ -271,12 +272,11 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <param name="password"></param>
         /// <param name="phone"></param>
         /// <returns></returns>
-        public async Task RegisterAsync(string userName, string password, long phone)
+        public async Task RegisterAsync(string userName, string password, long phone,string? nick)
         {
-            var user = new UserAggregateRoot(userName, password, phone);
+            var user = new UserAggregateRoot(userName, password, phone,nick);
             await _userManager.CreateAsync(user);
             await _userManager.SetDefautRoleAsync(user.Id);
-
         }
     }
 

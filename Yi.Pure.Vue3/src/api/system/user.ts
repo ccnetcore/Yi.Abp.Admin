@@ -52,7 +52,7 @@ export const updateUserProfile = data => {
 
 /** 只修改用户头像 */
 export const updateUserIcon = data => {
-  return http.request<Result>("put", `/account/icon`, { data: { icon: data } });
+  return http.request<Result>("put", `/account/icon`, { data });
 };
 
 /** 用户密码重置 */

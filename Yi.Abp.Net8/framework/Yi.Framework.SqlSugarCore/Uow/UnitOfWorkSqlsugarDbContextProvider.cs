@@ -48,7 +48,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
 
             //获取当前连接字符串，未多租户时，默认为空
             var connectionString = await ResolveConnectionStringAsync(connectionStringName);
-            var dbContextKey = $"{this.GetType().FullName}_{connectionString}";
+            var dbContextKey = $"{this.GetType().Name}_{connectionString}";
 
 
             var unitOfWork = UnitOfWorkManager.Current;

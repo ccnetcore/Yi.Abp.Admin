@@ -2,8 +2,8 @@
 import type { Result, ResultPage } from "@/api/result";
 
 /** 查询菜单下拉树结构 */
-export const getMenuOption = () => {
-  return http.request<ResultPage>("get", `/menu`, {});
+export const getMenuOption = menusource => {
+  return http.request<ResultPage>("get", `/menu`, { params: menusource });
 };
 
 /** 查询菜单列表 */

@@ -39,7 +39,8 @@ namespace Yi.Framework.Rbac.Application.Services
 
             if (!File.Exists(path))
             {
-                throw new UserFriendlyException("文件不存在",code:"404");
+                return new NotFoundResult();
+                // throw new UserFriendlyException("文件不存在",code:"404");
             }
             
 
@@ -66,12 +67,6 @@ namespace Yi.Framework.Rbac.Application.Services
             //    path = $"wwwroot/{FileTypeEnum.Thumbnail}/{file.Id}{Path.GetExtension(file.FileName)}";
             //}
             //路径为： 文件路径/文件id+文件扩展名
-
-            if (!File.Exists(path))
-            {
-                throw new UserFriendlyException("本地文件不存在", "404");
-            }
-
             return path;
         }
 

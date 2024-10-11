@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Nito.AsyncEx;
 using SqlSugar;
 using Volo.Abp;
 using Volo.Abp.Auditing;
@@ -16,9 +17,9 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 {
     public class SqlSugarRepository<TEntity> : ISqlSugarRepository<TEntity>, IRepository<TEntity> where TEntity : class, IEntity, new()
     {
-        public ISqlSugarClient _Db => GetDbContextAsync().Result;
+        public ISqlSugarClient _Db => AsyncContext.Run(async () => await GetDbContextAsync());
 
-        public ISugarQueryable<TEntity> _DbQueryable => GetDbContextAsync().ConfigureAwait(false).GetAwaiter().GetResult().Queryable<TEntity>();
+        public ISugarQueryable<TEntity> _DbQueryable => _Db.Queryable<TEntity>();
 
         private ISugarDbContextProvider<ISqlSugarDbContext> _sugarDbContextProvider;
         public IAsyncQueryableExecuter AsyncExecuter { get; }
@@ -36,9 +37,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
         /// <returns></returns>
         public virtual async Task<ISqlSugarClient> GetDbContextAsync()
         {
-
             var db = (await _sugarDbContextProvider.GetDbContextAsync()).SqlSugarClient;
-            //await Console.Out.WriteLineAsync("获取的id：" + db.ContextID);
             return db;
         }
 

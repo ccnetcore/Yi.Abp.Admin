@@ -7,7 +7,7 @@ import {
   userLogin,
   getUserDetailInfo,
   userLogout,
-  userRegister,
+  userRegister, userRetrievePassword,
 } from "@/apis/auth";
 const TokenKey = "AccessToken";
 export const AUTH_MENUS = "AUTH_MENUS";
@@ -108,7 +108,7 @@ const currentUserInfo=computed(()=>{
         message: `您好${params.userName}，登录成功！`,
         type: "success",
       });
-      loginSuccess(res);
+     await loginSuccess(res);
       return res;
     } catch (error) {
       const { data } = error;
@@ -182,6 +182,20 @@ const currentUserInfo=computed(()=>{
     // }
   };
 
+  // 找回密码
+  const retrievePasswordFun = async (params) => {
+    // try {
+   const {data}=await userRetrievePassword(params);
+    ElMessage({
+      message: `恭喜！账号：${data}，找回成功！密码已重置，请登录！`,
+      type: "success",
+      duration: 8000
+    });
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+  
   return {
     getToken,
     setToken,
@@ -189,6 +203,7 @@ const currentUserInfo=computed(()=>{
     loginFun,
     getUserInfo,
     logoutFun,
+    retrievePasswordFun,
     clearStorage,
     registerFun,
     loginSuccess,

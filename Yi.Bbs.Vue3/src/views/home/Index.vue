@@ -3,23 +3,47 @@
     <el-row :gutter="20" class="top-div">
       <el-col :span="17">
         <div class="chat-hub">
-          <p @click="onClickToChatHub">点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家
-          </p>
+<!--          <p @click="onClickToChatHub">点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>-->
+         
+         <p v-if="isIcp" 
+            style="font-size: 25px;
+    color: blue;
+    background: red;
+    /* height: 80px; */
+    font-weight: 900;
+    text-align: center;
+margin: 10px auto;">
+           本站点为个人内容分享，全部资料免费开源学习，所有数据为假数据
+           <br/>
+           不涉及企业、团体、论坛和经营销售等内容，只做简单的成果展示
+           <br/>
+           富强、‌民主、文明、‌和谐、‌自由、‌平等
+           <br/>
+           公正、‌法治、‌爱国、‌敬业、‌诚信、友善
+         </p>
+          <p v-else @click="onClickToWeChat">点击关注-最新上线<span>《意.Net官方微信公众号》 </span>，分享有<span>深度</span>的.Net知识，希望能帮助大家</p>
+       
+       
         </div>
         <div class="scrollbar">
           <ScrollbarInfo/>
         </div>
 
         <el-row class="left-div">
+          
+          
           <el-col :span="8" v-for="i in plateList" :key="i.id" class="plate" :style="{
       'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
       'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
     }">
-            <PlateCard :name="i.name" :introduction="i.introduction" :id="i.id" :isPublish="i.isDisableCreateDiscuss"/>
+            <img v-if="isIcp" src="@/assets/login.png" style="height: 80px;width: 100%" alt=""/>
+            <PlateCard v-else :name="i.name" :introduction="i.introduction" :id="i.id" :isPublish="i.isDisableCreateDiscuss"/>
           </el-col>
+          
           <template v-if="isDiscussFinished">
             <el-col :span="24" v-for="i in discussList" :key="i.id">
-              <DisscussCard :discuss="i"/>
+              <img v-if="isIcp" src="@/assets/login.png" style="height: 150px;width: 100%" alt=""/>
+              <DisscussCard v-else :discuss="i"/>
             </el-col>
           </template>
           <template v-else>
@@ -27,7 +51,8 @@
           </template>
           <template v-if="isAllDiscussFinished">
             <el-col :span="24" v-for="i in allDiscussList" :key="i.id">
-              <DisscussCard :discuss="i"/>
+              <img v-if="isIcp" src="@/assets/login.png" style="height: 150px;width: 100%" alt=""/>
+              <DisscussCard v-else :discuss="i"/>
             </el-col>
           </template>
           <template v-else>
@@ -77,7 +102,7 @@
             </div>
           </div>
           <!-- 签到 -->
-          <el-col :span="24">
+          <el-col v-if="!isIcp" :span="24">
             <InfoCard header="活动">
               <template #content>
                 <div class="top">你好，很高兴今天又遇到你呀~</div>
@@ -131,7 +156,7 @@
             </InfoCard>
           </el-col>
 
-          <el-col :span="24">
+          <el-col v-if="!isIcp" :span="24">
             <template v-if="isPointFinished">
               <InfoCard :items="pointList" header="财富排行榜" text="查看我的位置" height="400"
                         @onClickText="onClickMoneyTop">
@@ -149,7 +174,7 @@
             </template>
           </el-col>
 
-          <el-col :span="24">
+          <el-col v-if="!isIcp" :span="24">
             <template v-if="isFriendFinished">
               <InfoCard :items="friendList" header="推荐好友" text="更多" height="400">
                 <template #item="temp">
@@ -165,7 +190,7 @@
               </InfoCard>
             </template>
           </el-col>
-          <el-col :span="24">
+          <el-col v-if="!isIcp" :span="24">
             <template v-if="isThemeFinished">
               <InfoCard :items="themeList" header="推荐主题" text="更多" height="400">
                 <template #item="temp">
@@ -188,6 +213,25 @@
         </el-row>
       </el-col>
     </el-row>
+
+
+    <el-dialog
+        v-model="wechatDialogVisible"
+        title="意社区官方微信公众号"
+        width="800"
+    >
+     <div style="display: flex;justify-content: center;">
+      <img style="width: 585px; height: 186px" src="@/assets/wechat/share.png"  alt=""/>
+     </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="wechatDialogVisible = false">
+            已关注
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -253,7 +297,7 @@ const activeList = [
   {name: "开始", path: "/start", icon: "Position"},
   {name: "聊天室", path: "/chat", icon: "ChatRound"},
 ];
-
+const isIcp=import.meta.env.VITE_APP_ICP==="true";
 //主题查询参数
 const query = reactive({
   skipCount: 1,
@@ -261,40 +305,46 @@ const query = reactive({
   isTop: true,
 });
 
-const weekQuery = reactive({accessLogType: "Request"});
+const weekQuery = reactive({accessLogType: "Request"});4
+
+const init=async ()=>{
+  
+  //分阶段优化
+  await Promise.all([
+    (async ()=>{const {data: allDiscussData, config: allDiscussConfig} =
+        await getAllDiscussList({Type: 0, skipCount: 1, maxResultCount: 30,});
+      isAllDiscussFinished.value = allDiscussConfig.isFinish;
+      allDiscussList.value = allDiscussData.items;})(),
+    (async ()=>{const {data: plateData} = await getList();
+      plateList.value = plateData.items;})(),
+    (async ()=>{const {data: discussData, config: discussConfig} = await getHomeDiscuss();
+      discussList.value = discussData;
+      isDiscussFinished.value = discussConfig.isFinish;})(),
+    (async ()=>{const {data: bannerData} = await bannerGetList();
+      bannerList.value = bannerData.items;})(),
+    (async ()=>{const {data: weekData} = await getWeek(weekQuery);
+      weekList.value = weekData;})(),
+    (async ()=>{const {data: pointData, config: pointConfig} = await getRankingPoints();
+      pointList.value = pointData.items;
+      isPointFinished.value = pointConfig.isFinish;})(),
+    (async ()=>{const {data: userAnalyseInfoData} = await getUserAnalyse();
+      onlineNumber.value = userAnalyseInfoData.onlineNumber;
+      userAnalyseInfo.value = userAnalyseInfoData;})(),
+  ]);
+
+
+  //不重要的请求滞后
+ const {data: friendData, config: friendConfig} = await getRecommendedFriend();
+    friendList.value = friendData;
+    isFriendFinished.value = friendConfig.isFinish;
+    const {data: themeData, config: themeConfig} = await getRecommendedTopic();
+        themeList.value = themeData;
+        isThemeFinished.value = themeConfig.isFinish;
+  await access();
+}
 //初始化
 onMounted(async () => {
-  access();
-  const {data: plateData} = await getList();
-  plateList.value = plateData.items;
-  const {data: discussData, config: discussConfig} = await getHomeDiscuss();
-  discussList.value = discussData;
-  isDiscussFinished.value = discussConfig.isFinish;
-  const {data: bannerData} = await bannerGetList();
-  bannerList.value = bannerData.items;
-  const {data: weekData} = await getWeek(weekQuery);
-  weekList.value = weekData;
-  const {data: pointData, config: pointConfig} = await getRankingPoints();
-  pointList.value = pointData.items;
-  isPointFinished.value = pointConfig.isFinish;
-  const {data: friendData, config: friendConfig} =
-      await getRecommendedFriend();
-  friendList.value = friendData;
-  isFriendFinished.value = friendConfig.isFinish;
-  const {data: themeData, config: themeConfig} = await getRecommendedTopic();
-  themeList.value = themeData;
-  isThemeFinished.value = themeConfig.isFinish;
-  const {data: allDiscussData, config: allDiscussConfig} =
-      await getAllDiscussList({
-        Type: 0,
-        skipCount: 1,
-        maxResultCount: 30,
-      });
-  isAllDiscussFinished.value = allDiscussConfig.isFinish;
-  allDiscussList.value = allDiscussData.items;
-  const {data: userAnalyseInfoData} = await getUserAnalyse();
-  onlineNumber.value = userAnalyseInfoData.onlineNumber;
-  userAnalyseInfo.value = userAnalyseInfoData;
+await init();
 });
 
 const weekXAxis = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -396,6 +446,7 @@ const onClickAccessLog = async () => {
 
 }
 
+const wechatDialogVisible=ref(false)
 //切换统计开关
 const onClickWeekSwitch = async () => {
   if (weekQuery.accessLogType === "HomeClick") {
@@ -407,6 +458,11 @@ const onClickWeekSwitch = async () => {
   const {data: weekData} = await getWeek(weekQuery);
   weekList.value = weekData;
 }
+
+//打开微信公众号弹窗
+const onClickToWeChat=()=>{
+  wechatDialogVisible.value=true;
+};
 </script>
 <style scoped lang="scss">
 .home-box {
@@ -591,7 +647,7 @@ const onClickWeekSwitch = async () => {
   display: flex;
   align-content: center;
   flex-wrap: wrap;
-  height: 30px;
+  min-height: 30px;
 
   p {
     margin: 0 auto;

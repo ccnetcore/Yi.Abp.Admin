@@ -4,7 +4,8 @@
       <div class="image">
         <img class="img-icon" src="@/assets/common/icons/logo.ico" />
       </div>
-      <div class="text">{{ configStore.name }}</div>
+      
+      <div class="text">{{ isIcp===true?"个人成果展示":configStore.name }}</div>
     </div>
     <div class="tab">
       <el-menu :default-active="activeIndex" mode="horizontal" :ellipsis="false" @select="handleSelect">
@@ -12,23 +13,24 @@
 
         <el-menu-item index="2" @click="enterStart"
           style="color: red;font-weight: bolder;font-size: large;">开始</el-menu-item>
-
-        <el-sub-menu index="3">
+        <el-menu-item index="3" @click="enterWatermelon"
+                     >大西瓜</el-menu-item>
+        <el-sub-menu index="4">
           <template #title>学习</template>
           <el-menu-item index="3-1">前端</el-menu-item>
           <el-menu-item index="3-2">后端</el-menu-item>
           <el-menu-item index="3-3">运维</el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="4">
-          <template #title>问答</template>
-          <el-menu-item index="4-1">前端</el-menu-item>
-          <el-menu-item index="4-2">后端</el-menu-item>
-          <el-menu-item index="4-3">运维</el-menu-item>
-        </el-sub-menu>
+<!--        <el-sub-menu index="5">-->
+<!--          <template #title>问答</template>-->
+<!--          <el-menu-item index="4-1">前端</el-menu-item>-->
+<!--          <el-menu-item index="4-2">后端</el-menu-item>-->
+<!--          <el-menu-item index="4-3">运维</el-menu-item>-->
+<!--        </el-sub-menu>-->
       </el-menu>
     </div>
-    <div class="search-bar">
+    <div class="search-bar" v-if="!isIcp">
       <el-input style="width: 300px" v-model="searchText" placeholder="全站搜索" clearable prefix-icon="Search">
         <template #append>
           <el-button type="primary" plain @click="search">搜索</el-button>
@@ -39,8 +41,8 @@
 
 
       <div class="money" v-if="isLogin">钱钱：<span>{{ money }}</span></div>
-      <el-dropdown trigger="click">
-        <AvatarInfo :size="30" :isSelf="true" />
+      <el-dropdown v-if="!isIcp" trigger="click">
+        <AvatarInfo  :size="30" :isSelf="true" />
 
         <template #dropdown>
 
@@ -57,7 +59,7 @@
         </template>
       </el-dropdown>
 
-      <div class="notice">
+      <div class="notice" v-if="!isIcp">
         <el-dropdown trigger="click" :max-height="500">
           <el-badge v-if="noticeStore.noticeForNoReadCount > 0" :value="noticeStore.noticeForNoReadCount">
             <el-button type="primary">
@@ -75,7 +77,7 @@
 
 
           <template #dropdown>
-            <el-dropdown-menu>
+            <el-dropdown-menu v-if="!isIcp">
 
               <el-dropdown-item class="notice-oper" style="justify-content: space-between;">
                 <el-button type="primary" @click="fetchNoticeData">刷新</el-button>
@@ -151,9 +153,16 @@ const searchText = ref("");
 const noticeForNoReadCount = computed(() => {
   return noticeList.value.filter(x => x.isRead == false).length;
 })
+
+const isIcp=import.meta.env.VITE_APP_ICP==="true";
 //加载初始化离线消息
 onMounted(async () => {
-  await fetchNoticeData();
+  //登录了才去判断消息通知
+  if (isLogin.value)
+  {
+    await fetchNoticeData();
+  }
+
 })
 const fetchNoticeData = async () => {
   const { data } = await getNoticeList({ maxResultCount: 20 });
@@ -222,6 +231,9 @@ const enterStart = () => {
   router.push("/start");
 }
 
+const enterWatermelon=()=>{
+  alert("即将上线，敬请期待~")
+}
 </script>
 
 

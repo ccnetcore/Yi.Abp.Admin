@@ -26,13 +26,18 @@ const router = createRouter({
           name: "login",
           path: "/login",
           // component: () => import("../views/Login.vue"),
-          component: () => import("../views/login/index.vue"),
+          component: () => import("../views/login/login.vue"),
         },
-        // {
-        //   name: "register",
-        //   path: "/register",
-        //   component: () => import("../views/Register.vue"),
-        // },
+        {
+          name: "register",
+          path: "/register",
+          component: () => import("../views/login/register.vue"),
+        },
+        {
+          name: "forgotPassword",
+          path: "/forgotPassword",
+          component: () => import("../views/login/forgotPassword.vue"),
+        },
         {
           name: "auth",
           path: "/auth/:type",

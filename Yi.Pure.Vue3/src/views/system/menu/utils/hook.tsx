@@ -153,7 +153,7 @@ export function useMenu() {
                 ),
           higherMenuOptions: formatHigherMenuOptions(cloneDeep(dataList.value)),
           id: data?.id ?? "",
-          parentId: data?.parentId ?? 0,
+          parentId: data?.parentId ?? "00000000-0000-0000-0000-000000000000",
           router: data?.router ?? "",
           component: data?.component ?? "",
           orderNum: data?.orderNum ?? 0,

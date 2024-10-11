@@ -1,4 +1,4 @@
-﻿using IPTools.Core;
+using IPTools.Core;
 using Microsoft.AspNetCore.Http;
 using SqlSugar;
 using UAParser;
@@ -75,7 +75,14 @@ namespace Yi.Framework.Rbac.Domain.Entities
             }
             else
             {
-                location = IpTool.Search(ipAddr);
+                try
+                {
+                    location = IpTool.Search(ipAddr);
+                }
+                catch
+                {
+                    location = new IpInfo() { Province = ipAddr, City = "未知地区" };
+                }
             }
             ClientInfo clientInfo = GetClientInfo(context);
             LoginLogAggregateRoot entity = new()

@@ -9,6 +9,7 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
     [SugarTable("Discuss")]
     [SugarIndex($"index_{nameof(Title)}", nameof(Title), OrderByType.Asc)]
     [SugarIndex($"index_{nameof(PlateId)}", nameof(PlateId), OrderByType.Asc)]
+    [SugarIndex($"index_{nameof(CreatorId)}", nameof(CreatorId), OrderByType.Asc)]
     [SugarIndex($"index_{nameof(CreationTime)}", nameof(CreationTime), OrderByType.Desc)]
     public class DiscussAggregateRoot : AggregateRoot<Guid>, ISoftDelete, IAuditedObject
     {

@@ -1,0 +1,153 @@
+﻿<script setup>
+
+// 注册逻辑
+import {reactive, ref} from "vue";
+import {getCodePhoneForRetrievePassword} from "@/apis/accountApi";
+import useAuths from "@/hooks/useAuths";
+import { useRouter} from "vue-router";
+const { retrievePasswordFun } = useAuths();
+const router = useRouter();
+const retrievePasswordFormRef = ref();
+
+
+// 确认密码
+const passwordConfirm = ref("");
+const registerForm = reactive({
+  phone: "",
+  password: "",
+  uuid: "",
+  code: ""
+});
+const registerRules = reactive({
+  phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+  code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
+  password: [
+    { required: true, message: "请输入新的密码", trigger: "blur" },
+    { min: 6, message: "密码需大于六位", trigger: "blur" },
+  ],
+});
+
+const retrievePassword = async (formEl) => {
+  if (!formEl) return;
+  await formEl.validate(async (valid) => {
+
+    if (valid) {
+      try {
+        if (registerForm.password != passwordConfirm.value) {
+          ElMessage.error("两次密码输入不一致");
+          return;
+        }
+        await retrievePasswordFun(registerForm);
+        //注册成功返回登录
+        handleSignInNow();
+      } catch (error) {
+        ElMessage({
+          message: error.message,
+          type: "error",
+          duration: 2000,
+        });
+      }
+    }
+  });
+};
+
+
+//验证码
+const codeInfo = ref("发送短信");
+const isDisabledCode = ref(false);
+
+//前往登录
+const  handleSignInNow=()=>{
+  router.push("/login");
+}
+const captcha = async () => {
+  if (registerForm.phone !== "") {
+    const { data } = await getCodePhoneForRetrievePassword(registerForm.phone);
+    registerForm.uuid = data.uuid;
+    ElMessage({
+      message: `已向${registerForm.phone}发送验证码，请注意查收`,
+      type: "success",
+    });
+    isDisabledCode.value = true;
+    let time = 60; //定义剩下的秒数
+    let timer = setInterval(function () {
+      if (time == 0) {
+        //清除定时器和复原按钮
+        clearInterval(timer);
+        codeInfo.value = "发送验证码";
+        time = 60; //这个10是重新开始
+      } else {
+        codeInfo.value = "剩余" + time + "秒";
+        time--;
+      }
+    }, 1000);
+  } else {
+    ElMessage({
+      message: `请先输入手机号`,
+      type: "warning",
+    });
+  }
+};
+</script>
+
+<template>
+  <div class="container">
+    <!-- 找回密码 -->
+    <div class="div-content">
+      <div class="div-right-register">
+        <img class="div-img" src="@/assets/login.png"/>
+      </div>
+      <div class="div-left-register">
+        <div class="left-container">
+          <p class="title  register-title">Find Password!</p>
+          <el-form
+              class="registerForm"
+              ref="retrievePasswordFormRef"
+              :model="registerForm"
+              :rules="registerRules"
+          >
+            <div class="input-content">
+              
+              <div class="input" style="margin-top: 0">
+                <p>*电话</p>
+                <el-form-item prop="phone">
+                  <div class="phone-code">
+                    <input class="phone-code-input" type="text" v-model.trim="registerForm.phone">
+                    <button type="button" class="phone-code-btn" @click="captcha()">{{codeInfo}}</button>
+                  </div>
+                </el-form-item>
+              </div>
+              <div class="input">
+                <p>*短信验证码</p>
+                <el-form-item prop="code" >
+                  <input :disabled="!isDisabledCode" type="text" v-model.trim="registerForm.code">
+                </el-form-item>
+              </div>
+              <div class="input">
+                <p>*新的密码</p>
+                <el-form-item prop="password">
+                  <input :disabled="!isDisabledCode" type="password" v-model.trim="registerForm.password">
+                </el-form-item>
+              </div>
+              <div class="input">
+                <p>*确认密码</p>
+                <el-form-item>
+                  <input :disabled="!isDisabledCode" type="password" v-model.trim="passwordConfirm">
+                </el-form-item>
+              </div>
+
+            </div>
+          </el-form>
+          <div class="left-btn">
+            <button type="button" class="btn-login" @click="retrievePassword(retrievePasswordFormRef)">确认重置密码</button>
+            <button type="button" class="btn-reg" @click="handleSignInNow">前往登录</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<style src="@/assets/styles/login.css" scoped>
+</style>

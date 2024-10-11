@@ -7,7 +7,7 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Menu
     /// </summary>
     public class MenuCreateInputVo
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
         public Guid? CreatorId { get; set; }
         public bool State { get; set; }

@@ -127,7 +127,7 @@ system/tenant : api文件路径,例如：codeGen/tableApi
          <el-form-item label="数据库类型" prop="dbType">
               <el-radio-group v-model="form.dbType">
                 <el-radio
-                  v-for="dict in ['Sqlite','Mysql','Sqlserver']"
+                  v-for="dict in ['Sqlite','Mysql','Sqlserver','PostgreSQL']"
                   :key="dict"
                   :value="dict"
                   >{{ dict }}</el-radio
@@ -141,6 +141,7 @@ system/tenant : api文件路径,例如：codeGen/tableApi
                 <p>Sqlite: DataSource=[xxxx]</p>
                 <p>Mysql: server=[xxxx];port=3306;database=[xxxx];user id=[xxxx];password=[xxxx]</p> 
                 <p>Sqlserver: Data Source=[xxxx];Initial Catalog=[xxxx];User ID=[xxxx];password=[xxxx]</p>
+                <p>PostgreSQL: HOST=[xxxx];PORT=5432;DATABASE=[xxxx];USERID=[xxxx];PASSWORD=[xxxx]</p>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
