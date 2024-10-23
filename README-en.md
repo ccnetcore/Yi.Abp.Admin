@@ -1,3 +1,6 @@
+# [This repository is a mirror repository, and the source repository address is :[https://gitee.com/ccnetcore/Yi](https://gitee.com/ccnetcore/Yi)]
+# [start number：[![star](https://gitee.com/ccnetcore/yi/badge/star.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)]
+
 <h1 align="center"><img align="left" height="150px" src="https://ccnetcore.com/prod-api/wwwroot/logo.png"> Yi-Framework</h1>
 <h4 align="center">A .NET 8 Web open-source Asp.NetCore framework focused on user experience.</h4>
 <h5 align="center">Supports Native/Abp.vNext/Furion/Ruoyi/Pure</h5>
