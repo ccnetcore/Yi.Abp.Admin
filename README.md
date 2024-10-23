@@ -1,3 +1,6 @@
+# [本仓库为镜像库，源库地址:[https://gitee.com/ccnetcore/Yi](https://gitee.com/ccnetcore/Yi)]
+# [start数量：[![star](https://gitee.com/ccnetcore/yi/badge/star.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)]
+
 <h1 align="center"><img align="left" height="150px" src="https://ccnetcore.com/prod-api/wwwroot/logo.png"> Yi框架</h1>
 <h4 align="center">一套以用户体验出发的.Net8 Web开源框架</h4>
 <h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端接入Ruoyi/Pure Vue</h5>
