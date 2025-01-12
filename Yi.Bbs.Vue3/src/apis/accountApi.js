@@ -83,7 +83,7 @@ export function getCodeImg() {
   });
 }
 // 获取短信验证码
-export function getCodePhone(phone) {
+export function getCodePhone(phoneForm) {
   return request({
     url: "/account/captcha-phone",
     headers: {
@@ -91,11 +91,11 @@ export function getCodePhone(phone) {
     },
     method: "post",
     timeout: 20000,
-    data: { phone },
+    data: phoneForm,
   });
 }
 // 获取短信验证码-为了重置密码
-export function getCodePhoneForRetrievePassword(phone) {
+export function getCodePhoneForRetrievePassword(form) {
   return request({
     url: "/account/captcha-phone/repassword",
     headers: {
@@ -103,6 +103,6 @@ export function getCodePhoneForRetrievePassword(phone) {
     },
     method: "post",
     timeout: 20000,
-    data: { phone },
+    data: form,
   });
 }

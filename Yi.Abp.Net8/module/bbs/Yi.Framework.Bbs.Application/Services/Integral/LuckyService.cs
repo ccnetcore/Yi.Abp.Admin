@@ -16,7 +16,7 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
 
         /// <summary>
         /// 大转盘
-        /// Todo: 可放入领域层
+        /// Todo: 可放入领域层，但是太简单了，不重要
         /// </summary>
         /// <returns></returns>
         [Authorize]
@@ -32,13 +32,7 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
             int[] values = new int[10] { 0, 10, 30, 50, 60, 80, 90, 100, 200, 666 };
             var index = GetWheelIndex();
             var value = values[index] - 50;
-
-            ////不存在负数钱钱
-            //if (value < 0)
-            //{
-            //    value = 0;
-            //}
-
+            
             //修改钱钱，如果钱钱不足，直接会丢出去,那本次抽奖将无效
             await _localEventBus.PublishAsync(new MoneyChangeEventArgs { UserId = CurrentUser.Id!.Value, Number = value }, false);
 
@@ -47,7 +41,7 @@ namespace Yi.Framework.Bbs.Application.Services.Integral
 
         private int GetWheelIndex()
         {
-            int[] probabilities = { 30, 40, 30, 15, 15, 10, 4, 3, 2, 1 };
+            int[] probabilities = {5 , 30, 40, 30, 20, 10, 4, 3, 2, 1 };
 
             int total = 0;
             foreach (var prob in probabilities)

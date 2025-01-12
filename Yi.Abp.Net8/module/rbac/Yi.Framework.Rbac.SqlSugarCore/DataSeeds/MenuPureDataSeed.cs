@@ -19,7 +19,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
         public async Task SeedAsync(DataSeedContext context)
         {
-            if (!await _repository.IsAnyAsync(x => x.MenuName == "系统管理"&&x.MenuSource==MenuSourceEnum.Pure))
+            if (!await _repository.IsAnyAsync(x => x.MenuName == "系统管理" && x.MenuSource == MenuSourceEnum.Pure))
             {
                 await _repository.InsertManyAsync(GetSeedData());
             }
@@ -37,7 +37,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100
             };
             entities.Add(system);
-            
+
             //系统监控
             MenuAggregateRoot monitoring = new MenuAggregateRoot(_guidGenerator.Create())
             {
@@ -64,7 +64,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             };
             entities.Add(online);
 
-            
+
             //Yi框架
             MenuAggregateRoot guide = new MenuAggregateRoot(_guidGenerator.Create())
             {
@@ -77,7 +77,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 Component = null
             };
             entities.Add(guide);
-            
+
             //用户管理
             MenuAggregateRoot user = new MenuAggregateRoot(_guidGenerator.Create())
             {
@@ -141,7 +141,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             entities.Add(userRemove);
 
 
-             MenuAggregateRoot userResetPwd = new MenuAggregateRoot(_guidGenerator.Create())
+            MenuAggregateRoot userResetPwd = new MenuAggregateRoot(_guidGenerator.Create())
             {
 
                 MenuName = "重置密码",
@@ -408,7 +408,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false
             };
             entities.Add(postRemove);
-            
+
 
             //操作日志
             MenuAggregateRoot operationLog = new MenuAggregateRoot(_guidGenerator.Create())
@@ -491,9 +491,77 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 ParentId = loginLog.Id,
                 IsDeleted = false,
-                
+
             };
             entities.Add(loginLogRemove);
+
+            //参数设置
+            MenuAggregateRoot config = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "参数设置",
+                PermissionCode = "system:config:list",
+                MenuType = MenuTypeEnum.Menu,
+                Router = "config",
+                IsShow = true,
+                IsLink = false,
+                IsCache = true,
+                Component = "/system/config/index",
+                MenuIcon = "ri:edit-box-line",
+                OrderNum = 94,
+                ParentId = system.Id,
+                IsDeleted = false
+            };
+            entities.Add(config);
+
+            MenuAggregateRoot configQuery = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "参数查询",
+                PermissionCode = "system:config:query",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = config.Id,
+                IsDeleted = false
+            };
+            entities.Add(configQuery);
+
+            MenuAggregateRoot configAdd = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "参数新增",
+                PermissionCode = "system:config:add",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = config.Id,
+                IsDeleted = false
+            };
+            entities.Add(configAdd);
+
+            MenuAggregateRoot configEdit = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "参数修改",
+                PermissionCode = "system:config:edit",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = config.Id,
+                IsDeleted = false
+            };
+            entities.Add(configEdit);
+
+            MenuAggregateRoot configRemove = new MenuAggregateRoot(_guidGenerator.Create())
+            {
+
+                MenuName = "参数删除",
+                PermissionCode = "system:config:remove",
+                MenuType = MenuTypeEnum.Component,
+                OrderNum = 100,
+                ParentId = config.Id,
+                IsDeleted = false
+            };
+            entities.Add(configRemove);
+
 
             //默认值
             entities.ForEach(m =>

@@ -9,8 +9,8 @@ namespace Yi.Framework.Rbac.Domain.Shared.Dtos
         public HashSet<RoleDto> Roles { get; set; } = new();
         public HashSet<MenuDto> Menus { get; set; } = new();
 
-        public List<string> RoleCodes { get; set; } = new();
-        public List<string> PermissionCodes { get; set; } = new();
+        public HashSet<string> RoleCodes { get; set; } = new();
+        public HashSet<string> PermissionCodes { get; set; } = new();
     }
 
     public class UserDto

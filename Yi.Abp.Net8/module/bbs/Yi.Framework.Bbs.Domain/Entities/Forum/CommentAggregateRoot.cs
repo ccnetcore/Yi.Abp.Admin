@@ -31,7 +31,7 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
         public override Guid Id { get; protected set; }
         public bool IsDeleted { get; set; }
 
-        [SugarColumn(Length = 500)]
+        [SugarColumn(Length = 2000)]
         public string Content { get; set; }
 
         public Guid DiscussId { get; set; }

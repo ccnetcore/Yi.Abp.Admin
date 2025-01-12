@@ -3,6 +3,7 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\..\framework\Yi.Framework.BackgroundWorkers.Hangfire\Yi.Framework.BackgroundWorkers.Hangfire.csproj" />
     <ProjectReference Include="..\..\framework\Yi.Framework.Ddd.Application\Yi.Framework.Ddd.Application.csproj" />
     <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.Application\Yi.Framework.Bbs.Application.csproj" />
     <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj" />

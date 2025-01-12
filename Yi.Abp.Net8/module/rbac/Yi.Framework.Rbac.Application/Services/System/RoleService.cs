@@ -97,13 +97,13 @@ namespace Yi.Framework.Rbac.Application.Services.System
         public override async Task<RoleGetOutputDto> UpdateAsync(Guid id, RoleUpdateInputVo input)
         {
             var entity = await _repository.GetByIdAsync(id);
-            
-            var isExist =await _repository._DbQueryable.Where(x=>x.Id!=entity.Id).AnyAsync(x=>x.RoleCode==input.RoleCode||x.RoleName==input.RoleName);
+
+            var isExist = await _repository._DbQueryable.Where(x => x.Id != entity.Id).AnyAsync(x => x.RoleCode == input.RoleCode || x.RoleName == input.RoleName);
             if (isExist)
             {
                 throw new UserFriendlyException(RoleConst.Exist);
             }
-            
+
             await MapToEntityAsync(input, entity);
             await _repository.UpdateAsync(entity);
 
@@ -195,7 +195,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task CreateAuthUserAsync(RoleAuthUserCreateOrDeleteInput input)
+        public async Task CreateAuthUserAsync([FromBody] RoleAuthUserCreateOrDeleteInput input)
         {
             var userRoleEntities = input.UserIds.Select(u => new UserRoleEntity { RoleId = input.RoleId, UserId = u })
                 .ToList();
@@ -208,7 +208,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task DeleteAuthUserAsync(RoleAuthUserCreateOrDeleteInput input)
+        public async Task DeleteAuthUserAsync([FromBody] RoleAuthUserCreateOrDeleteInput input)
         {
             await _userRoleRepository._Db.Deleteable<UserRoleEntity>().Where(x => x.RoleId == input.RoleId)
                 .Where(x => input.UserIds.Contains(x.UserId))

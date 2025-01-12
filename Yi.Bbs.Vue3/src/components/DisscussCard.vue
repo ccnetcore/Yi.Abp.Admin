@@ -28,7 +28,7 @@
         </div>
         
       <div style="display: flex; margin-right: 40px;position: relative;
-    top: -20px;">
+    top: -10px;">
         <el-image
           :preview-src-list="[getUrl(discuss.cover)]"
           v-if="discuss.cover"

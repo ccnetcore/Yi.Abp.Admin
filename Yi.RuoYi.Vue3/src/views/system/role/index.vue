@@ -74,10 +74,10 @@
             <el-button link icon="CircleCheck" @click="handleDataScope(scope.row)"
               v-hasPermi="['system:role:edit']"></el-button>
           </el-tooltip>
-          <!-- <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
+          <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
             <el-button link icon="User" @click="handleAuthUser(scope.row)" v-hasPermi="['system:role:edit']">
             </el-button>
-          </el-tooltip> -->
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

@@ -67,7 +67,8 @@ namespace Yi.Abp.Application.Services
         public async Task GetUowAsync()
         {
             //魔改
-            // 用户体验优先，万金油模式，支持高并发。支持单、多线程并发安全，支持多线程工作单元，支持多线程无工作单元，支持。。。
+            // 用户体验优先，万金油模式，支持高并发。支持单、多线程并发安全，支持多线程工作单元，支持。。。
+            // 不支持多线程无工作单元，应由工作单元统一管理（来自abp工作单元设计）
             // 请注意，如果requiresNew: true只有在没有工作单元内使用，嵌套子工作单元，默认值false即可
             // 自动在各个情况处理db客户端最优解之一
             int i = 3;
@@ -78,7 +79,8 @@ namespace Yi.Abp.Application.Services
             {
                 tasks.Add(Task.Run(async () =>
                 {
-                    await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入2" });
+                    //以下操作是错误的，不允许在新线程中，直接操作db，所有db操作应放在工作单元内，应由工作单元统一管理-来自abp工作单元设计
+                    //await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入2" });
                     using (var uow = UnitOfWorkManager.Begin(requiresNew: true, isTransactional: true))
                     {
                         await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入1" });
@@ -173,6 +175,5 @@ namespace Yi.Abp.Application.Services
 
             return result ?? string.Empty;
         }
-
     }
 }

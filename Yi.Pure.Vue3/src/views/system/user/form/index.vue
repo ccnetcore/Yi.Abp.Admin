@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<FormProps>(), {
   formInline: () => ({
     title: "新增",
     higherDeptOptions: [],
-    deptId: "",
+    deptId: null,
     nick: "",
     userName: "",
     password: "",
@@ -31,6 +31,10 @@ const sexOptions = [
   {
     value: "Woman",
     label: "女"
+  },
+  {
+    value: "Unknown",
+    label: "未知"
   }
 ];
 const ruleFormRef = ref();

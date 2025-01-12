@@ -4,54 +4,55 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Yi.Abp.Tool.Commands
 {
     public class AddModuleCommand : ICommand
     {
-        public List<string> CommandStrs => new List<string> { "add-module" };
-
-        public async Task InvokerAsync(Dictionary<string, string> options, string[] args)
+        public string Command => "add-module";
+        public string? Description => "将内容添加到当前解决方案` yi-abp add-module <moduleName> [-p <path>] [-s <solution>] ";
+        public void CommandLineApplication(CommandLineApplication application)
         {
-            //只有一个add-module
-            if (args.Length <= 1)
+            application.HelpOption("-h|--help");
+            var modulePathOption=  application.Option("-p|--modulePath", "模块路径",CommandOptionType.SingleValue);
+            var solutionOption=  application.Option("-s|--solution", "解决方案路径",CommandOptionType.SingleValue);
+            var moduleNameArgument = application.Argument("moduleName", "模块名", (_) => { });
+            application.OnExecute(() =>
             {
-                throw new UserFriendlyException("命令错误，add-module命令后必须添加 模块名");
-            }
-
-            //需要添加名称
-            var moduleName = args[1];
-            options.TryGetValue("modulePath", out var modulePath);
-
-            //模块路径默认按小写规则，当前路径
-            if (string.IsNullOrEmpty(modulePath))
-            {
-                modulePath = moduleName.ToLower().Replace(".", "-");
-            }
-
-
-            //解决方案默认在模块文件夹上一级，也可以通过s进行指定
-            var slnPath = string.Empty;
-            options.TryGetValue("s", out var slnPath1);
-            options.TryGetValue("solution", out var slnPath2);
-            slnPath = string.IsNullOrEmpty(slnPath1) ? slnPath2 : slnPath1;
-            if (string.IsNullOrEmpty(slnPath))
-            {
-                slnPath = "../";
-            }
-
-            CheckFirstSlnPath(slnPath);
-            var dotnetSlnCommandPart1 = $"dotnet sln \"{slnPath}\" add \"{modulePath}\\{moduleName}.";
-            var dotnetSlnCommandPart2 = new List<string>() { "Application", "Application.Contracts", "Domain", "Domain.Shared", "SqlSugarCore" };
-            var paths = dotnetSlnCommandPart2.Select(x => $@"{modulePath}\{moduleName}." + x).ToArray();
-            CheckPathExist(paths);
-
-            var cmdCommands = dotnetSlnCommandPart2.Select(x => dotnetSlnCommandPart1 + x+"\"").ToArray();
-            StartCmd(cmdCommands);
-
-            await Console.Out.WriteLineAsync("恭喜~模块添加成功！");
+                var moduleName = moduleNameArgument.Value;
+  
+                //模块路径默认按小写规则，默认在模块路径下一层
+                var modulePath =moduleName.ToLower().Replace(".", "-");
+                if (modulePathOption.HasValue())
+                {
+                    modulePath = modulePathOption.Value();
+                }
+                
+                
+                //解决方案默认在模块文件夹上一级，也可以通过s进行指定
+                var slnPath = "../";
+                
+                if (solutionOption.HasValue())
+                {
+                    slnPath = solutionOption.Value();
+                }
+                
+                CheckFirstSlnPath(slnPath);
+                var dotnetSlnCommandPart1 = $"dotnet sln \"{slnPath}\" add \"{modulePath}\\{moduleName}.";
+                var dotnetSlnCommandPart2 = new List<string>() { "Application", "Application.Contracts", "Domain", "Domain.Shared", "SqlSugarCore" };
+                var paths = dotnetSlnCommandPart2.Select(x => $@"{modulePath}\{moduleName}." + x).ToArray();
+                CheckPathExist(paths);
+                
+                var cmdCommands = dotnetSlnCommandPart2.Select(x => dotnetSlnCommandPart1 + x+"\"").ToArray();
+                StartCmd(cmdCommands);
+                
+                Console.WriteLine("恭喜~模块添加成功！");
+                return 0;
+            });
+            
         }
-
+        
         /// <summary>
         /// 获取一个sln解决方案，多个将报错
         /// </summary>
@@ -117,5 +118,7 @@ namespace Yi.Abp.Tool.Commands
                 }
             }
         }
+
+
     }
 }

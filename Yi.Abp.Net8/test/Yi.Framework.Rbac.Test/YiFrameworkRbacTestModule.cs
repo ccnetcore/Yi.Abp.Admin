@@ -2,8 +2,6 @@
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundWorkers;
-using Volo.Abp.BackgroundWorkers.Quartz;
-using Volo.Abp.Domain.Repositories;
 using Yi.Framework.Rbac.Application;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Managers;
@@ -24,10 +22,11 @@ namespace Yi.Framework.Rbac.Test
     {
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            Configure<AbpBackgroundWorkerQuartzOptions>(options =>
-            {
-                options.IsAutoRegisterEnabled = false;
-            });
+
+            // Configure<AbpBackgroundWorkerQuartzOptions>(options =>
+            // {
+            //     options.IsAutoRegisterEnabled = false;
+            // });
             Configure<AbpBackgroundWorkerOptions> (options =>
             {
                 options.IsEnabled = false; //禁用作业执行
@@ -35,7 +34,6 @@ namespace Yi.Framework.Rbac.Test
             Configure<DbConnOptions>(options =>
             {
                 options.Url = $"DataSource=yi-rbac-test-{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.db";
-
             });
         }
 

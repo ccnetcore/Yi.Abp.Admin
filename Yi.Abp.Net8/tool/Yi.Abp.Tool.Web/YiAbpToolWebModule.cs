@@ -1,6 +1,9 @@
 ﻿using System.Globalization;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
@@ -12,6 +15,7 @@ using Yi.Abp.Tool.Application;
 using Yi.Framework.AspNetCore;
 using Yi.Framework.AspNetCore.Microsoft.AspNetCore.Builder;
 using Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection;
+using Yi.Framework.Core.Json;
 
 namespace Yi.Abp.Tool.Web
 {
@@ -41,11 +45,13 @@ namespace Yi.Abp.Tool.Web
             });
 
             //设置api格式
-            service.AddControllers().AddNewtonsoftJson(options =>
+            Configure<JsonOptions>(options =>
             {
-                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver();
+                options.JsonSerializerOptions.Converters.Add(new DatetimeJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+
 
 
 
@@ -81,7 +87,7 @@ namespace Yi.Abp.Tool.Web
                 });
             });
 
-
+            service.AddHttpClient();
             //速率限制
             //每60秒限制100个请求，滑块添加，分6段
             service.AddRateLimiter(_ =>

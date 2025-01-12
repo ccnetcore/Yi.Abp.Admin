@@ -8,6 +8,12 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1" />
+    <PackageReference Include="Hangfire.Redis.StackExchange" Version="1.9.4" />
+    <!-- 解决 docker 构建冲突问题，冲突版本信息如下 -->
+    <!-- Yi.Abp.Web -> Hangfire.Redis.StackExchange 1.9.4 -> Hangfire.Core (>= 1.8.7)  -->
+    <!-- Yi.Abp.Web -> Yi.Abp.Application -> Yi.Framework.Rbac.Application -> Volo.Abp.BackgroundJobs.HangFire 0.4.1 -> Volo.Abp.HangFire 0.4.1 -> Hangfire.AspNetCore 1.6.19 -> Hangfire.Core (= 1.6.19). -->
+    <PackageReference Include="Hangfire.Core" Version="1.8.14" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />

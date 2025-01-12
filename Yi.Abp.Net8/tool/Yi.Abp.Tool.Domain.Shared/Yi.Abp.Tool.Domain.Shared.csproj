@@ -9,5 +9,8 @@
     <ProjectReference Include="..\..\framework\Yi.Framework.Core\Yi.Framework.Core.csproj" />
     <ProjectReference Include="..\..\framework\Yi.Framework.Mapster\Yi.Framework.Mapster.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Options\" />
+  </ItemGroup>
 
 </Project>

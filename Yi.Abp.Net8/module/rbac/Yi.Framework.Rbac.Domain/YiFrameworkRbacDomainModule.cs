@@ -2,6 +2,7 @@
 using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain;
+using Volo.Abp.Imaging;
 using Volo.Abp.Modularity;
 using Yi.Framework.Caching.FreeRedis;
 using Yi.Framework.Mapster;
@@ -18,7 +19,8 @@ namespace Yi.Framework.Rbac.Domain
 
         typeof(AbpAspNetCoreSignalRModule),
         typeof(AbpDddDomainModule),
-        typeof(AbpCachingModule)
+        typeof(AbpCachingModule),
+        typeof(AbpImagingImageSharpModule)
         )]
     public class YiFrameworkRbacDomainModule : AbpModule
     {

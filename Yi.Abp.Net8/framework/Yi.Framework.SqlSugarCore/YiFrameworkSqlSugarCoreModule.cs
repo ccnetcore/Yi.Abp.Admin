@@ -6,12 +6,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SqlSugar;
-using Volo.Abp;
-using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.Domain;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.Modularity;
+using Volo.Abp.Guids;
 using Yi.Framework.SqlSugarCore.Abstractions;
 using Yi.Framework.SqlSugarCore.Repositories;
 using Yi.Framework.SqlSugarCore.Uow;
@@ -27,8 +25,33 @@ namespace Yi.Framework.SqlSugarCore
             var configuration = service.GetConfiguration();
             var section = configuration.GetSection("DbConnOptions");
             Configure<DbConnOptions>(section);
+            var dbConnOptions = new DbConnOptions();
+            section.Bind(dbConnOptions);
 
-            service.TryAddScoped<ISqlSugarDbContext, SqlSugarDbContext>();
+            //很多人遗漏了这一点，不同的数据库，对于主键的使用规约不一样，需要根据数据库进行判断
+            SequentialGuidType guidType;
+            switch (dbConnOptions.DbType)
+            {
+                case DbType.MySql:
+                case DbType.PostgreSQL:
+                    guidType= SequentialGuidType.SequentialAsString;
+                    break;
+                case DbType.SqlServer:
+                    guidType = SequentialGuidType.SequentialAtEnd;
+                    break;
+                case DbType.Oracle:
+                    guidType = SequentialGuidType.SequentialAsBinary;
+                    break;
+                default:
+                    guidType = SequentialGuidType.SequentialAtEnd;
+                    break;
+            }
+            Configure<AbpSequentialGuidGeneratorOptions>(options =>
+            {
+                options.DefaultSequentialGuidType = guidType;
+            });
+            
+            service.TryAddScoped<ISqlSugarDbContext, SqlSugarDbContextFactory>();
 
             //不开放sqlsugarClient
             //service.AddTransient<ISqlSugarClient>(x => x.GetRequiredService<ISqlsugarDbContext>().SqlSugarClient);
@@ -47,6 +70,7 @@ namespace Yi.Framework.SqlSugarCore
             //将默认db传递给abp连接字符串模块
             Configure<AbpDbConnectionOptions>(x => { x.ConnectionStrings.Default = dbConfig.Url; });
 
+             context.Services.AddYiDbContext<DefaultSqlSugarDbContext>();
             return Task.CompletedTask;
         }
 
@@ -72,7 +96,6 @@ namespace Yi.Framework.SqlSugarCore
 
 
             logger.LogInformation(sb.ToString());
-            //Todo：准备支持多租户种子数据及CodeFirst
 
             if (options.EnabledCodeFirst)
             {

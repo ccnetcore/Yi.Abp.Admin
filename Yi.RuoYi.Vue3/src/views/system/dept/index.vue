@@ -9,6 +9,14 @@
                @keyup.enter="handleQuery"
             />
          </el-form-item>
+        <el-form-item label="部门编号" prop="deptCode">
+          <el-input
+              v-model="queryParams.deptCode"
+              placeholder="请输入部门编号"
+              clearable
+              @keyup.enter="handleQuery"
+          />
+        </el-form-item>
          <el-form-item label="状态" prop="state">
             <el-select v-model="queryParams.state" placeholder="部门状态" clearable>
                <el-option
@@ -55,6 +63,7 @@
          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
          <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
+        <el-table-column prop="deptCode" label="部门编号" width="200"></el-table-column>
          <el-table-column prop="orderNum" label="排序" width="200"></el-table-column>
          <el-table-column prop="state" label="状态" width="100">
             <template #default="scope">
@@ -112,6 +121,11 @@
                      <el-input v-model="form.deptName" placeholder="请输入部门名称" />
                   </el-form-item>
                </el-col>
+              <el-col :span="12">
+                <el-form-item label="部门编号" prop="deptCode">
+                  <el-input v-model="form.deptCode" placeholder="部门编号" />
+                </el-form-item>
+              </el-col>
                <el-col :span="12">
                   <el-form-item label="显示排序" prop="orderNum">
                      <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
@@ -173,11 +187,13 @@ const refreshTable = ref(true);
 const data = reactive({
   form: {},
   queryParams: {
+    deptCode:undefined,
     deptName: undefined,
     state: undefined
   },
   rules: {
     parentId: [{ required: true, message: "上级部门不能为空", trigger: "blur" }],
+    deptCode: [{ required: true, message: "部门编号不能为空", trigger: "blur" }],
     deptName: [{ required: true, message: "部门名称不能为空", trigger: "blur" }],
     orderNum: [{ required: true, message: "显示排序不能为空", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],

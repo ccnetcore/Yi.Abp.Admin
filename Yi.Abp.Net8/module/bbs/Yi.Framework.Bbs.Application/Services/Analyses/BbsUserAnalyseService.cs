@@ -110,7 +110,9 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
                     )
                     .ToPageListAsync(pageIndex, input.MaxResultCount, total);
 
-                output.ForEach(x => { x.LevelName = _bbsUserManager._levelCacheDic[x.Level].Name; });
+                var levelCache = await _bbsUserManager.GetLevelCacheMapAsync();
+
+                output.ForEach(x => { x.LevelName = levelCache[x.Level].Name; });
                 return new PagedResultDto<MoneyTopUserDto>
                 {
                     Items = output,

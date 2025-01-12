@@ -11,6 +11,8 @@ import App from './App'
 import store from './store'
 import router from './router'
 import directive from './directive' // directive
+import VForm3 from 'vform3-builds'
+import 'vform3-builds/dist/designer.style.css'  //引入VForm3样式
 
 
 // 注册指令
@@ -77,5 +79,6 @@ app.use(ElementPlus, {
   // 支持 large、default、small
   size: Cookies.get('size') || 'default'
 })
+app.use(VForm3)
 app.mount('#app')
 

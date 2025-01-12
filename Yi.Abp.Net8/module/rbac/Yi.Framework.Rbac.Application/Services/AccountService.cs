@@ -82,12 +82,12 @@ namespace Yi.Framework.Rbac.Application.Services
         /// 校验图片登录验证码,无需和账号绑定
         /// </summary>
         [AllowAnonymous]
-        private void ValidationImageCaptcha(LoginInputVo input)
+        private void ValidationImageCaptcha(string? uuid,string? code )
         {
             if (_rbacOptions.EnableCaptcha)
             {
                 //登录不想要验证码 ，可不校验
-                if (!_captcha.Validate(input.Uuid, input.Code))
+                if (!_captcha.Validate(uuid, code))
                 {
                     throw new UserFriendlyException("验证码错误");
                 }
@@ -109,7 +109,7 @@ namespace Yi.Framework.Rbac.Application.Services
             }
 
             //校验验证码
-            ValidationImageCaptcha(input);
+            ValidationImageCaptcha(input.Uuid,input.Code);
 
             UserAggregateRoot user = new();
             //校验
@@ -157,24 +157,20 @@ namespace Yi.Framework.Rbac.Application.Services
         {
             var uuid = _guidGenerator.Create();
             var captcha = _captcha.Generate(uuid.ToString());
-            return new CaptchaImageDto { Img = captcha.Bytes, Uuid = uuid };
+            var enableCaptcha = _rbacOptions.EnableCaptcha;
+            return new CaptchaImageDto { Img = captcha.Bytes, Uuid = uuid,IsEnableCaptcha= enableCaptcha };
         }
 
         /// <summary>
         /// 验证电话号码
         /// </summary>
         /// <param name="str_handset"></param>
-        private async Task ValidationPhone(string str_handset)
+        private async Task ValidationPhone(string phone)
         {
-            var res = Regex.IsMatch(str_handset, @"^\d{11}$");
+            var res = Regex.IsMatch(phone, @"^\d{11}$");
             if (res == false)
             {
                 throw new UserFriendlyException("手机号码格式错误！请检查");
-            }
-
-            if (await _userRepository.IsAnyAsync(x => x.Phone.ToString() == str_handset))
-            {
-                throw new UserFriendlyException("该手机号已被注册！");
             }
         }
 
@@ -203,13 +199,23 @@ namespace Yi.Framework.Rbac.Application.Services
         }
 
         /// <summary>
-        /// 手机验证码
+        /// 手机验证码-需通过图形验证码
         /// </summary>
         /// <returns></returns>
         private async Task<object> PostCaptchaPhoneAsync(ValidationPhoneTypeEnum validationPhoneType,
             PhoneCaptchaImageDto input)
         {
+            //验证uuid 和 验证码
+            ValidationImageCaptcha(input.Uuid,input.Code);
+            
             await ValidationPhone(input.Phone);
+            
+            //注册的手机号验证，是不能已经注册过的
+            if (validationPhoneType == ValidationPhoneTypeEnum.Register&& await _userRepository.IsAnyAsync(x => x.Phone.ToString() == input.Phone))
+            {
+                throw new UserFriendlyException("该手机号已被注册！");
+            }
+            
             var value = await _phoneCache.GetAsync(new CaptchaPhoneCacheKey(validationPhoneType, input.Phone));
 
             //防止暴刷
@@ -225,7 +231,7 @@ namespace Yi.Framework.Rbac.Application.Services
             var uuid = Guid.NewGuid();
             await _aliyunManger.SendSmsAsync(input.Phone, code);
 
-            await _phoneCache.SetAsync(new CaptchaPhoneCacheKey(ValidationPhoneTypeEnum.RetrievePassword, input.Phone),
+            await _phoneCache.SetAsync(new CaptchaPhoneCacheKey(validationPhoneType, input.Phone),
                 new CaptchaPhoneCacheItem(code),
                 new DistributedCacheEntryOptions { SlidingExpiration = TimeSpan.FromMinutes(10) });
             return new
@@ -349,13 +355,13 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
-                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus).Vue3RuoYiRouterBuild();
+                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Ruoyi).ToList()).Vue3RuoYiRouterBuild();
             }
             else if (routerType == "pure")
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
-                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus).Vue3PureRouterBuild();
+                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Pure).ToList()).Vue3PureRouterBuild();
             }
 
             return output;

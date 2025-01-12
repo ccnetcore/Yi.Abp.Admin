@@ -142,7 +142,7 @@ function handleRegister() {
 
 function getCode() {
   getCodeImg().then(res => {
-    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled;
+    captchaEnabled.value = res.data.isEnableCaptcha === undefined ? true : res.data.isEnableCaptcha;
     if (captchaEnabled.value) {
       codeUrl.value = "data:image/gif;base64," + res.img;
       registerForm.value.uuid = res.uuid;

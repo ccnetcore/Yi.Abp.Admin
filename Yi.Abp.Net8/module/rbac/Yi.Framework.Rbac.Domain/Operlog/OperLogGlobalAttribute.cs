@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Uow;
 using Volo.Abp.Users;
 using Yi.Framework.Core.Extensions;
 using Yi.Framework.Core.Helper;
@@ -18,12 +19,15 @@ namespace Yi.Framework.Rbac.Domain.Operlog
         private ILogger<OperLogGlobalAttribute> _logger;
         private IRepository<OperationLogEntity> _repository;
         private ICurrentUser _currentUser;
+
+        private IUnitOfWorkManager _unitOfWorkManager;
         //注入一个日志服务
-        public OperLogGlobalAttribute(ILogger<OperLogGlobalAttribute> logger, IRepository<OperationLogEntity> repository, ICurrentUser currentUser)
+        public OperLogGlobalAttribute(ILogger<OperLogGlobalAttribute> logger, IRepository<OperationLogEntity> repository, ICurrentUser currentUser, IUnitOfWorkManager unitOfWorkManager)
         {
             _logger = logger;
             _repository = repository;
             _currentUser = currentUser;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -35,8 +39,9 @@ namespace Yi.Framework.Rbac.Domain.Operlog
             if (resultContext.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor) return;
 
             //查找标签，获取标签对象
-            OperLogAttribute? operLogAttribute = controllerActionDescriptor.MethodInfo.GetCustomAttributes(inherit: true)
-                  .FirstOrDefault(a => a.GetType().Equals(typeof(OperLogAttribute))) as OperLogAttribute;
+            OperLogAttribute? operLogAttribute = controllerActionDescriptor.MethodInfo
+                .GetCustomAttributes(inherit: true)
+                .FirstOrDefault(a => a.GetType().Equals(typeof(OperLogAttribute))) as OperLogAttribute;
             //空对象直接返回
             if (operLogAttribute is null) return;
 
@@ -49,9 +54,17 @@ namespace Yi.Framework.Rbac.Domain.Operlog
             string ip = resultContext.HttpContext.GetClientIp();
 
             //根据ip获取地址
+            string location = "";
+            try
+            {
+                var ipTool = IpTool.Search(ip);
+                location = ipTool.Province + " " + ipTool.City;
+            }
+            catch
+            {
+                location = "搜索地址失败，可能是内网地址:" + ip;
+            }
 
-            var ipTool = IpTool.Search(ip);
-            string location = ipTool.Province + " " + ipTool.City;
 
             //日志服务插入一条操作记录即可
 
@@ -70,6 +83,7 @@ namespace Yi.Framework.Rbac.Domain.Operlog
                 {
                     logEntity.RequestResult = result.Content?.Replace("\r\n", "").Trim();
                 }
+
                 if (resultContext.Result is JsonResult result2)
                 {
                     logEntity.RequestResult = result2.Value?.ToString();
@@ -84,14 +98,13 @@ namespace Yi.Framework.Rbac.Domain.Operlog
 
             if (operLogAttribute.IsSaveRequestData)
             {
-                //不建议保存，吃性能
-                //保存请求参数
                 logEntity.RequestParam = JsonConvert.SerializeObject(context.ActionArguments);
             }
 
-            await _repository.InsertAsync(logEntity);
-
-
+            using (var uow = _unitOfWorkManager.Begin())
+            {
+                await _repository.InsertAsync(logEntity);
+            }
         }
 
     }

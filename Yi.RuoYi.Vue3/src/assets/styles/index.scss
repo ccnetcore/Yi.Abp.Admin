@@ -133,6 +133,11 @@ aside {
 
 .pagination-container {
   margin-top: 30px;
+
+  .el-pagination{
+    right:20px;
+    position: absolute;
+  }
 }
 
 .text-center {

@@ -1,6 +1,6 @@
-﻿using Quartz;
+﻿using Hangfire;
 using SqlSugar;
-using Volo.Abp.BackgroundWorkers.Quartz;
+using Volo.Abp.BackgroundWorkers.Hangfire;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Uow;
 using Yi.Framework.Rbac.Domain.Entities;
@@ -11,26 +11,21 @@ namespace Yi.Abp.Application.Jobs
     /// <summary>
     /// 定时任务
     /// </summary>
-    public class TestJob : QuartzBackgroundWorkerBase
+    public class TestJob : HangfireBackgroundWorkerBase
     {
         private ISqlSugarRepository<UserAggregateRoot> _repository;
         public TestJob(ISqlSugarRepository<UserAggregateRoot> repository)
         {
             _repository = repository;
-            JobDetail = JobBuilder.Create<TestJob>().WithIdentity(nameof(TestJob)).Build();
-            Trigger = TriggerBuilder.Create().WithIdentity(nameof(TestJob)).StartNow()
-            .WithSimpleSchedule(x => x
-                .WithIntervalInSeconds(1000 * 60)
-                .RepeatForever())
-            .Build();
+            RecurringJobId = "测试";
+            //每天一次
+            CronExpression = Cron.Daily();
         }
-        public override async Task Execute(IJobExecutionContext context)
+        public override Task DoWorkAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             //定时任务，非常简单
             Console.WriteLine("你好，世界");
-            // var eneities= await _repository.GetListAsync();
-            //var entities=   await _sqlSugarClient.Queryable<UserEntity>().ToListAsync();
-            //await Console.Out.WriteLineAsync(entities.Count().ToString());
+            return Task.CompletedTask;
         }
     }
 }

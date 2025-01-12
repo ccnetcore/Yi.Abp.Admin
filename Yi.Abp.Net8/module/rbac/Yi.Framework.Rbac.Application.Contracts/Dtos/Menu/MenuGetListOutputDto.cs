@@ -20,7 +20,7 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Menu
         public string? Remark { get; set; }
         public string? Component { get; set; }
         public string? Query { get; set; }
-
+        public string? RouterName { get; set; }
         public int OrderNum { get; set; }
         //public List<MenuEntity>? Children { get; set; }
     }

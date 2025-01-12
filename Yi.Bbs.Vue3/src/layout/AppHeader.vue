@@ -14,7 +14,7 @@
         <el-menu-item index="2" @click="enterStart"
           style="color: red;font-weight: bolder;font-size: large;">开始</el-menu-item>
         <el-menu-item index="3" @click="enterWatermelon"
-                     >大西瓜</el-menu-item>
+                     >数字藏品</el-menu-item>
         <el-sub-menu index="4">
           <template #title>学习</template>
           <el-menu-item index="3-1">前端</el-menu-item>
@@ -232,7 +232,7 @@ const enterStart = () => {
 }
 
 const enterWatermelon=()=>{
-  alert("即将上线，敬请期待~")
+  alert("即将发布，敬请期待~")
 }
 </script>
 

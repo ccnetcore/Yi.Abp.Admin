@@ -11,10 +11,10 @@ namespace Yi.Framework.Core.Enums
     /// </summary>
     public enum FileTypeEnum
     {
-        File,
-        Image,
-        Thumbnail,
-        Excel,
-        Temp
+        file,
+        image,
+        thumbnail,
+        excel,
+        temp
     }
 }

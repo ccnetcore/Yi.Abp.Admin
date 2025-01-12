@@ -14,6 +14,10 @@ namespace Yi.Abp.Tool.Application.Contracts.Dtos
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// 模块类型
+        /// </summary>
+        public string ModuleSoure { get; set; }
 
         /// <summary>
         /// 数据库提供者

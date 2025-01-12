@@ -45,8 +45,8 @@ namespace Yi.Framework.Core.Helper
         {
             var extension = Path.GetExtension(fileName);
             if (ImageType.Contains(extension.ToLower()))
-                return FileTypeEnum.Image;
-            return FileTypeEnum.File;
+                return FileTypeEnum.image;
+            return FileTypeEnum.file;
 
 
         }

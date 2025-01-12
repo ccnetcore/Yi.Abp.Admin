@@ -24,6 +24,8 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Menu
 
         public int OrderNum { get; set; }
 
+        public string? RouterName { get; set; }
+
         //public List<MenuEntity>? Children { get; set; }
     }
 }

@@ -217,8 +217,8 @@ namespace Yi.Framework.Rbac.Domain.Managers
             }
             else
             {
-                dto.PermissionCodes?.ForEach(per => AddToClaim(claims, TokenTypeConst.Permission, per));
-                dto.RoleCodes?.ForEach(role => AddToClaim(claims, AbpClaimTypes.Role, role));
+                dto.PermissionCodes?.ToList()?.ForEach(per => AddToClaim(claims, TokenTypeConst.Permission, per));
+                dto.RoleCodes?.ToList()?.ForEach(role => AddToClaim(claims, AbpClaimTypes.Role, role));
             }
 
             return claims;

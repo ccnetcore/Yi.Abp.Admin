@@ -91,11 +91,26 @@ defineExpose({ getRef });
       <re-col
         v-show="newFormInline.menuType !== 2"
         :value="24"
-        :xs="24"
-        :sm="24"
+        :xs="12"
+        :sm="12"
       >
         <el-form-item label="菜单图标">
           <IconSelect v-model="newFormInline.menuIcon" class="w-full" />
+        </el-form-item>
+      </re-col>
+      <re-col
+        v-show="newFormInline.menuType !== 2"
+        :value="24"
+        :xs="12"
+        :sm="12"
+      >
+        <el-form-item label="路由名称">
+          <el-input
+            v-model="newFormInline.routerName"
+            clearable
+            placeholder="请输入路由名称"
+            class="w-full"
+          />
         </el-form-item>
       </re-col>
       <re-col :value="12" :xs="24" :sm="24">

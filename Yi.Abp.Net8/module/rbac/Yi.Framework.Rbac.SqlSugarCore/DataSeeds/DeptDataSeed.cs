@@ -41,7 +41,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot shenzhenDept = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "SZ",
                 DeptName = "深圳总公司",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -52,7 +52,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot jiangxiDept = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "JX",
                 DeptName = "江西总公司",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -64,7 +64,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot szDept1 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "YF",
                 DeptName = "研发部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -74,7 +74,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot szDept2 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "SC",
                 DeptName = "市场部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -84,7 +84,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot szDept3 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "CS",
                 DeptName = "测试部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -94,7 +94,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot szDept4 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "CW",
                 DeptName = "财务部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -104,7 +104,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot szDept5 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "YW",
                 DeptName = "运维部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -115,7 +115,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot jxDept1 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "SC",
                 DeptName = "市场部门",
                 OrderNum = 100,
                 IsDeleted = false,
@@ -126,7 +126,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
 
             DeptAggregateRoot jxDept2 = new DeptAggregateRoot(_guidGenerator.Create())
             {
-
+                DeptCode = "CW2",
                 DeptName = "财务部门",
                 OrderNum = 100,
                 IsDeleted = false,

@@ -4,6 +4,7 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Dictionary
 {
     public class DictionaryGetListOutputDto : EntityDto<Guid>
     {
+        public int OrderNum { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.Now;
         public Guid? CreatorId { get; set; }
         public string? Remark { get; set; }

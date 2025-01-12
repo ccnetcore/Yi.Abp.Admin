@@ -14,7 +14,8 @@ namespace Yi.Framework.Bbs.Domain.Managers
     {
         public ISqlSugarRepository<UserAggregateRoot> _userRepository;
         public ISqlSugarRepository<BbsUserExtraInfoEntity> _bbsUserInfoRepository;
-        public Dictionary<int, LevelCacheItem> _levelCacheDic;
+        // public Dictionary<int, LevelCacheItem> _levelCacheDic;
+        private LevelManager _levelManager;
 
         public BbsUserManager(ISqlSugarRepository<UserAggregateRoot> userRepository,
             ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository,
@@ -23,7 +24,12 @@ namespace Yi.Framework.Bbs.Domain.Managers
         {
             _userRepository = userRepository;
             _bbsUserInfoRepository = bbsUserInfoRepository;
-            _levelCacheDic = levelManager.GetCacheMapAsync().Result;
+            _levelManager = levelManager;
+        }
+
+        public async Task<Dictionary<int, LevelCacheItem>> GetLevelCacheMapAsync()
+        {
+            return await _levelManager.GetCacheMapAsync();
         }
 
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
@@ -44,7 +50,8 @@ namespace Yi.Framework.Bbs.Domain.Managers
                 }, true)
                 .FirstAsync(user => user.Id == userId);
 
-            userInfo.LevelName = _levelCacheDic[userInfo.Level].Name;
+          var levelCacheDic= await GetLevelCacheMapAsync();
+            userInfo.LevelName = levelCacheDic[userInfo.Level].Name;
             return userInfo;
         }
 
@@ -66,7 +73,8 @@ namespace Yi.Framework.Bbs.Domain.Managers
                     DiscussNumber = info.DiscussNumber
                 }, true)
                 .ToListAsync();
-            userInfos?.ForEach(userInfo => userInfo.LevelName = _levelCacheDic[userInfo.Level].Name);
+            var levelCacheDic= await GetLevelCacheMapAsync();
+            userInfos?.ForEach(userInfo => userInfo.LevelName =levelCacheDic[userInfo.Level].Name);
 
             return userInfos ?? new List<BbsUserInfoDto>();
         }

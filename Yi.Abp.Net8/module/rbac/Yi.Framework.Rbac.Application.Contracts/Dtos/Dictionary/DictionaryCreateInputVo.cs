@@ -5,6 +5,7 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Dictionary
     /// </summary>
     public class DictionaryCreateInputVo
     {
+        public int OrderNum { get; set; }
         public string? Remark { get; set; }
         public string? ListClass { get; set; }
         public string? CssClass { get; set; }

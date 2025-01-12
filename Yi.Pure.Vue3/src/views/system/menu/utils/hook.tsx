@@ -89,7 +89,7 @@ export function useMenu() {
     {
       label: "显示",
       prop: "isShow",
-      formatter: ({ isShow }) => (isShow ? "否" : "是"),
+      formatter: ({ isShow }) => (isShow ? "是" : "否"),
       width: 100
     },
     {

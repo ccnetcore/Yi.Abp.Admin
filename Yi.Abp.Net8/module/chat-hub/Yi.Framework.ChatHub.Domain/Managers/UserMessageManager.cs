@@ -78,7 +78,12 @@ namespace Yi.Framework.ChatHub.Domain.Managers
         public async Task<ChatOnlineUserCacheItem?> GetUserAsync(Guid userId)
         {
             var key = new ChatOnlineUserCacheKey(CacheKeyPrefix);
-            var cacheUser = System.Text.Json.JsonSerializer.Deserialize<ChatOnlineUserCacheItem>(await RedisClient.HGetAsync(key.GetKey(), key.GetField(userId)));
+           var cacheUserOrNull= await RedisClient.HGetAsync(key.GetKey(), key.GetField(userId));
+           if (cacheUserOrNull is null)
+           {
+               return null;
+           }
+            var cacheUser = System.Text.Json.JsonSerializer.Deserialize<ChatOnlineUserCacheItem>(cacheUserOrNull);
             return cacheUser;
         }
     }

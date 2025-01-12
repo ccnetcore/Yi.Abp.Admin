@@ -1,6 +1,7 @@
 ﻿using Volo.Abp.SettingManagement;
 using Yi.Abp.Application.Contracts;
 using Yi.Abp.Domain;
+using Yi.Framework.BackgroundWorkers.Hangfire;
 using Yi.Framework.Bbs.Application;
 using Yi.Framework.ChatHub.Application;
 using Yi.Framework.CodeGen.Application;
@@ -23,7 +24,8 @@ namespace Yi.Abp.Application
         typeof(YiFrameworkCodeGenApplicationModule),
         typeof (YiFrameworkSettingManagementApplicationModule),
 
-        typeof(YiFrameworkDddApplicationModule)
+        typeof(YiFrameworkDddApplicationModule),
+        typeof(YiFrameworkBackgroundWorkersHangfireModule)
         )]
     public class YiAbpApplicationModule : AbpModule
     {

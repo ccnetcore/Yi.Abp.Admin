@@ -30,9 +30,11 @@
     "pinia": "2.1.7",
     "qs": "^6.12.0",
     "typeface-roboto": "^1.1.13",
+    "vform3-builds": "^3.0.10",
     "vue": "3.4.21",
     "vue-cropper": "1.0.3",
-    "vue-router": "4.3.0"
+    "vue-router": "4.3.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
@@ -45,5 +47,6 @@
     "vite-plugin-style-import": "^2.0.0",
     "vite-plugin-svg-icons": "^2.0.1",
     "vite-plugin-vue-setup-extend": "^0.4.0"
-  }
+  },
+  "type": "module"
 }

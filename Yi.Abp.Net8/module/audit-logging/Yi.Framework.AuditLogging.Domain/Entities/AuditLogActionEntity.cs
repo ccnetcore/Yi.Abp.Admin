@@ -22,6 +22,7 @@ public class AuditLogActionEntity : Entity<Guid>, IMultiTenant
 
     public virtual string? MethodName { get; protected set; }
 
+    [SugarColumn(ColumnDataType = StaticConfig.CodeFirst_BigString)]
     public virtual string? Parameters { get; protected set; }
 
     public virtual DateTime? ExecutionTime { get; protected set; }

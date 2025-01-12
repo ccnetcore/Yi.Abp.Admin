@@ -16,7 +16,8 @@ const form = reactive({
 });
 const installText = "> dotnet tool install -g Yi.Abp.Tool";
 const cloneText = "> yi-abp clone ";
-
+const listText="> yi-abp new list ";
+const helpText="> yi-abp -h ";
 const nugetData=reactive({
     versions:"0.0.0",
     downloadNumber:0
@@ -40,7 +41,9 @@ const dbData = [
 
 
 const typeData = [{ name: '模块', key: 'module', value: 'module' },
-{ name: '模块', key: 'project', value: 'project' }]
+{ name: '模块', key: 'module', value: 'module' },
+  { name: '模块', key: 'module', value: 'module' },
+  { name: '模块', key: 'module', value: 'module' }]
 const addModuleComputed=computed(()=>{
 
     return `> yi-abp add-module ${form.name}`;
@@ -139,6 +142,19 @@ onUnmounted(() => {
 
 
                     <LableCheck v-model="form.isCsf" title="创建解决方案文件夹" text="指定项目是放在输出文件夹中的新文件夹中，还是直接放在输出文件夹中。" />
+                   <p>默认勾选</p>
+
+                  <h4>模板库</h4>
+                  <p>现在已经支持公开模板库，地址：https://gitee.com/ccnetcore/yi-template</p>
+                  <p>每个分支代表一个模板，你可以通过提交pr，或联系管理员上传你自定义的模板</p>
+                  <CodeBox  v-model="listText" />
+                  <p>通过以上命令，可查询当前可用模板</p>
+
+
+                  <h4>帮助</h4>
+                  <p>更详细的实时帮助，可执行帮助命令</p>
+                  <CodeBox  v-model="helpText" />
+                  <p>如还有疑惑，或错误，可在社区对应板块发布问题</p>
                 </div>
                 <div class="content-body-right">
 
@@ -191,7 +207,7 @@ onUnmounted(() => {
     }
 
     &-body {
-        height: 1400px;
+        height: 1800px;
         padding: 48px;
         background-color: #fff;
         border-radius: 12px;

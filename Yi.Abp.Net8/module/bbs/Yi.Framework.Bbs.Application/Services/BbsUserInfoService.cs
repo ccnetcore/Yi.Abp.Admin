@@ -27,13 +27,19 @@ namespace Yi.Framework.Bbs.Application.Services
                 var userEntity = await _bbsUserManager._userRepository.GetFirstAsync(x => x.UserName == userNameOrUserId);
                 if (userEntity == null)
                 {
-                    throw new Volo.Abp.UserFriendlyException("该用户不存在");
+                    throw new UserFriendlyException("该用户不存在");
                 }
                 userId= userEntity.Id;
             }
 
             var output =await _bbsUserManager.GetBbsUserInfoAsync(userId);
-
+           
+            //不是自己
+            if (CurrentUser.Id != output.Id)
+            {
+                output.Phone = null;
+                output.Email=null;
+            }
             return output!;
         }
     }

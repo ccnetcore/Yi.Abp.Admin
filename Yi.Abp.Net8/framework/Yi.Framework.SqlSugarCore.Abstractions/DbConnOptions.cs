@@ -1,4 +1,5 @@
 ﻿using SqlSugar;
+using ArgumentException = System.ArgumentException;
 
 namespace Yi.Framework.SqlSugarCore.Abstractions
 {
@@ -53,6 +54,5 @@ namespace Yi.Framework.SqlSugarCore.Abstractions
         /// 开启Saas多租户
         /// </summary>
         public bool EnabledSaasMultiTenancy { get; set; } = false;
-
     }
 }

@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Quartz;
-using Quartz.Logging;
-using Volo.Abp.BackgroundWorkers.Quartz;
+using Volo.Abp.BackgroundWorkers.Hangfire;
 using Volo.Abp.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Options;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Rbac.Application.Jobs
 {
-    public class BackupDataBaseJob : QuartzBackgroundWorkerBase
+    public class BackupDataBaseJob: HangfireBackgroundWorkerBase
     {
         private ISqlSugarDbContext _dbContext;
         private IOptions<RbacOptions> _options;
@@ -24,13 +22,12 @@ namespace Yi.Framework.Rbac.Application.Jobs
 
             _options = options;
             _dbContext = dbContext;
-            JobDetail = JobBuilder.Create<BackupDataBaseJob>().WithIdentity(nameof(BackupDataBaseJob)).Build();
-
+            
+            RecurringJobId = "数据库备份";
             //每天00点与24点进行备份
-            Trigger = TriggerBuilder.Create().WithIdentity(nameof(BackupDataBaseJob)).WithCronSchedule("0 0 0,12 * * ? ").Build();
-            //Trigger = TriggerBuilder.Create().WithIdentity(nameof(BackupDataBaseJob)).WithSimpleSchedule(x=>x.WithIntervalInSeconds(10)).Build();
+            CronExpression = "0 0 0,12 * * ? ";
         }
-        public override Task Execute(IJobExecutionContext context)
+        public override Task DoWorkAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             if (_options.Value.EnableDataBaseBackup)
             {

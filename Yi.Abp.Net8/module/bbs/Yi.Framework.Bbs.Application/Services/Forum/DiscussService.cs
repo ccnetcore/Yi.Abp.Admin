@@ -158,10 +158,11 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             //查询完主题之后，要过滤一下私有的主题信息
             items.ApplyPermissionTypeFilter(CurrentUser.Id ?? Guid.Empty);
 
+            var levelCacheDic= await _bbsUserManager.GetLevelCacheMapAsync();
             //等级、是否点赞赋值
             items?.ForEach(x =>
             {
-                x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name;
+                x.User.LevelName = levelCacheDic[x.User.Level].Name;
                 if (CurrentUser.Id is not null)
                 {
                     //默认fasle
@@ -212,7 +213,8 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                     }
                 }, true)
                 .ToListAsync();
-            output?.ForEach(x => x.User.LevelName = _bbsUserManager._levelCacheDic[x.User.Level].Name);
+            var levelCacheDic= await _bbsUserManager.GetLevelCacheMapAsync();
+            output?.ForEach(x => x.User.LevelName = levelCacheDic[x.User.Level].Name);
             return output;
         }
 

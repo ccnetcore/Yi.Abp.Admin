@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\temp\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,10 @@
     <Content Update="wwwroot\ProjectTemplate.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\temp\download\d5bb6f4c5ca24da29ebe1b67e1e4595d.zip" />
   </ItemGroup>
 
 </Project>

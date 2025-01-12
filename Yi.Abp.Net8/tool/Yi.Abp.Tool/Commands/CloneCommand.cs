@@ -4,20 +4,29 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Yi.Abp.Tool.Commands
 {
     public class CloneCommand : ICommand
     {
-        public List<string> CommandStrs => new List<string> { "clone"};
+        private const string CloneAddress= "https://gitee.com/ccnetcore/Yi";
 
-        private const string cloneAddress= "https://gitee.com/ccnetcore/Yi";
-        public Task InvokerAsync(Dictionary<string, string> options, string[] args)
+        
+        public string Command => "clone";
+        public string? Description => "克隆最新YiFramework源代码，需依赖git";
+
+        public void CommandLineApplication(CommandLineApplication application)
         {
-            StartCmd($"git clone {cloneAddress}");
-            return Task.CompletedTask;
+            application.OnExecute(() =>
+            {
+                Console.WriteLine("正在克隆，请耐心等待");
+                StartCmd($"git clone {CloneAddress}");
+                return 0;
+            });
         }
-
+        
+        
         /// <summary>
         /// 执行cmd命令
         /// </summary>

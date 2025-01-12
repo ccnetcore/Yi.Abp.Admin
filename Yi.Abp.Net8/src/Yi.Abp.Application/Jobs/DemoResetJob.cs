@@ -1,15 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Quartz;
-using Quartz.Logging;
-using Volo.Abp.BackgroundWorkers.Quartz;
+using Volo.Abp.BackgroundWorkers.Hangfire;
 using Volo.Abp.Data;
 using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Abp.Application.Jobs
 {
-    public class DemoResetJob : QuartzBackgroundWorkerBase
+    public class DemoResetJob  : HangfireBackgroundWorkerBase
     {
         private ISqlSugarDbContext _dbContext;
         private ILogger<DemoResetJob> _logger => LoggerFactory.CreateLogger<DemoResetJob>();
@@ -18,15 +16,15 @@ namespace Yi.Abp.Application.Jobs
         public DemoResetJob(ISqlSugarDbContext dbContext, IDataSeeder dataSeeder, IConfiguration configuration)
         {
             _dbContext = dbContext;
-            JobDetail = JobBuilder.Create<DemoResetJob>().WithIdentity(nameof(DemoResetJob)).Build();
-
-            //每天01点与13点,演示环境进行重置
-            Trigger = TriggerBuilder.Create().WithIdentity(nameof(DemoResetJob)).WithCronSchedule("0 0 1,13 * * ? ").Build();
-           // Trigger = TriggerBuilder.Create().WithIdentity(nameof(DemoResetJob)).WithSimpleSchedule(x=>x.WithIntervalInSeconds(10)).Build();
+            RecurringJobId = "重置demo环境";
+            //每天1点和13点进行重置demo环境
+            CronExpression = "0 0 1,13 * * ?";
+           
             _dataSeeder = dataSeeder;
             _configuration = configuration;
         }
-        public override async Task Execute(IJobExecutionContext context)
+        
+        public override async Task DoWorkAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             //开启演示环境重置功能
             if (_configuration.GetSection("EnableDemoReset").Get<bool>())
@@ -49,7 +47,6 @@ namespace Yi.Abp.Application.Jobs
                 _logger.LogWarning("演示环境还原成功！");
 
             }
-
 
         }
     }

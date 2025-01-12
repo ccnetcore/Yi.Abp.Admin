@@ -49,6 +49,11 @@ export default defineConfig(({ mode, command }) => {
     },
     //fix:error:stdin>:7356:1: warning: "@charset" must be the first rule in the file
     css: {
+    //fix Deprecation Warning: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler'
+        }},
       postcss: {
         plugins: [
           {

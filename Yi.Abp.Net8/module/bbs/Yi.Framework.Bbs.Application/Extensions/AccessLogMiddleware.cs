@@ -4,7 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Volo.Abp.Caching;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.EventBus;
 using Yi.Framework.Bbs.Domain.Shared.Caches;
+using Yi.Framework.Bbs.Domain.Shared.Etos;
 
 namespace Yi.Framework.Bbs.Application.Extensions;
 
@@ -14,6 +16,29 @@ namespace Yi.Framework.Bbs.Application.Extensions;
 /// 需考虑一致性问题，又不能上锁影响性能
 /// </summary>
 public class AccessLogMiddleware : IMiddleware, ITransientDependency
+{
+    private static int _accessLogNumber = 0;
+
+    internal static void ResetAccessLogNumber()
+    {
+        _accessLogNumber = 0;
+    }
+    internal static int GetAccessLogNumber()
+    {
+        return _accessLogNumber;
+    }
+    
+    
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        await next(context);
+
+        Interlocked.Increment(ref _accessLogNumber);
+    }
+}
+
+public class AccessLogResetEventHandler : ILocalEventHandler<AccessLogResetArgs>,
+    ITransientDependency
 {
     /// <summary>
     /// 缓存前缀
@@ -39,13 +64,28 @@ public class AccessLogMiddleware : IMiddleware, ITransientDependency
             return redisEnabled.IsNullOrEmpty() || bool.Parse(redisEnabled);
         }
     }
-
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    
+    //该事件由job定时10秒触发
+    public async Task HandleEventAsync(AccessLogResetArgs eventData)
     {
-        await next(context);
         if (EnableRedisCache)
         {
-            await RedisClient.IncrByAsync($"{CacheKeyPrefix}:{AccessLogCacheConst.Key}:{DateTime.Now.Date}", 1);
+            //分布式锁
+            if (await RedisClient.SetNxAsync("AccessLogLock",true,TimeSpan.FromSeconds(5)))
+            {
+                //自增长数
+                var incrNumber= AccessLogMiddleware.GetAccessLogNumber();
+                //立即重置，开始计算，方式丢失
+                AccessLogMiddleware.ResetAccessLogNumber();
+                if (incrNumber>0)
+                {
+                    await RedisClient.IncrByAsync(
+                        $"{CacheKeyPrefix}{AccessLogCacheConst.Key}:{DateTime.Now.Date:yyyyMMdd}", incrNumber);
+                }
+             
+                
+            }
+         
         }
     }
 }

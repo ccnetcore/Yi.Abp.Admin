@@ -303,13 +303,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
   const resetForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
-    form.deptId = "";
+    form.deptId = null;
     treeRef.value.onTreeReset();
     onSearch();
   };
 
   function onTreeSelect({ id, selected }) {
-    form.deptId = selected ? id : "";
+    form.deptId = selected ? id : null;
     onSearch();
   }
 
@@ -338,13 +338,13 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         formInline: {
           title,
           higherDeptOptions: formatHigherDeptOptions(higherDeptOptions.value),
-          deptId: data?.deptId ?? 0,
+          deptId: data?.deptId ?? null,
           nick: data?.nick ?? "",
           userName: data?.userName ?? "",
           password: data?.password ?? "",
-          phone: data?.phone ?? "",
+          phone: data?.phone ?? null,
           email: data?.email ?? "",
-          sex: data?.sex ?? "",
+          sex: data?.sex ?? "Unknown",
           state: data?.state ?? true,
           remark: data?.remark ?? "",
           roleIds: data?.roles?.map(r => r.id),
@@ -362,7 +362,7 @@ export function useUser(tableRef: Ref, treeRef: Ref) {
         const curData = options.props.formInline as FormItemProps;
 
         function chores() {
-          message(`您${title}了用户名称为${curData.userName}的这条数据`, {
+          message(`您${title}了用户名称为${curData.userName}的用户`, {
             type: "success"
           });
           done(); // 关闭弹框

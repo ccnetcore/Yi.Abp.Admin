@@ -8,6 +8,8 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY ./common.props ./
 COPY ["src/Yi.Abp.Web/Yi.Abp.Web.csproj", "src/Yi.Abp.Web/"]
 COPY ["framework/Yi.Framework.AspNetCore.Authentication.OAuth/Yi.Framework.AspNetCore.Authentication.OAuth.csproj", "framework/Yi.Framework.AspNetCore.Authentication.OAuth/"]
 COPY ["framework/Yi.Framework.AspNetCore/Yi.Framework.AspNetCore.csproj", "framework/Yi.Framework.AspNetCore/"]

@@ -2,11 +2,12 @@
 using SqlSugar;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Uow;
 
 namespace Yi.Framework.SqlSugarCore.Abstractions
 {
 
-    public interface ISqlSugarRepository<TEntity>:IRepository<TEntity> where TEntity : class, IEntity,new ()
+    public interface ISqlSugarRepository<TEntity>:IRepository<TEntity>,IUnitOfWorkEnabled where TEntity : class, IEntity,new ()
     {
         ISqlSugarClient _Db { get; }
         ISugarQueryable<TEntity> _DbQueryable { get; }

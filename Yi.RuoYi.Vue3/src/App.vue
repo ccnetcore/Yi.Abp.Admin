@@ -26,3 +26,12 @@ watch(()=>token.value,async (newValue,oldValue)=>{
 })
 
 </script>
+<style>
+.el-form--inline {
+  .el-form-item {
+    .el-input, .el-cascader, .el-select, .el-autocomplete {
+      width: 180px;
+    }
+  }
+}
+</style>

@@ -16,6 +16,13 @@ namespace Yi.Framework.Bbs.Domain.Shared.Etos
             Message = message;
         }
 
+        public BbsNoticeEventArgs( NoticeTypeEnum noticeType, Guid acceptUserId, string message)
+        {
+            NoticeType = noticeType;
+            AcceptUserId = acceptUserId;
+            Message = message;
+        }
+        
         /// <summary>
         /// 发送广播
         /// </summary>

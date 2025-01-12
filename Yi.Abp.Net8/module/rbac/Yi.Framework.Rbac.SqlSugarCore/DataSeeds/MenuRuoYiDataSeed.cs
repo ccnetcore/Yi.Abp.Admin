@@ -227,7 +227,22 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false,
             };
             entities.Add(swagger);
-
+            
+            //表单构建
+            MenuAggregateRoot builder = new MenuAggregateRoot(_guidGenerator.Create(), tool.Id)
+            {
+                MenuName = "表单生成器",
+                MenuType = MenuTypeEnum.Menu,
+                Router = "build",
+                IsShow = true,
+                IsLink = false,
+                MenuIcon = "form",
+                Component = "tool/build/index",
+				IsCache = true,
+				OrderNum = 101,
+                IsDeleted = false,
+            };
+            entities.Add(builder);
 
             // //ERP
             // MenuAggregateRoot erp = new MenuAggregateRoot(_guidGenerator.Create())

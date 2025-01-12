@@ -16,10 +16,14 @@ using Yi.Framework.Core.Helper;
 
 namespace Yi.Abp.Tool.Application
 {
-    public class TemplateGenService : ApplicationService,ITemplateGenService
+    public class TemplateGenService : ApplicationService, ITemplateGenService
     {
         private readonly TemplateGenManager _templateGenManager;
-        public TemplateGenService(TemplateGenManager templateGenManager) { _templateGenManager = templateGenManager; }
+
+        public TemplateGenService(TemplateGenManager templateGenManager)
+        {
+            _templateGenManager = templateGenManager;
+        }
 
         /// <summary>
         /// 下载模块文件
@@ -29,8 +33,10 @@ namespace Yi.Abp.Tool.Application
         {
             moduleCreateInputDto.SetNameReplace();
 
+            //模块类型，就是分支小写
             var input = moduleCreateInputDto.Adapt<TemplateGenCreateDto>();
-            input.SetTemplateFilePath(_templateGenManager._toolOptions.ModuleTemplateFilePath);
+            input.SetTemplateGiteeRef(moduleCreateInputDto.ModuleSoure);
+
             var filePath = await _templateGenManager.CreateTemplateAsync(input);
 
             ////考虑从路径中获取
@@ -39,22 +45,15 @@ namespace Yi.Abp.Tool.Application
             return await File.ReadAllBytesAsync(filePath);
         }
 
+
         /// <summary>
-        /// 下载模块文件
+        /// 获取全部模板列表
         /// </summary>
         /// <returns></returns>
-        public async Task<byte[]> CreateProjectAsync(TemplateGenCreateInputDto moduleCreateInputDto)
+        [HttpGet("template-gen/template")]
+        public async Task<List<string>> GetAllTemplatesAsync()
         {
-            moduleCreateInputDto.SetNameReplace();
-
-            var input = moduleCreateInputDto.Adapt<TemplateGenCreateDto>();
-            input.SetTemplateFilePath(_templateGenManager._toolOptions.ProjectTemplateFilePath);
-            var filePath = await _templateGenManager.CreateTemplateAsync(input);
-
-            //考虑从路径中获取
-           // var fileContentType = MimeHelper.GetMimeMapping(Path.GetFileName(filePath));
-            //设置附件下载，下载名称
-            return await File.ReadAllBytesAsync(filePath);
+            return await _templateGenManager.GetAllTemplatesAsync();
         }
     }
 }

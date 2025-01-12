@@ -9,21 +9,19 @@ namespace Yi.Abp.Tool.Domain.Shared.Dtos
 {
     public class TemplateGenCreateDto
     {
-        public void SetTemplateFilePath(string templateFilePath)
+        public void SetTemplateGiteeRef(string moduleType)
         {
-            this.TemplateFilePath = templateFilePath;
+            this.GiteeRef = moduleType.ToLower();
         }
-
-
-        /// <summary>
-        /// 模板文件路径
-        /// </summary>
-        public string TemplateFilePath { get; set; }
+        
         /// <summary>
         /// 模块名称
         /// </summary>
         public string Name { get; set; }
-
+        /// <summary>
+        /// 模块所属gitee分支
+        /// </summary>
+        public string GiteeRef { get; set; }
 
         /// <summary>
         /// 数据库提供者

@@ -9,84 +9,89 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.DependencyInjection;
+using Volo.Abp.Options;
 
 namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
 {
     public static class SwaggerAddExtensions
     {
-        public static IServiceCollection AddYiSwaggerGen<Program>(this IServiceCollection services, Action<SwaggerGenOptions>? action=null)
+        public static IServiceCollection AddYiSwaggerGen<Program>(this IServiceCollection services,
+            Action<SwaggerGenOptions>? action = null)
         {
-
-            var serviceProvider = services.BuildServiceProvider();
-            var mvcOptions = serviceProvider.GetRequiredService<IOptions<AbpAspNetCoreMvcOptions>>();
-
-            var mvcSettings = mvcOptions.Value.ConventionalControllers.ConventionalControllerSettings.DistinctBy(x => x.RemoteServiceName);
+            var mvcOptions = services.GetPreConfigureActions<AbpAspNetCoreMvcOptions>().Configure();
+            
+            var mvcSettings =
+                mvcOptions.ConventionalControllers.ConventionalControllerSettings.DistinctBy(x => x.RemoteServiceName);
 
 
             services.AddAbpSwaggerGen(
-            options =>
-            {
-                if (action is not null)
+                options =>
                 {
-                    action.Invoke(options);
-                }
-
-                // 配置分组,还需要去重,支持重写,如果外部传入后，将以外部为准
-                foreach (var setting in mvcSettings.OrderBy(x => x.RemoteServiceName))
-                {
-                    if (!options.SwaggerGeneratorOptions.SwaggerDocs.ContainsKey(setting.RemoteServiceName))
+                    if (action is not null)
                     {
-                        options.SwaggerDoc(setting.RemoteServiceName, new OpenApiInfo { Title = setting.RemoteServiceName, Version = "v1" });
+                        action.Invoke(options);
                     }
-                }
 
-                // 根据分组名称过滤 API 文档
-                options.DocInclusionPredicate((docName, apiDesc) =>
-                {
-                    if (apiDesc.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+                    // 配置分组,还需要去重,支持重写,如果外部传入后，将以外部为准
+                    foreach (var setting in mvcSettings.OrderBy(x => x.RemoteServiceName))
                     {
-                        var settingOrNull = mvcSettings.Where(x => x.Assembly == controllerActionDescriptor.ControllerTypeInfo.Assembly).FirstOrDefault();
-                        if (settingOrNull is not null)
+                        if (!options.SwaggerGeneratorOptions.SwaggerDocs.ContainsKey(setting.RemoteServiceName))
                         {
-                            return docName == settingOrNull.RemoteServiceName;
+                            options.SwaggerDoc(setting.RemoteServiceName,
+                                new OpenApiInfo { Title = setting.RemoteServiceName, Version = "v1" });
                         }
                     }
-                    return false;
-                });
 
-                options.CustomSchemaIds(type => type.FullName);
-                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                if (basePath is not null)
-                {
-                    foreach (var item in Directory.GetFiles(basePath, "*.xml"))
+                    // 根据分组名称过滤 API 文档
+                    options.DocInclusionPredicate((docName, apiDesc) =>
                     {
-                        options.IncludeXmlComments(item, true);
+                        if (apiDesc.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+                        {
+                            var settingOrNull = mvcSettings
+                                .Where(x => x.Assembly == controllerActionDescriptor.ControllerTypeInfo.Assembly)
+                                .FirstOrDefault();
+                            if (settingOrNull is not null)
+                            {
+                                return docName == settingOrNull.RemoteServiceName;
+                            }
+                        }
+
+                        return false;
+                    });
+
+                    options.CustomSchemaIds(type => type.FullName);
+                    var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                    if (basePath is not null)
+                    {
+                        foreach (var item in Directory.GetFiles(basePath, "*.xml"))
+                        {
+                            options.IncludeXmlComments(item, true);
+                        }
                     }
+
+                    options.AddSecurityDefinition("JwtBearer", new OpenApiSecurityScheme()
+                    {
+                        Description = "直接输入Token即可",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer"
+                    });
+                    var scheme = new OpenApiSecurityScheme()
+                    {
+                        Reference = new OpenApiReference() { Type = ReferenceType.SecurityScheme, Id = "JwtBearer" }
+                    };
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                    {
+                        [scheme] = new string[0]
+                    });
+
+                    options.OperationFilter<AddRequiredHeaderParameter>();
+                    options.SchemaFilter<EnumSchemaFilter>();
                 }
+            );
 
-                options.AddSecurityDefinition("JwtBearer", new OpenApiSecurityScheme()
-                {
-                    Description = "直接输入Token即可",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer"
-                });
-                var scheme = new OpenApiSecurityScheme()
-                {
-                    Reference = new OpenApiReference() { Type = ReferenceType.SecurityScheme, Id = "JwtBearer" }
-                };
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    [scheme] = new string[0]
-                });
-
-                options.OperationFilter<AddRequiredHeaderParameter>();
-                options.SchemaFilter<EnumSchemaFilter>();
-            }
-        );
-
-         
 
             return services;
         }
@@ -103,7 +108,6 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="model"></param>
         /// <param name="context"></param>
-
         public void Apply(OpenApiSchema model, SchemaFilterContext context)
         {
             if (context.Type.IsEnum)
@@ -112,7 +116,7 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
                 model.Type = "string";
                 model.Format = null;
 
-            
+
                 StringBuilder stringBuilder = new StringBuilder();
                 Enum.GetNames(context.Type)
                     .ToList()
@@ -121,9 +125,10 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
                         Enum e = (Enum)Enum.Parse(context.Type, name);
                         var descrptionOrNull = GetEnumDescription(e);
                         model.Enum.Add(new OpenApiString(name));
-                        stringBuilder.Append($"【枚举：{name}{(descrptionOrNull is null ? string.Empty : $"({descrptionOrNull})")}={Convert.ToInt64(Enum.Parse(context.Type, name))}】<br />");
+                        stringBuilder.Append(
+                            $"【枚举：{name}{(descrptionOrNull is null ? string.Empty : $"({descrptionOrNull})")}={Convert.ToInt64(Enum.Parse(context.Type, name))}】<br />");
                     });
-                model.Description= stringBuilder.ToString();
+                model.Description = stringBuilder.ToString();
             }
         }
 
@@ -133,13 +138,13 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
             var attributes = (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
             return attributes.Length > 0 ? attributes[0].Description : null;
         }
-
     }
 
 
     public class AddRequiredHeaderParameter : IOperationFilter
     {
         public static string HeaderKey { get; set; } = "__tenant";
+
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (operation.Parameters == null)
@@ -150,7 +155,7 @@ namespace Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection
                 In = ParameterLocation.Header,
                 Required = false,
                 AllowEmptyValue = true,
-                Description="租户id或者租户名称（可空为默认租户）"
+                Description = "租户id或者租户名称（可空为默认租户）"
             });
         }
     }

@@ -19,5 +19,10 @@ namespace Yi.Framework.Bbs.Domain.Shared.Enums
         /// 广播
         /// </summary>
         Broadcast,
+        
+        /// <summary>
+        /// 钱钱
+        /// </summary>
+        Money
     }
 }

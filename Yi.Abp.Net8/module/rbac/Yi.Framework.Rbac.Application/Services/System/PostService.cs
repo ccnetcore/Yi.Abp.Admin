@@ -30,6 +30,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
             var entities = await _repository._DbQueryable.WhereIF(!string.IsNullOrEmpty(input.PostName),
                     x => x.PostName.Contains(input.PostName!))
                 .WhereIF(input.State is not null, x => x.State == input.State)
+                .OrderByDescending(x => x.OrderNum)
                 .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
             return new PagedResultDto<PostGetListOutputDto>(total, await MapToGetListOutputDtosAsync(entities));
         }

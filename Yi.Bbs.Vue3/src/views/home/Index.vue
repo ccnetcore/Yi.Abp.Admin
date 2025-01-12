@@ -3,61 +3,63 @@
     <el-row :gutter="20" class="top-div">
       <el-col :span="17">
         <div class="chat-hub">
-<!--          <p @click="onClickToChatHub">点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>-->
-         
-         <p v-if="isIcp" 
-            style="font-size: 25px;
+          <!--          <p @click="onClickToChatHub">点击前往-最新上线<span>《聊天室》 </span>，现已支持<span>Ai助手</span>，希望能帮助大家</p>-->
+
+          <p v-if="isIcp"
+             style="font-size: 25px;
     color: blue;
     background: red;
     /* height: 80px; */
     font-weight: 900;
     text-align: center;
 margin: 10px auto;">
-           本站点为个人内容分享，全部资料免费开源学习，所有数据为假数据
-           <br/>
-           不涉及企业、团体、论坛和经营销售等内容，只做简单的成果展示
-           <br/>
-           富强、‌民主、文明、‌和谐、‌自由、‌平等
-           <br/>
-           公正、‌法治、‌爱国、‌敬业、‌诚信、友善
-         </p>
-          <p v-else @click="onClickToWeChat">点击关注-最新上线<span>《意.Net官方微信公众号》 </span>，分享有<span>深度</span>的.Net知识，希望能帮助大家</p>
-       
-       
+            本站点为个人内容分享，全部资料免费开源学习，所有数据为假数据
+            <br/>
+            不涉及企业、团体、论坛和经营销售等内容，只做简单的成果展示
+            <br/>
+            富强、‌民主、文明、‌和谐、‌自由、‌平等
+            <br/>
+            公正、‌法治、‌爱国、‌敬业、‌诚信、友善
+          </p>
+          <p v-else @click="onClickToWeChat">
+            点击关注-最新上线<span>《意.Net官方微信公众号》 </span>，分享有<span>深度</span>的.Net知识，希望能帮助大家</p>
+
+
         </div>
         <div class="scrollbar">
           <ScrollbarInfo/>
         </div>
 
         <el-row class="left-div">
-          
-          
+
+
           <el-col :span="8" v-for="i in plateList" :key="i.id" class="plate" :style="{
       'padding-left': i % 3 == 1 ? 0 : 0.2 + 'rem',
       'padding-right': i % 3 == 0 ? 0 : 0.2 + 'rem',
     }">
             <img v-if="isIcp" src="@/assets/login.png" style="height: 80px;width: 100%" alt=""/>
-            <PlateCard v-else :name="i.name" :introduction="i.introduction" :id="i.id" :isPublish="i.isDisableCreateDiscuss"/>
+            <PlateCard v-else :name="i.name" :introduction="i.introduction" :id="i.id"
+                       :isPublish="i.isDisableCreateDiscuss"/>
           </el-col>
-          
-          <template v-if="isDiscussFinished">
-            <el-col :span="24" v-for="i in discussList" :key="i.id">
+
+          <div ref="scrollableDiv" class="scrollable-div" v-infinite-scroll="loadDiscuss" style="height: 2500px;width: 100%; overflow-y: auto;" infinite-scroll-distance="10">
+
+            <el-col v-if="isDiscussFinished" :span="24" v-for="i in discussList" :key="i.id">
               <img v-if="isIcp" src="@/assets/login.png" style="height: 150px;width: 100%" alt=""/>
-              <DisscussCard v-else :discuss="i"/>
+              <DisscussCard v-else :discuss="i" badge="置顶"/>
             </el-col>
-          </template>
-          <template v-else>
-            <Skeleton :isBorder="true"/>
-          </template>
-          <template v-if="isAllDiscussFinished">
+            <Skeleton v-else :isBorder="true"/>
+       
+
             <el-col :span="24" v-for="i in allDiscussList" :key="i.id">
               <img v-if="isIcp" src="@/assets/login.png" style="height: 150px;width: 100%" alt=""/>
               <DisscussCard v-else :discuss="i"/>
             </el-col>
-          </template>
-          <template v-else>
-            <Skeleton :isBorder="true"/>
-          </template>
+
+            <Skeleton v-if="!isAllDiscussFinished"  :isBorder="true"/>
+          </div>
+
+ 
         </el-row>
       </el-col>
       <el-col :span="7">
@@ -220,9 +222,9 @@ margin: 10px auto;">
         title="意社区官方微信公众号"
         width="800"
     >
-     <div style="display: flex;justify-content: center;">
-      <img style="width: 585px; height: 186px" src="@/assets/wechat/share.png"  alt=""/>
-     </div>
+      <div style="display: flex;justify-content: center;">
+        <img style="width: 585px; height: 186px" src="@/assets/wechat/share.png" alt=""/>
+      </div>
 
       <template #footer>
         <div class="dialog-footer">
@@ -232,6 +234,7 @@ margin: 10px auto;">
         </div>
       </template>
     </el-dialog>
+    <el-backtop :right="100" :bottom="100" @click="clickBacktop" visibility-height="0"/>
   </div>
 </template>
 
@@ -286,6 +289,8 @@ const isAllDiscussFinished = ref(false);
 const userAnalyseInfo = ref({});
 const onlineNumber = ref(0);
 const accessLogTab = ref()
+
+const currentDiscussPageIndex = ref(1);
 const activeList = [
   {name: "签到", path: "/activity/sign", icon: "Present"},
   {name: "等级", path: "/activity/level", icon: "Ticket"},
@@ -297,54 +302,62 @@ const activeList = [
   {name: "开始", path: "/start", icon: "Position"},
   {name: "聊天室", path: "/chat", icon: "ChatRound"},
 ];
-const isIcp=import.meta.env.VITE_APP_ICP==="true";
-//主题查询参数
-const query = reactive({
-  skipCount: 1,
-  maxResultCount: 10,
-  isTop: true,
-});
+const isIcp = import.meta.env.VITE_APP_ICP === "true";
 
-const weekQuery = reactive({accessLogType: "Request"});4
+const weekQuery = reactive({accessLogType: "Request"});
 
-const init=async ()=>{
-  
+const init = async () => {
+
   //分阶段优化
   await Promise.all([
-    (async ()=>{const {data: allDiscussData, config: allDiscussConfig} =
-        await getAllDiscussList({Type: 0, skipCount: 1, maxResultCount: 30,});
+    (async () => {
+      const {data: allDiscussData, config: allDiscussConfig} =
+          await getAllDiscussList({Type: 0, skipCount: currentDiscussPageIndex.value, maxResultCount: 10});
       isAllDiscussFinished.value = allDiscussConfig.isFinish;
-      allDiscussList.value = allDiscussData.items;})(),
-    (async ()=>{const {data: plateData} = await getList();
-      plateList.value = plateData.items;})(),
-    (async ()=>{const {data: discussData, config: discussConfig} = await getHomeDiscuss();
+      allDiscussList.value = allDiscussData.items;
+    })(),
+    (async () => {
+      const {data: plateData} = await getList();
+      plateList.value = plateData.items;
+    })(),
+    (async () => {
+      const {data: discussData, config: discussConfig} = await getHomeDiscuss();
       discussList.value = discussData;
-      isDiscussFinished.value = discussConfig.isFinish;})(),
-    (async ()=>{const {data: bannerData} = await bannerGetList();
-      bannerList.value = bannerData.items;})(),
-    (async ()=>{const {data: weekData} = await getWeek(weekQuery);
-      weekList.value = weekData;})(),
-    (async ()=>{const {data: pointData, config: pointConfig} = await getRankingPoints();
+      isDiscussFinished.value = discussConfig.isFinish;
+    })(),
+    (async () => {
+      const {data: bannerData} = await bannerGetList();
+      bannerList.value = bannerData.items;
+    })(),
+    (async () => {
+      const {data: weekData} = await getWeek(weekQuery);
+      weekList.value = weekData;
+    })(),
+    (async () => {
+      const {data: pointData, config: pointConfig} = await getRankingPoints();
       pointList.value = pointData.items;
-      isPointFinished.value = pointConfig.isFinish;})(),
-    (async ()=>{const {data: userAnalyseInfoData} = await getUserAnalyse();
+      isPointFinished.value = pointConfig.isFinish;
+    })(),
+    (async () => {
+      const {data: userAnalyseInfoData} = await getUserAnalyse();
       onlineNumber.value = userAnalyseInfoData.onlineNumber;
-      userAnalyseInfo.value = userAnalyseInfoData;})(),
+      userAnalyseInfo.value = userAnalyseInfoData;
+    })(),
   ]);
 
 
   //不重要的请求滞后
- const {data: friendData, config: friendConfig} = await getRecommendedFriend();
-    friendList.value = friendData;
-    isFriendFinished.value = friendConfig.isFinish;
-    const {data: themeData, config: themeConfig} = await getRecommendedTopic();
-        themeList.value = themeData;
-        isThemeFinished.value = themeConfig.isFinish;
+  const {data: friendData, config: friendConfig} = await getRecommendedFriend();
+  friendList.value = friendData;
+  isFriendFinished.value = friendConfig.isFinish;
+  const {data: themeData, config: themeConfig} = await getRecommendedTopic();
+  themeList.value = themeData;
+  isThemeFinished.value = themeConfig.isFinish;
   await access();
 }
 //初始化
 onMounted(async () => {
-await init();
+  await init();
 });
 
 const weekXAxis = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
@@ -446,11 +459,35 @@ const onClickAccessLog = async () => {
 
 }
 
-const wechatDialogVisible=ref(false)
+let loadingDiscuss = false;
+//加载滚动文章
+const loadDiscuss = async () => {
+  
+  if (loadingDiscuss === false) {
+    loadingDiscuss = true;
+
+
+    currentDiscussPageIndex.value += 1;
+
+    isAllDiscussFinished.value = false;
+    const {data: allDiscussData, config: allDiscussConfig} =
+        await getAllDiscussList({Type: 0, skipCount: currentDiscussPageIndex.value, maxResultCount: 10});
+    isAllDiscussFinished.value = allDiscussConfig.isFinish;
+
+    //在列表后新增
+    allDiscussList.value.push(...allDiscussData.items);
+
+
+    loadingDiscuss = false;
+  }
+
+
+}
+const wechatDialogVisible = ref(false)
 //切换统计开关
 const onClickWeekSwitch = async () => {
   if (weekQuery.accessLogType === "HomeClick") {
-    weekQuery.accessLogType= "Request";
+    weekQuery.accessLogType = "Request";
   } else if (weekQuery.accessLogType === "Request") {
     weekQuery.accessLogType = "HomeClick";
   }
@@ -458,10 +495,17 @@ const onClickWeekSwitch = async () => {
   const {data: weekData} = await getWeek(weekQuery);
   weekList.value = weekData;
 }
+const scrollableDiv = ref(null);
+//回到顶部
+const clickBacktop=()=>{
+  if (scrollableDiv.value) {
+    scrollableDiv.value.scrollTop = 0; // 设置滚动条到顶部
+  }
+}
 
 //打开微信公众号弹窗
-const onClickToWeChat=()=>{
-  wechatDialogVisible.value=true;
+const onClickToWeChat = () => {
+  wechatDialogVisible.value = true;
 };
 </script>
 <style scoped lang="scss">
@@ -610,14 +654,15 @@ const onClickToWeChat=()=>{
   .VisitsLineChart > > > .el-card__body {
     padding: 0.5rem;
   }
-  
-.VisitsLineChart p{
-  display: flex;
-  justify-content: flex-end;
-  color: #409eff;
-  cursor: pointer;
-  margin-top: 8px;
-}
+
+  .VisitsLineChart p {
+    display: flex;
+    justify-content: flex-end;
+    color: #409eff;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
   .statisChart {
     width: 100%;
     height: 300px;
@@ -663,5 +708,24 @@ const onClickToWeChat=()=>{
   100% {
     transform: translateX(-100%);
   }
+}
+
+
+/* 设置滚动条的样式 */
+.scrollable-div::-webkit-scrollbar {
+  width: 3px; /* 设置滚动条的宽度 */
+}
+
+.scrollable-div::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 滚动条轨道背景 */
+}
+
+.scrollable-div::-webkit-scrollbar-thumb {
+  background: #cccccc; /* 滚动条的颜色 */
+  border-radius: 10px; /* 设置圆角 */
+}
+
+.scrollable-div::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 滚动条 hover 时的颜色 */
 }
 </style>

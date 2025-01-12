@@ -15,7 +15,8 @@ namespace Yi.Abp.Tool
             Configure<AbpRemoteServiceOptions>(options =>
             {
                 options.RemoteServices.Default =
-                    new RemoteServiceConfiguration("https://ccnetcore.com:19009");
+                     new RemoteServiceConfiguration("https://ccnetcore.com:19009");
+                   // new RemoteServiceConfiguration("http://localhost:19002");
             });
         }
     }

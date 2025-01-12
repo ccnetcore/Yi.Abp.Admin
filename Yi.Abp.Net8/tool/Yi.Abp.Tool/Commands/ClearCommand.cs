@@ -3,27 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Yi.Abp.Tool.Commands
 {
     public class ClearCommand : ICommand
     {
         public List<string> CommandStrs => ["clear"];
+      
 
-        public Task InvokerAsync(Dictionary<string, string> options, string[] args)
+        public string Command => "clear";
+        public string? Description => "清除当前目录及子目录下的obj、bin文件夹` yi-abp clear `";
+
+        public void CommandLineApplication(CommandLineApplication application)
         {
+            application.HelpOption("-h|--help");
             List<string> delDirBlacklist = ["obj", "bin"];
-            options.TryGetValue("path", out var path);
+            var pathOption=  application.Option("-path", "路径",CommandOptionType.SingleValue);
 
-            if (string.IsNullOrEmpty(path))
+
+            application.OnExecute(() =>
             {
-                path = "./";
-            }
-            DeleteObjBinFolders(path, delDirBlacklist);
-            return Task.CompletedTask;
+                var path = "./";
+                if (pathOption.HasValue())
+                {
+                    path = pathOption.Value();
+                }
+                DeleteObjBinFolders(path, delDirBlacklist);
+                return 0;
+            });
         }
-
-
+        
+        
         private static void DeleteObjBinFolders(string directory, List<string> delDirBlacklist)
         {
             try

@@ -122,23 +122,6 @@ const useUserStore = defineStore("user", {
           });
       });
     },
-      //找回密码
-      retrievePassword(userInfo)
-      {
-          const password = userInfo.password.trim();
-          const phone = userInfo.phone;
-          const uuid = userInfo.uuid;
-          const code = userInfo.code;
-          return new Promise((resolve, reject) => {
-              retrievePassword(password, phone, code, uuid)
-                  .then((response) => {
-                      resolve(response);
-                  })
-                  .catch((error) => {
-                      reject(error);
-                  });
-          });
-      },
     // 重置用户信息
     resetInfo() {
       this.roles = [];
@@ -153,9 +136,12 @@ const useUserStore = defineStore("user", {
       this.codeImageURL = "data:image/jpg;base64," + data.img;
       this.codeUUid = data.uuid;
     },
-    updateToken(token)
-    {
+    updateToken(token) {
       this.token = token;
+    },
+    //更新钱钱
+    updateMoney(updateMoneyNumber){
+        this.money=this.money+updateMoneyNumber
     }
   },
   persist: {

@@ -16,13 +16,7 @@
 
   <el-divider />
   <div>
-    <el-input
-      :disabled="!isAddComment"
-      v-model="topContent"
-      placeholder="发表一个友善的评论吧~"
-      :rows="5"
-      type="textarea"
-    ></el-input>
+    <WangEditor v-model="topContent" height="220px" />
     <el-button
       @click="addTopComment"
       type="primary"
@@ -142,6 +136,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getListByDiscussId, add, del } from "@/apis/commentApi.js";
 import AvatarInfo from "./AvatarInfo.vue";
 import { getPermission } from "@/utils/auth";
+import WangEditor from "./WangEditor.vue"
 
 const props = defineProps({
   isComment: {

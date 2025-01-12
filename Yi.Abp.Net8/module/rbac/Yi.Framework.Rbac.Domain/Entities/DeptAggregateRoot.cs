@@ -63,12 +63,12 @@ namespace Yi.Framework.Rbac.Domain.Entities
         /// <summary>
         /// 部门名称 
         ///</summary>
-        public string DeptName { get; set; } = string.Empty;
+        public string DeptName { get; set; }
         /// <summary>
         /// 部门编码 
         ///</summary>
         [SugarColumn(ColumnName = "DeptCode")]
-        public string DeptCode { get; set; } = string.Empty;
+        public string DeptCode { get; set; }
         /// <summary>
         /// 负责人 
         ///</summary>

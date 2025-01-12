@@ -3,21 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.CommandLineUtils;
 using Volo.Abp.DependencyInjection;
 
 namespace Yi.Abp.Tool
 {
-    public interface ICommand:ITransientDependency
+    public interface ICommand:ISingletonDependency
     {
-        /// <summary>
-        /// 命令串
-        /// </summary>
-        public List<string> CommandStrs { get; }
+        public string Command { get; }
 
-        /// <summary>
-        /// 执行
-        /// </summary>
-        /// <returns></returns>
-        public Task InvokerAsync(Dictionary<string,string> options, string[] args);
+        public string? Description { get; }
+        void CommandLineApplication(CommandLineApplication application);
+
     }
 }

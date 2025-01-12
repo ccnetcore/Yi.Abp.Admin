@@ -9,28 +9,32 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.SqlSugarCore
 {
-    public static class SqlsugarCoreExtensions
+    public static class SqlSugarCoreExtensions
     {
-        public static IServiceCollection AddYiDbContext<DbContext>(this IServiceCollection service, ServiceLifetime serviceLifetime = ServiceLifetime.Transient) where DbContext : class, ISqlSugarDbContext
+        /// <summary>
+        /// 新增db对象，可支持多个
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="serviceLifetime"></param>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <returns></returns>
+        public static IServiceCollection AddYiDbContext<TDbContext>(this IServiceCollection service, ServiceLifetime serviceLifetime = ServiceLifetime.Transient) where TDbContext : class, ISqlSugarDbContextDependencies
         {
-            service.Replace(new ServiceDescriptor(typeof(ISqlSugarDbContext), typeof(DbContext), serviceLifetime));
+            service.AddTransient<ISqlSugarDbContextDependencies, TDbContext>();
             return service;
         }
-        public static IServiceCollection TryAddYiDbContext<DbContext>(this IServiceCollection service, ServiceLifetime serviceLifetime = ServiceLifetime.Transient) where DbContext : class, ISqlSugarDbContext
+        
+        /// <summary>
+        /// 新增db对象，可支持多个
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="options"></param>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <returns></returns>
+        public static IServiceCollection AddYiDbContext<TDbContext>(this IServiceCollection service, Action<DbConnOptions> options) where TDbContext : class, ISqlSugarDbContextDependencies
         {
-            service.TryAdd(new ServiceDescriptor(typeof(ISqlSugarDbContext), typeof(DbContext), serviceLifetime));
-            return service;
-        }
-
-
-        public static IServiceCollection AddYiDbContext<DbContext>(this IServiceCollection service, Action<DbConnOptions> options) where DbContext : class, ISqlSugarDbContext
-        {
-
-            service.Configure<DbConnOptions>(ops =>
-            {
-                options.Invoke(ops);
-            });
-            service.AddYiDbContext<DbContext>();
+            service.Configure<DbConnOptions>(options.Invoke);
+            service.AddYiDbContext<TDbContext>();
             return service;
         }
     }

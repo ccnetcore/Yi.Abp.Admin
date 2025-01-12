@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.WebClientInfo;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Modularity;
 using Yi.Framework.AspNetCore.Mvc;
@@ -22,6 +23,11 @@ namespace Yi.Framework.AspNetCore
         )]
     public class YiFrameworkAspNetCoreModule : AbpModule
     {
-
+        public override void PostConfigureServices(ServiceConfigurationContext context)
+        {
+            var services = context.Services;
+            services.Replace(new ServiceDescriptor(typeof(IWebClientInfoProvider),
+                typeof(RealIpHttpContextWebClientInfoProvider), ServiceLifetime.Transient));
+        }
     }
 }
