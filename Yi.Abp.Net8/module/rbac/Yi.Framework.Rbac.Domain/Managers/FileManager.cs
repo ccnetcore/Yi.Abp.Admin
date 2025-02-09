@@ -100,9 +100,13 @@ public class FileManager : DomainService, IFileManager
             }
             catch (Exception exception)
             {
+
+                this.LoggerFactory.CreateLogger<FileManager>().LogError(exception, exception.Message);
+            }
+            finally
+            {
                 //如果失败了，直接复制一份到缩略图上即可
                 compressImageStream = fileStream;
-                this.LoggerFactory.CreateLogger<FileManager>().LogError(exception, exception.Message);
             }
 
           

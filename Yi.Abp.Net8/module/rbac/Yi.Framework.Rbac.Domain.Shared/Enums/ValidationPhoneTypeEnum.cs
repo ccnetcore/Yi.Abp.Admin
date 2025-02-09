@@ -9,5 +9,9 @@ public enum ValidationPhoneTypeEnum
     /// <summary>
     /// 忘记密码
     /// </summary>
-    RetrievePassword
+    RetrievePassword,
+    /// <summary>
+    /// 绑定
+    /// </summary>
+    Bind
 }

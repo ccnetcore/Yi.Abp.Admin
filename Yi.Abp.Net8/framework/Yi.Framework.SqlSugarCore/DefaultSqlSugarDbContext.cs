@@ -61,7 +61,12 @@ public class DefaultSqlSugarDbContext : SqlSugarDbContext
 
                 if (entityInfo.PropertyName.Equals(nameof(IAuditedObject.LastModificationTime)))
                 {
-                    if (!DateTime.MinValue.Equals(oldValue))
+                    //最后更新时间，已经是最小值，忽略
+                    if (DateTime.MinValue.Equals(oldValue))
+                    {
+                        entityInfo.SetValue(null);
+                    }
+                    else
                     {
                         entityInfo.SetValue(DateTime.Now);
                     }
@@ -70,7 +75,12 @@ public class DefaultSqlSugarDbContext : SqlSugarDbContext
                 {
                     if (typeof(Guid?) == entityInfo.EntityColumnInfo.PropertyInfo.PropertyType)
                     {
-                        if (CurrentUser.Id != null)
+                        //最后更新者，已经是空guid，忽略
+                        if (Guid.Empty.Equals(oldValue))
+                        {
+                            entityInfo.SetValue(null);
+                        }
+                        else if (CurrentUser.Id != null)
                         {
                             entityInfo.SetValue(CurrentUser.Id);
                         }
@@ -154,9 +164,10 @@ public class DefaultSqlSugarDbContext : SqlSugarDbContext
 
                 break;
             case DataFilterType.DeleteByObject:
-                if (entityInfo.PropertyName == nameof(IEntity<object>.Id))
-                {
+                // if (entityInfo.PropertyName == nameof(IEntity<object>.Id))
+                // {
                     //这里sqlsugar有个特殊，删除会返回批量的结果
+                    //这里sqlsugar有第二个特殊，删除事件是行级事件
                     if (entityInfo.EntityValue is IEnumerable entityValues)
                     {
                         foreach (var entityValue in entityValues)
@@ -164,7 +175,7 @@ public class DefaultSqlSugarDbContext : SqlSugarDbContext
                             EntityChangeEventHelper.PublishEntityDeletedEvent(entityValue);
                         }
                     }
-                }
+                // }
 
                 break;
         }

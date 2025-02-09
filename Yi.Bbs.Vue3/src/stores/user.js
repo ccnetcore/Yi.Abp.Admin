@@ -18,7 +18,9 @@ const useUserStore = defineStore("user", {
     codeUUid: "",
     money:0
   }),
-  getters: {},
+  getters: {
+      moneyFixed: (state) => state.money.toFixed(2)
+  },
   actions: {
     // 登录
     login(userInfo) {

@@ -22,7 +22,8 @@ margin: 10px auto;">
             公正、‌法治、‌爱国、‌敬业、‌诚信、友善
           </p>
           <p v-else @click="onClickToWeChat">
-            点击关注-最新上线<span>《意.Net官方微信公众号》 </span>，分享有<span>深度</span>的.Net知识，希望能帮助大家</p>
+            点击关注官方<span>意.Net微信小程序</span>与<span>意.Net公众号</span>
+          </p>
 
 
         </div>
@@ -107,10 +108,10 @@ margin: 10px auto;">
           <el-col v-if="!isIcp" :span="24">
             <InfoCard header="活动">
               <template #content>
-                <div class="top">你好，很高兴今天又遇到你呀~</div>
+                <div class="top">祝各位，蛇年大吉~</div>
                 <el-row class="active">
 
-                  <el-col v-for="item in activeList" :span="6" @click="handleToRouter(item.path)">
+                  <el-col style="padding: 5px 0px;" v-for="item in activeList" :span="6" @click="handleToRouter(item.path)">
 
                     <el-icon color="#70aafb" size="30px">
                       <component :is="item.icon"></component>
@@ -160,7 +161,8 @@ margin: 10px auto;">
 
           <el-col v-if="!isIcp" :span="24">
             <template v-if="isPointFinished">
-              <InfoCard :items="pointList" header="财富排行榜" text="查看我的位置" height="400"
+              <InfoCard :isPadding="false" :items="pointList" header="财富排行榜" text="查看我的位置" height="410"
+                        style="padding:0 20px"
                         @onClickText="onClickMoneyTop">
                 <template #item="temp">
                   <PointsRanking :pointsData="temp"/>
@@ -168,7 +170,7 @@ margin: 10px auto;">
               </InfoCard>
             </template>
             <template v-else>
-              <InfoCard header="本月排行" text="更多">
+              <InfoCard :isPadding="false" header="财富排行榜" text="查看我的位置">
                 <template #content>
                   <Skeleton/>
                 </template>
@@ -178,14 +180,15 @@ margin: 10px auto;">
 
           <el-col v-if="!isIcp" :span="24">
             <template v-if="isFriendFinished">
-              <InfoCard :items="friendList" header="推荐好友" text="更多" height="400">
+              <InfoCard :isPadding="false" :items="friendList" header="推荐好友" text="更多" height="400"
+                        style="padding:0 20px">
                 <template #item="temp">
                   <RecommendFriend :friendData="temp"/>
                 </template>
               </InfoCard>
             </template>
             <template v-else>
-              <InfoCard header="推荐好友" text="更多">
+              <InfoCard :isPadding="false" header="推荐好友" text="更多">
                 <template #content>
                   <Skeleton/>
                 </template>
@@ -194,14 +197,16 @@ margin: 10px auto;">
           </el-col>
           <el-col v-if="!isIcp" :span="24">
             <template v-if="isThemeFinished">
-              <InfoCard :items="themeList" header="推荐主题" text="更多" height="400">
+              <InfoCard :isPadding="false" :items="themeList" header="推荐主题" text="更多" height="400"
+                        style="padding:0 20px"
+              >
                 <template #item="temp">
                   <ThemeData :themeData="temp"/>
                 </template>
               </InfoCard>
             </template>
             <template v-else>
-              <InfoCard header="推荐主题" text="更多">
+              <InfoCard :isPadding="false" header="推荐主题" text="更多">
                 <template #content>
                   <Skeleton/>
                 </template>
@@ -219,10 +224,15 @@ margin: 10px auto;">
 
     <el-dialog
         v-model="wechatDialogVisible"
-        title="意社区官方微信公众号"
+        title="意社区官方"
         width="800"
     >
-      <div style="display: flex;justify-content: center;">
+  
+      <div style="display: flex;flex-direction: column;align-items: center;">
+        <p style="margin: 10px;font-size: large">微信小程序：</p>
+      <img style="width: 200px; height: 200px" src="@/assets/wechat/mini.jpg" alt=""/>
+    <el-divider/>
+        <p style="margin: 10px;font-size: large"> 微信公众号：</p>
         <img style="width: 585px; height: 186px" src="@/assets/wechat/share.png" alt=""/>
       </div>
 
@@ -243,6 +253,7 @@ import {onMounted, ref, reactive, computed, nextTick, watch} from "vue";
 import {useRouter} from "vue-router";
 import DisscussCard from "@/components/DisscussCard.vue";
 import InfoCard from "@/components/InfoCard.vue";
+import ThemeData from "@/views/home/components/RecommendTheme/index.vue";
 import PlateCard from "@/components/PlateCard.vue";
 import ScrollbarInfo from "@/components/ScrollbarInfo.vue";
 import BottomInfo from "@/components/BottomInfo.vue";
@@ -256,14 +267,13 @@ import {getWeek} from "@/apis/accessApi.js";
 import {
   getRecommendedTopic,
   getRecommendedFriend,
-  getRankingPoints,
+  getMoneyTop,
   getUserAnalyse,
   getRegisterAnalyse
 } from "@/apis/analyseApi.js";
 import {getList as getAllDiscussList} from "@/apis/discussApi.js";
 import PointsRanking from "./components/PointsRanking/index.vue";
 import RecommendFriend from "./components/RecommendFriend/index.vue";
-import ThemeData from "./components/RecommendTheme/index.vue";
 import Skeleton from "@/components/Skeleton/index.vue";
 import useSocketStore from "@/stores/socket";
 
@@ -301,6 +311,12 @@ const activeList = [
   {name: "排行榜", path: "/money", icon: "Money"},
   {name: "开始", path: "/start", icon: "Position"},
   {name: "聊天室", path: "/chat", icon: "ChatRound"},
+    
+  {name: "商城", path: "/shop", icon: "ShoppingCart"},
+  {name: "数字藏品", path: "/dc", icon: "Trophy"},
+  {name: "面试宝典", path: "/book", icon: "Memo"},
+  // {name: "小程序", path: "/", icon: "Position"},
+  // {name: "公众号", path: "/", icon: "ChatRound"},
 ];
 const isIcp = import.meta.env.VITE_APP_ICP === "true";
 
@@ -334,7 +350,7 @@ const init = async () => {
       weekList.value = weekData;
     })(),
     (async () => {
-      const {data: pointData, config: pointConfig} = await getRankingPoints();
+      const {data: pointData, config: pointConfig} = await getMoneyTop();
       pointList.value = pointData.items;
       isPointFinished.value = pointConfig.isFinish;
     })(),
@@ -617,7 +633,7 @@ const onClickToWeChat = () => {
 
   .active {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     color: #8a919f;
 

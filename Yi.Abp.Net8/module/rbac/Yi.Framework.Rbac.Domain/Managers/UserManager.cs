@@ -152,12 +152,12 @@ namespace Yi.Framework.Rbac.Domain.Managers
             }
 
             // 正则表达式，匹配只包含数字和字母的字符串
-            string pattern = @"^[a-zA-Z0-9]+$";
+            string pattern = @"^[a-zA-Z0-9_]+$";
 
             bool isMatch = Regex.IsMatch(input.UserName, pattern);
             if (!isMatch)
             {
-                throw new UserFriendlyException("用户名不能包含除【字母】与【数字】的其他字符");
+                throw new UserFriendlyException("用户名不能包含除【字母】与【数字】与【_】的其他字符");
             }
         }
 

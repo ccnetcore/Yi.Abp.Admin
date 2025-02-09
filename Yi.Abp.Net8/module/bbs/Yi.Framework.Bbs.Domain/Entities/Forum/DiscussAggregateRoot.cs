@@ -8,9 +8,12 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
 {
     [SugarTable("Discuss")]
     [SugarIndex($"index_{nameof(Title)}", nameof(Title), OrderByType.Asc)]
-    [SugarIndex($"index_{nameof(PlateId)}", nameof(PlateId), OrderByType.Asc)]
-    [SugarIndex($"index_{nameof(CreatorId)}", nameof(CreatorId), OrderByType.Asc)]
     [SugarIndex($"index_{nameof(CreationTime)}", nameof(CreationTime), OrderByType.Desc)]
+    [SugarIndex($"index_{nameof(IsDeleted)}_{nameof(PlateId)}_{nameof(CreatorId)}",
+        nameof(IsDeleted), OrderByType.Asc,
+        nameof(PlateId), OrderByType.Asc,
+        nameof(CreatorId), OrderByType.Asc
+        )]
     public class DiscussAggregateRoot : AggregateRoot<Guid>, ISoftDelete, IAuditedObject
     {
         public DiscussAggregateRoot()
@@ -21,10 +24,18 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
             PlateId = plateId;
         }
 
+        public void AddSeeNumber()
+        {
+            this.SeeNum += 1;
+            //设置最小值，不更新
+            this.LastModificationTime = DateTime.MinValue;
+            //设置空值，不更新
+            this.LastModifierId = Guid.Empty;
+        }
+
         [SugarColumn(ColumnName = "Id", IsPrimaryKey = true)]
         public override Guid Id { get; protected set; }
         public string? Title { get; set; }
-        public string? Types { get; set; }
         public string? Introduction { get; set; }
         public int AgreeNum { get; set; }
         public int SeeNum { get; set; }
@@ -59,11 +70,14 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
 
 
         /// <summary>
-        /// 当PermissionType为部分用户时候，以下列表中的用户+创建者 代表拥有权限
+        /// 当PermissionType为角色时候，以下列表中的角色+创建者 代表拥有权限
         /// </summary>
-        [SugarColumn(IsJson = true)]//使用json处理
-        public List<Guid>? PermissionUserIds { get; set; }
+        [SugarColumn(IsJson = true)] //使用json处理
+        public List<string>? PermissionRoleCodes { get; set; } = new List<string>();
 
+        [SugarColumn(IsJson = true)]//使用json处理
+        public List<Guid>? DiscussLableIds{ get; set; }
+        
         /// <summary>
         /// 是否禁止评论创建功能
         /// </summary>

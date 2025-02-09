@@ -39,7 +39,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
 
         private ISqlSugarRepository<UserRoleEntity> _userRoleRepository;
 
-        public async Task UpdateDataScpoceAsync(UpdateDataScpoceInput input)
+        public async Task UpdateDataScopeAsync(UpdateDataScopeInput input)
         {
             //只有自定义的需要特殊处理
             if (input.DataScope == DataScopeEnum.CUSTOM)

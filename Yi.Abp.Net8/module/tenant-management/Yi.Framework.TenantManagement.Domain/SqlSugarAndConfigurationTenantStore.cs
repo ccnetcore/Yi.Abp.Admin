@@ -6,6 +6,7 @@ using Volo.Abp.Caching;
 using Volo.Abp.Data;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.MultiTenancy.ConfigurationStore;
+using Volo.Abp.Uow;
 
 namespace Yi.Framework.TenantManagement.Domain
 {
@@ -14,14 +15,16 @@ namespace Yi.Framework.TenantManagement.Domain
         private ISqlSugarTenantRepository TenantRepository { get; }
         protected ICurrentTenant CurrentTenant { get; }
         protected IDistributedCache<TenantCacheItem> Cache { get; }
+        private IUnitOfWorkManager _unitOfWorkManager;
         public SqlSugarAndConfigurationTenantStore(ISqlSugarTenantRepository repository,
             IDistributedCache<TenantCacheItem> cache,
         ICurrentTenant currentTenant,
-        IOptionsMonitor<AbpDefaultTenantStoreOptions> options) : base(options)
+        IOptionsMonitor<AbpDefaultTenantStoreOptions> options, IUnitOfWorkManager unitOfWorkManager) : base(options)
         {
             TenantRepository = repository;
             Cache = cache;
             CurrentTenant = currentTenant;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         public new TenantConfiguration? Find(string name)
@@ -79,7 +82,13 @@ namespace Yi.Framework.TenantManagement.Domain
             {
                 using (CurrentTenant.Change(null)) //TODO: No need this if we can implement to define host side (or tenant-independent) entities!
                 {
-                    var tenant = await TenantRepository.FindAsync(id.Value);
+                    TenantAggregateRoot tenant = null;
+                    using (var uow=_unitOfWorkManager.Begin(isTransactional:false))
+                    {
+                         tenant = await TenantRepository.FindAsync(id.Value); 
+                        await uow.CompleteAsync();
+                    }
+                  
                     return await SetCacheAsync(cacheKey, tenant);
                 }
             }

@@ -6,7 +6,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
     public class DiscussGetListInputVo : PagedAndSortedResultRequestDto
     {
         /// <summary>
-        /// ´´½¨ÕßµÄÓÃ»§Ãû
+        /// åˆ›å»ºè€…çš„ç”¨æˆ·å
         /// </summary>
         public string? UserName { get; set; }
         public Guid? UserId { get; set; }
@@ -15,11 +15,11 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
 
         public Guid? PlateId { get; set; }
 
-        //Ä¬ÈÏ²éÑ¯·ÇÖÃ¶¥
+        //é»˜è®¤æŸ¥è¯¢éç½®é¡¶
         public bool? IsTop { get; set; } 
 
 
-        //²éÑ¯·½Ê½
+        //æŸ¥è¯¢æ–¹å¼
         public QueryDiscussTypeEnum Type { get; set; } = QueryDiscussTypeEnum.New;
     }
 }

@@ -2,6 +2,7 @@
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
+using Yi.Framework.Core.Data;
 
 namespace Yi.Framework.Bbs.Domain.Entities.Shop;
 
@@ -9,7 +10,7 @@ namespace Yi.Framework.Bbs.Domain.Entities.Shop;
 /// 商品定义表
 /// </summary>
 [SugarTable("BbsGoods")]
-public class BbsGoodsAggregateRoot: AggregateRoot<Guid>, IHasCreationTime
+public class BbsGoodsAggregateRoot: AggregateRoot<Guid>, IHasCreationTime,IOrderNum
 {
     /// <summary>
     /// 上架时间
@@ -70,4 +71,6 @@ public class BbsGoodsAggregateRoot: AggregateRoot<Guid>, IHasCreationTime
     /// 所需积分
     /// </summary>
     public decimal NeedPoints { get; set; }
+
+    public int OrderNum { get; set; }
 }

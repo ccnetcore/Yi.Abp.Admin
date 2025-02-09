@@ -8,28 +8,24 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.EventBus;
 using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Shared.Etos;
+using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Bbs.Domain.EventHandlers
 {
     public class SeeDiscussEventHandler : ILocalEventHandler<SeeDiscussEventArgs>, ITransientDependency
     {
-        private IRepository<DiscussAggregateRoot, Guid> _repository;
-        public SeeDiscussEventHandler(IRepository<DiscussAggregateRoot, Guid> repository)
+        private ISqlSugarRepository<DiscussAggregateRoot, Guid> _repository;
+
+        public SeeDiscussEventHandler(ISqlSugarRepository<DiscussAggregateRoot, Guid> repository)
         {
             _repository = repository;
         }
+
         public async Task HandleEventAsync(SeeDiscussEventArgs eventData)
         {
-            var entity = await _repository.GetAsync(eventData.DiscussId);
-            if (entity is not null)
-            {
-                entity.SeeNum += 1;
-                await _repository.UpdateAsync(entity);
-            }
+            await _repository._Db.Updateable<DiscussAggregateRoot>()
+                .SetColumns(x => new DiscussAggregateRoot { SeeNum = x.SeeNum + 1 })
+                .Where(x => x.Id == eventData.DiscussId).ExecuteCommandAsync();
         }
-
-
-
-
     }
 }

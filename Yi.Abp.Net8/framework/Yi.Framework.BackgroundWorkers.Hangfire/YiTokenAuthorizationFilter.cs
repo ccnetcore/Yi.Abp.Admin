@@ -75,6 +75,7 @@ public class YiTokenAuthorizationFilter : IDashboardAsyncAuthorizationFilter, IT
                               function sendToken() {
                                   // 获取输入的 token
                                   var token = document.getElementById("tokenInput").value;
+                                  token = token.replace('Bearer ','');
                                   // 构建请求 URL
                                   var url = "/hangfire";
                                   // 发送 GET 请求
@@ -107,7 +108,7 @@ public class YiTokenAuthorizationFilter : IDashboardAsyncAuthorizationFilter, IT
                       <body style="text-align: center;">
                           <h1>Yi-hangfire</h1>
                           <h1>输入您的Token，我们将验证您是否为管理员</h1>
-                          <input type="text" id="tokenInput" placeholder="请输入 token" />
+                          <textarea id="tokenInput" placeholder="请输入 token" style="width: 80%;height: 120px;margin: 0 10%;"></textarea>
                           <button onclick="sendToken()">校验</button>
                       </body>
                       </html>

@@ -42,6 +42,17 @@ Yi框架-一套与SqlSugar一样爽的.Net8开源框架。
 - Yi.RuoYi.Vue3：RuoYi js后台前端
 
 ****
+## 🍉 docker 一键启动
+
+完整内容在：README-Docker.md
+
+后端：`docker run -d --name yi.admin -p 19001:19001 jiftcc/yi.admin:last`
+
+bbs前端：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/yi-bbs.conf:/etc/nginx/conf.d/yi-bbs.conf jiftcc/yi.bbs:last`
+
+> 另外我们提供docker的build操作，我们更希望你能通过此种方式二开构建属于自己的镜像
+
+****
 
 ##  🍊  官网及演示地址：
 
@@ -60,6 +71,7 @@ Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456�
 - [x] 完全支持微服务架构
 
 ****
+
 ##  🍇  详细到爆炸的Yi框架教程导航：
 
 1. [框架快速开始教程](https://ccnetcore.com/article/aaa00329-7f35-d3fe-d258-3a0f8380b742)(已完成)

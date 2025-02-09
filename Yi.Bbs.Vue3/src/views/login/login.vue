@@ -56,7 +56,7 @@
                     </div>
                 </div>
             </div>
-            <div class="div-right">
+            <div class="div-right div-logo">
 <img class="div-img" src="@/assets/login.png" alt=""/>
             </div>
         </div>
@@ -150,4 +150,5 @@ window.addEventListener("message", async (e) => {
 });
 </script>
 <style src="@/assets/styles/login.css" scoped>
+
 </style>

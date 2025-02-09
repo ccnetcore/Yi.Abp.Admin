@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.SqlSugarCore\Yi.Framework.Bbs.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.SqlSugarCore\Yi.Framework.ChatHub.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\code-gen\Yi.Framework.CodeGen.SqlSugarCore\Yi.Framework.CodeGen.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\module\digital-collectibles\Yi.Framework.DigitalCollectibles.SqlSugarCore\Yi.Framework.DigitalCollectibles.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.SqlSugarCore\Yi.Framework.Rbac.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.SqlSugarCore\Yi.Framework.TenantManagement.SqlSugarCore.csproj" />

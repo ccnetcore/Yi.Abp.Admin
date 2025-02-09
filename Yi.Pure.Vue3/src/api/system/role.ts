@@ -38,7 +38,7 @@ export const delRole = roleIds => {
 
 /** 修改角色数据权限 */
 export const updataDataScope = data => {
-  return http.request<Result>("put", `/role/data-scpoce`, { data });
+  return http.request<Result>("put", `/role/data-scope`, { data });
 };
 
 /** 根据角色ID查询菜单下拉树结构 */

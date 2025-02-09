@@ -46,8 +46,8 @@ public class AccessLogStoreJob : HangfireBackgroundWorkerBase
 
         
         RecurringJobId = "访问日志写入数据库";
-        //每分钟执行一次
-        CronExpression = "0 * * * * ?";
+        //每小时执行一次
+        CronExpression = "0 0 * * * ?";
         // JobDetail = JobBuilder.Create<AccessLogStoreJob>().WithIdentity(nameof(AccessLogStoreJob))
         //     .Build();
         // //每分钟执行一次

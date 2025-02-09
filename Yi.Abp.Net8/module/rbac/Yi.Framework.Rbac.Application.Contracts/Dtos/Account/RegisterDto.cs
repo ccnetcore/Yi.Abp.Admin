@@ -23,7 +23,7 @@
         /// <summary>
         /// 电话
         /// </summary>
-        public long Phone { get; set; }
+        public long? Phone { get; set; }
 
         /// <summary>
         /// 验证码

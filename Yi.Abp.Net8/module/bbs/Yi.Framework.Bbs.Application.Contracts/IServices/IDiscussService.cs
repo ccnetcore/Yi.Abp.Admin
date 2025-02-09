@@ -8,6 +8,5 @@ namespace Yi.Framework.Bbs.Application.Contracts.IServices
     /// </summary>
     public interface IDiscussService : IYiCrudAppService<DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>
     {
-        Task VerifyDiscussPermissionAsync(Guid discussId);
     }
 }

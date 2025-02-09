@@ -1,8 +1,10 @@
 <template>
-  <el-tree
+<!--  @node-click="handleNodeClick"-->
+  <el-tree 
+      empty-text="无子文章"
     :data="props.data == '' ? [] : props.data"
     :props="defaultProps"
-    @node-click="handleNodeClick"
+
     :expand-on-click-node="false"
     node-key="id"
     :default-expand-all="true"
@@ -17,7 +19,7 @@
           :content="data.name"
           placement="right"
         >
-          <span class="title-name">{{ data.name }}</span>
+          <span @click="handleNodeClick(data)" class="title-name">{{ data.name }}</span>
         </el-tooltip>
 
         <span>
@@ -43,6 +45,7 @@
             删除
           </a>
         </span>
+        
       </span>
     </template>
   </el-tree>
@@ -78,7 +81,7 @@ const { isHasPermission: isRemoveArticle } = getPermission("bbs:article:del");
 </script>
 <style scoped>
 .custom-tree-node {
-  width: 100%;
+
   flex: 1;
   display: flex;
   align-items: center;

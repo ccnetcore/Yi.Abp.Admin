@@ -22,9 +22,9 @@ export function sendGroupMessage(data) {
     });
   }
 
-  export function sendAiChat(data) {
+  export function sendAiChat(data,model) {
     return request({
-      url: "/ai-chat/chat",
+      url: `/ai-chat/chat/${model}`,
       method: "post",
       data
     });

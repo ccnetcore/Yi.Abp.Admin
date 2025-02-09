@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		version.props = version.props
 		publish.bat = publish.bat
 		publish_Demo.bat = publish_Demo.bat
+		Dockerfile = Dockerfile
+		DockerfileFast = DockerfileFast
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Framework.SqlSugarCore.Abstractions", "framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj", "{FD6D6860-3753-4747-8A26-977E4A3001F9}"
@@ -155,6 +157,20 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yi.Abp.Tool.HttpApi.Client", "tool\Yi.Abp.Tool.HttpApi.Client\Yi.Abp.Tool.HttpApi.Client.csproj", "{C8F97775-D903-4365-A4FF-3DA97E318CD2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.SettingManagement.Application", "module\setting-management\Yi.Framework.SettingManagement.Application\Yi.Framework.SettingManagement.Application.csproj", "{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "digital-collectibles", "digital-collectibles", "{B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.DigitalCollectibles.Application", "module\digital-collectibles\Yi.Framework.DigitalCollectibles.Application\Yi.Framework.DigitalCollectibles.Application.csproj", "{236B88D4-F018-4A5F-A506-7458F2308C70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.DigitalCollectibles.Application.Contracts", "module\digital-collectibles\Yi.Framework.DigitalCollectibles.Application.Contracts\Yi.Framework.DigitalCollectibles.Application.Contracts.csproj", "{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.DigitalCollectibles.Domain", "module\digital-collectibles\Yi.Framework.DigitalCollectibles.Domain\Yi.Framework.DigitalCollectibles.Domain.csproj", "{9B5CAE1A-E062-4C9B-8121-E58FBF69309C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.DigitalCollectibles.Domain.Shared", "module\digital-collectibles\Yi.Framework.DigitalCollectibles.Domain.Shared\Yi.Framework.DigitalCollectibles.Domain.Shared.csproj", "{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.DigitalCollectibles.SqlSugarCore", "module\digital-collectibles\Yi.Framework.DigitalCollectibles.SqlSugarCore\Yi.Framework.DigitalCollectibles.SqlSugarCore.csproj", "{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.WeChat.MiniProgram", "framework\Yi.Framework.WeChat.MiniProgram\Yi.Framework.WeChat.MiniProgram.csproj", "{81CEA2ED-917B-41D8-BE0D-39A785B050C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yi.Framework.BackgroundWorkers.Hangfire", "framework\Yi.Framework.BackgroundWorkers.Hangfire\Yi.Framework.BackgroundWorkers.Hangfire.csproj", "{862CA181-BEE6-4870-82D2-B662E527ED8C}"
 EndProject
@@ -392,6 +408,30 @@ Global
 		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236B88D4-F018-4A5F-A506-7458F2308C70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236B88D4-F018-4A5F-A506-7458F2308C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236B88D4-F018-4A5F-A506-7458F2308C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236B88D4-F018-4A5F-A506-7458F2308C70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B5CAE1A-E062-4C9B-8121-E58FBF69309C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B5CAE1A-E062-4C9B-8121-E58FBF69309C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B5CAE1A-E062-4C9B-8121-E58FBF69309C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B5CAE1A-E062-4C9B-8121-E58FBF69309C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81CEA2ED-917B-41D8-BE0D-39A785B050C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81CEA2ED-917B-41D8-BE0D-39A785B050C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81CEA2ED-917B-41D8-BE0D-39A785B050C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81CEA2ED-917B-41D8-BE0D-39A785B050C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{862CA181-BEE6-4870-82D2-B662E527ED8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{862CA181-BEE6-4870-82D2-B662E527ED8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{862CA181-BEE6-4870-82D2-B662E527ED8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -465,6 +505,13 @@ Global
 		{4AE84CDE-2A47-4D68-8E93-86193F72E4E8} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
 		{C8F97775-D903-4365-A4FF-3DA97E318CD2} = {084CBEEC-5D37-4716-B9C7-D80D6960DFF4}
 		{2A31D7CB-BDCC-4253-BA73-273B6B5E1956} = {8C68059E-F3B1-4D28-A1C9-A5830F53E5D3}
+		{B8F76A6B-2EEB-4E64-9F26-D84584E16B9C} = {2317227D-7796-4E7B-BEDB-7CD1CAE7B853}
+		{236B88D4-F018-4A5F-A506-7458F2308C70} = {B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}
+		{4FE7AC0E-91CC-4DF1-ACA7-ED83483C3F3B} = {B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}
+		{9B5CAE1A-E062-4C9B-8121-E58FBF69309C} = {B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}
+		{FFEC9DA6-1A13-480A-AE9E-2BF8763D3061} = {B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}
+		{4CE6E4AE-0BA4-4984-A4F1-A9A414B1BB8F} = {B8F76A6B-2EEB-4E64-9F26-D84584E16B9C}
+		{81CEA2ED-917B-41D8-BE0D-39A785B050C0} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
 		{862CA181-BEE6-4870-82D2-B662E527ED8C} = {77B949E9-530E-45A5-9657-20F7D5C6875C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

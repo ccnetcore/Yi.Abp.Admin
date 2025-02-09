@@ -19,7 +19,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
         {
 
         }
-        public UserAggregateRoot(string userName, string password, long phone, string? nick = null)
+        public UserAggregateRoot(string userName, string password, long? phone, string? nick = null)
         {
             UserName = userName;
             EncryPassword.Password = password;

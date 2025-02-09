@@ -12,10 +12,11 @@
       </div>
     </div>
   </div>
+  <StarBackground :speed="0.01" :number="4000"/>
 </template>
 <!-- <style src="@/assets/styles/login.scss" scoped></style> -->
 <script setup>
-
+import StarBackground from "@/components/StarBackground.vue";
 import useConfigStore from "@/stores/config";
 const  configStore=useConfigStore();
 const isIcp=import.meta.env.VITE_APP_ICP==="true";

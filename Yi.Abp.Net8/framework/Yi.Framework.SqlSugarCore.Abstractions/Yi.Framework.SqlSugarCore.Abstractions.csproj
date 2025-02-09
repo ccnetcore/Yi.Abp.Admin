@@ -3,7 +3,10 @@
 
 
   <ItemGroup>
-    <PackageReference Include="SqlSugarCoreNoDrive" Version="$(SqlSugarVersion)" />
+<!--    <PackageReference Include="SqlSugarCoreNoDrive" Version="$(SqlSugarVersion)" />-->
+    
+    <PackageReference Include="SqlSugarCore" Version="$(SqlSugarVersion)" />
+    
     <PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
   </ItemGroup>
 

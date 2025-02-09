@@ -128,7 +128,7 @@ const captcha = async () => {
   <div class="container">
     <!-- 找回密码 -->
     <div class="div-content">
-      <div class="div-right-register">
+      <div class="div-right-register div-logo">
         <img class="div-img" src="@/assets/login.png"/>
       </div>
       <div class="div-left-register">

@@ -1,0 +1,8 @@
+FROM nginx as base
+COPY nginx.conf /etc/nginx/nginx.conf
+EXPOSE 18001
+
+FROM base AS final
+WORKDIR /app
+COPY ["./dist/","."]
+ENTRYPOINT  ["nginx", "-g", "daemon off;"]

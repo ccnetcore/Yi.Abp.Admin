@@ -35,6 +35,18 @@ A Comprehensive Solution, Ultimately Just Another Wheel.
 - Yi.RuoYi.Vue3：RuoYi JS Backend Frontend
 
 ****
+## 🍉 docker 
+
+Full content：README-Docker.md
+
+backend：`docker run -d --name yi.admin -p 19001:19001 jiftcc/yi.admin:last`
+
+bbs frontend：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/yi-bbs.conf:/etc/nginx/conf.d/yi-bbs.conf jiftcc/yi.bbs:last`
+
+> In addition, we provide Docker build operation, and we hope that you can build your own image through this method
+
+****
+
 
 ##  🍊  Official website and demo link：
 

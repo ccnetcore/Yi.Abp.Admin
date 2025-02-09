@@ -1,8 +1,10 @@
 ﻿using System.Xml.Linq;
 using Mapster;
+using Medallion.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Volo.Abp.Application.Services;
+using Volo.Abp.DistributedLocking;
 using Volo.Abp.Settings;
 using Volo.Abp.Uow;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Banner;
@@ -49,7 +51,7 @@ namespace Yi.Abp.Application.Services
             throw new UserFriendlyException("业务异常");
             throw new Exception("系统异常");
         }
-        
+
         /// <summary>
         /// SqlSugar
         /// </summary>
@@ -138,6 +140,7 @@ namespace Yi.Abp.Application.Services
         }
 
         private static int RequestNumber { get; set; } = 0;
+
         /// <summary>
         /// 速率限制
         /// </summary>
@@ -154,6 +157,7 @@ namespace Yi.Abp.Application.Services
         public ISettingProvider _settingProvider { get; set; }
 
         public ISettingManager _settingManager { get; set; }
+
         /// <summary>
         /// 系统配置模块
         /// </summary>
@@ -174,6 +178,42 @@ namespace Yi.Abp.Application.Services
 
 
             return result ?? string.Empty;
+        }
+
+        
+        /// <summary>
+        /// 分布式送abp版本：abp套了一层娃。但是纯粹鸡肋，不建议使用这个
+        /// </summary>
+        public IAbpDistributedLock AbpDistributedLock { get; set; }
+        
+        /// <summary>
+        /// 分布式锁推荐使用版本：yyds，分布式锁永远的神！
+        /// </summary>
+        public IDistributedLockProvider DistributedLock { get; set; }
+
+        /// <summary>
+        /// 分布式锁
+        /// </summary>
+        /// <remarks>强烈吐槽一下abp，正如他们所说，abp的分布式锁单纯为了自己用，一切还是以DistributedLock为主</remarks>>
+        /// <returns></returns>
+        public async Task<string> GetDistributedLockAsync()
+        {
+            var number = 0;
+            await Parallel.ForAsync(0, 100, async (i, cancellationToken) =>
+            {
+                await using (await DistributedLock.AcquireLockAsync("MyLockName"))
+                {
+                    //执行1秒
+                    number += 1;
+                }
+            });
+            var number2 = 0;
+            await Parallel.ForAsync(0, 100, async (i, cancellationToken) =>
+            {
+                    //执行1秒
+                    number2 += 1;
+            });
+            return $"加锁结果：{number},不加锁结果：{number2}";
         }
     }
 }

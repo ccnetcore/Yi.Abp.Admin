@@ -2,16 +2,16 @@
   <el-scrollbar>
     <div class="scrollbar-flex-content">
       <div v-for="item in recommendList" :key="item.id" class="scrollbar-item">
-        <el-tooltip
-          class="box-item"
-          effect="dark"
-          :content="item.dictLabel"
-          placement="top"
-          v-if="item.dictLabel.length > 5"
-        >
-          {{ item.dictLabel.slice(0, 5) + "..." }}
-        </el-tooltip>
-        <span v-else>
+<!--        <el-tooltip-->
+<!--          class="box-item"-->
+<!--          effect="dark"-->
+<!--          :content="item.dictLabel"-->
+<!--          placement="top"-->
+<!--          v-if="item.dictLabel.length > 5"-->
+<!--        >-->
+<!--          {{ item.dictLabel.slice(0, 5) + "..." }}-->
+<!--        </el-tooltip>-->
+        <span >
           {{ item.dictLabel }}
         </span>
       </div>
@@ -35,12 +35,13 @@ onMounted(async () => {
   display: flex;
 }
 .scrollbar-item {
+  padding: 0 15px;
   cursor: pointer;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
+  //width: 4rem;
   height: 2.6rem;
   margin: 0 0.2rem;
   text-align: center;

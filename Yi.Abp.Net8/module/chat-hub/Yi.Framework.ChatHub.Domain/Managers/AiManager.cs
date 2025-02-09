@@ -24,19 +24,8 @@ namespace Yi.Framework.ChatHub.Domain.Managers
         }
         private OpenAIService OpenAIService { get; }
 
-        public async IAsyncEnumerable<string> ChatAsStreamAsync(List<AiChatContextDto> aiChatContextDtos)
+        public async IAsyncEnumerable<string> ChatAsStreamAsync(string model, List<AiChatContextDto> aiChatContextDtos)
         {
-            //var temp = "站长正在接入ChatGpt,敬请期待~";
-
-            //for (var i = 0; i < temp.Length; i++)
-            //{
-            //    await Task.Delay(200);
-            //    yield return temp[i].ToString();
-            //}
-
-
-
-
             if (aiChatContextDtos.Count == 0)
             {
                 yield return null;
@@ -56,7 +45,7 @@ namespace Yi.Framework.ChatHub.Domain.Managers
             var completionResult = OpenAIService.ChatCompletion.CreateCompletionAsStream(new ChatCompletionCreateRequest
             {
                 Messages = messages,
-                Model = Models.Gpt_4o_mini
+                Model =model 
             });
 
             HttpStatusCode? error = null;
@@ -64,7 +53,7 @@ namespace Yi.Framework.ChatHub.Domain.Managers
             {
                 if (result.Successful)
                 {
-                    yield return result.Choices.FirstOrDefault()?.Message.Content ?? string.Empty;
+                    yield return result.Choices.FirstOrDefault()?.Message.Content ?? null;
                 }
                 else
                 {

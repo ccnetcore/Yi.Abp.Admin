@@ -272,7 +272,7 @@ namespace Yi.Framework.Rbac.Domain.Managers
         /// <param name="password"></param>
         /// <param name="phone"></param>
         /// <returns></returns>
-        public async Task RegisterAsync(string userName, string password, long phone,string? nick)
+        public async Task RegisterAsync(string userName, string password, long? phone,string? nick)
         {
             var user = new UserAggregateRoot(userName, password, phone,nick);
             await _userManager.CreateAsync(user);

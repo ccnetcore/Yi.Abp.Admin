@@ -9,6 +9,10 @@ using Hangfire.Redis.StackExchange;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
@@ -19,6 +23,7 @@ using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.AspNetCore.VirtualFileSystem;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundJobs.Hangfire;
@@ -39,6 +44,7 @@ using Yi.Framework.Bbs.Application.Extensions;
 using Yi.Framework.ChatHub.Application;
 using Yi.Framework.CodeGen.Application;
 using Yi.Framework.Core.Json;
+using Yi.Framework.DigitalCollectibles.Application;
 using Yi.Framework.Rbac.Application;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
@@ -79,12 +85,12 @@ namespace Yi.Abp.Web
                     options => options.RemoteServiceName = "bbs");
                 options.ConventionalControllers.Create(typeof(YiFrameworkChatHubApplicationModule).Assembly,
                     options => options.RemoteServiceName = "chat-hub");
-                options.ConventionalControllers.Create(
-                    typeof(YiFrameworkTenantManagementApplicationModule).Assembly,
+                options.ConventionalControllers.Create(typeof(YiFrameworkTenantManagementApplicationModule).Assembly,
                     options => options.RemoteServiceName = "tenant-management");
                 options.ConventionalControllers.Create(typeof(YiFrameworkCodeGenApplicationModule).Assembly,
                     options => options.RemoteServiceName = "code-gen");
-
+                options.ConventionalControllers.Create(typeof(YiFrameworkDigitalCollectiblesApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "digital-collectibles");
                 //统一前缀
                 options.ConventionalControllers.ConventionalControllerSettings.ForEach(x => x.RootPath = "api/app");
             });
@@ -100,7 +106,7 @@ namespace Yi.Abp.Web
             Configure<AbpAuditingOptions>(options =>
             {
                 //默认关闭，开启会有大量的审计日志
-                options.IsEnabled = true;
+                options.IsEnabled = false;
             });
             //忽略审计日志路径
             Configure<AbpAspNetCoreAuditingOptions>(options =>
@@ -115,7 +121,7 @@ namespace Yi.Abp.Web
 
             //配置错误处理显示详情
             Configure<AbpExceptionHandlingOptions>(options => { options.SendExceptionsDetailsToClients = true; });
-            
+
             //【NewtonsoftJson严重问题！！！！！逆天】设置api格式，留给后人铭记
             // service.AddControllers().AddNewtonsoftJson(options =>
             // {
@@ -182,10 +188,10 @@ namespace Yi.Abp.Web
 
             //配置Hangfire定时任务存储，开启redis后，优先使用redis
             var redisConfiguration = configuration["Redis:Configuration"];
-            var redisEnabled = configuration["Redis:IsEnabled"];
             context.Services.AddHangfire(config=>
             {
-                if (redisEnabled.IsNullOrEmpty() || bool.Parse(redisEnabled))
+                bool.TryParse( configuration["Redis:IsEnabled"], out var redisEnabled);
+                if (redisEnabled)
                 {
                     config.UseRedisStorage(
                         ConnectionMultiplexer.Connect(redisConfiguration),
@@ -356,7 +362,18 @@ namespace Yi.Abp.Web
             app.UseYiApiHandlinge();
 
             //静态资源
-            app.UseStaticFiles("/api/app/wwwroot");
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                RequestPath = "/api/app/wwwroot",
+                // 可以在这里添加或修改MIME类型映射  
+                ContentTypeProvider = new FileExtensionContentTypeProvider
+                {
+                    Mappings =
+                    {
+                        [".wxss"] = "text/css"
+                    }
+                }
+            });
             app.UseDefaultFiles();
             app.UseDirectoryBrowser("/api/app/wwwroot");
 

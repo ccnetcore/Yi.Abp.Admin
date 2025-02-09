@@ -15,15 +15,25 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public DiscussPermissionTypeEnum PermissionType { get; set; }
 
         /// <summary>
-        /// ·âÃæ
+        /// å°é¢
         /// </summary>
         public string? Cover { get; set; }
 
         public int OrderNum { get; set; }
 
         /// <summary>
-        /// ÊÇ·ñ½ûÖ¹ÆÀÂÛ´´½¨¹¦ÄÜ
+        /// æ˜¯å¦ç¦æ­¢è¯„è®ºåˆ›å»ºåŠŸèƒ½
         /// </summary>
         public bool IsDisableCreateComment { get; set; }
+        
+        /// <summary>
+        /// æ ‡ç­¾
+        /// </summary>
+        public List<Guid>? DiscussLableIds { get; set; }
+
+        /// <summary>
+        /// éœ€æ±‚è§’è‰²
+        /// </summary>
+        public List<string>? PermissionRoleCodes { get; set; } = new List<string>();
     }
 }

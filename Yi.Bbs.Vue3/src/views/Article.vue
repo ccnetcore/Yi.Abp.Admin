@@ -4,82 +4,84 @@
       <el-col :span="5">
         <el-row class="art-info-left">
           <el-col :span="24">
-            <InfoCard header="文章信息" text="展开" hideDivider="true">
+            <InfoCard header="文章信息" text="展开" hideDivider="true" :isPadding="false" style="padding: 10px">
               <template #content>
                 <el-button
-                  style="width: 100%; margin-bottom: 0.8rem"
-                  @click="loadDiscuss(true)"
-                  >主题封面</el-button
+                    style="width: 100%; margin-bottom: 0.8rem"
+                    @click="loadDiscuss(true)"
+                >主题首页
+                </el-button
                 >
                 <el-button
-                  v-if="isAddArticle && isArticleUser"
-                  @click="addArticle('00000000-0000-0000-0000-000000000000')"
-                  type="primary"
-                  style="width: 100%; margin-bottom: 0.8rem; margin-left: 0"
-                  >添加子文章</el-button
+                    v-if="isAddArticle && isArticleUser"
+                    @click="addArticle('00000000-0000-0000-0000-000000000000')"
+                    type="primary"
+                    style="width: 100%; margin-bottom: 0.8rem; margin-left: 0"
+                >添加子文章
+                </el-button
                 >
                 <!--目录在这里 -->
-                <el-scrollbar height="410px">
+                <el-scrollbar style="height:600px;overflow-y: auto;">
                   <TreeArticleInfo
-                    :data="articleData"
-                    @remove="delArticle"
-                    @update="updateArticle"
-                    @create="addNextArticle"
-                    @handleNodeClick="handleNodeClick"
-                    :currentNodeKey="currentNodeKey"
-                    :isArticleUser="isArticleUser"
+                      :data="articleData"
+                      @remove="delArticle"
+                      @update="updateArticle"
+                      @create="addNextArticle"
+                      @handleNodeClick="handleNodeClick"
+                      :currentNodeKey="currentNodeKey"
+                      :isArticleUser="isArticleUser"
                   />
                 </el-scrollbar>
               </template>
             </InfoCard>
           </el-col>
           <el-col :span="24">
-            <InfoCard :items="items" header="作者分享" text="更多">
+            <InfoCard :items="authorList" :isPadding="false" header="作者分享" height="410" text="更多" style="padding:0 20px">
               <template #item="temp">
-                <AvatarInfo />
+                <ThemeData :themeData="temp"/>
               </template>
             </InfoCard>
           </el-col>
-          <el-col :span="24">
-            <InfoCard :items="items" header="内容推荐" text="更多">
-              <template #item="temp">
-                <AvatarInfo />
-              </template>
-            </InfoCard>
-          </el-col>
+          <!--          <el-col :span="24">-->
+          <!--            <InfoCard :items="items" header="内容推荐" text="更多">-->
+          <!--              <template #item="temp">-->
+          <!--                <AvatarInfo />-->
+          <!--              </template>-->
+          <!--            </InfoCard>-->
+          <!--          </el-col>-->
         </el-row>
       </el-col>
 
       <el-col :span="14">
         <el-row class="left-div">
           <el-col :span="24">
-            <Breadcrumb :breadcrumbsList="breadcrumbsList" class="breadcrumb" />
+            <Breadcrumb :breadcrumbsList="breadcrumbsList" class="breadcrumb"/>
             <!-- {{ discuss.user }} -->
             <AvatarInfo
-              :size="50"
-              :showWatching="true"
-              :time="discuss.creationTime"
-              :userInfo="discuss.user"
+                :size="50"
+                :showWatching="true"
+                :time="discuss.creationTime"
+                :userInfo="discuss.user"
             ></AvatarInfo>
             <!-- :userInfo="{nick:'qwe'} -->
-         
+
             <h2>{{ discuss.title }}</h2>
-            <h5 class="subtitle">{{discuss.introduction  }}</h5>
+            <h5 class="subtitle">{{ discuss.introduction }}</h5>
             <el-image
-              :preview-src-list="[getUrl(discuss.cover)]"
-              v-if="discuss.cover"
-              :src="getUrl(discuss.cover)"
-              style="width: 150px; height: 150px"
+                :preview-src-list="[getUrl(discuss.cover)]"
+                v-if="discuss.cover"
+                :src="getUrl(discuss.cover)"
+                style="width: 150px; height: 150px"
             />
-            <el-divider />
+            <el-divider/>
             <ArticleContentInfo
-              :code="discuss.content ?? ''"
+                :code="discuss.content ?? ''"
             ></ArticleContentInfo>
 
-            <el-divider class="tab-divider" />
+            <el-divider class="tab-divider"/>
 
             <el-space :size="10" :spacer="spacer">
-              <AgreeInfo :data="discuss" />
+              <AgreeInfo :data="discuss"/>
               <el-button icon="Star" text> 0</el-button>
               <el-button icon="Share" text> 分享</el-button>
               <el-button icon="Operation" text> 操作</el-button>
@@ -87,38 +89,40 @@
           </el-col>
 
           <el-col :span="24" class="comment">
-            <CommentInfo :isComment="isDisabledCreateComment" />
+            <CommentInfo :isComment="isDisabledCreateComment"/>
           </el-col>
         </el-row>
-        <BottomInfo />
+        <BottomInfo/>
       </el-col>
 
       <el-col :span="5">
         <el-row class="right-div">
           <el-col :span="24">
             <InfoCard
-              class="art-info-right"
-              header="主题信息"
-              text="更多"
-              hideDivider="true"
+                class="art-info-right"
+                header="主题信息"
+                text="更多"
+                hideDivider="true"
             >
               <template #content>
                 <div>
                   <ul class="art-info-ul">
                     <li>
                       <el-button
-                        type="primary"
-                        size="default"
-                        v-if="isEditTheme && isArticleUser"
-                        @click="updateHander(route.params.discussId)"
-                        >编辑</el-button
+                          type="primary"
+                          size="default"
+                          v-if="isEditTheme && isArticleUser"
+                          @click="updateHander(route.params.discussId)"
+                      >编辑
+                      </el-button
                       >
                       <el-button
-                        style="margin-left: 1rem"
-                        type="danger"
-                        v-if="isRemoveTheme && isArticleUser"
-                        @click="delHander(route.params.discussId)"
-                        >删除</el-button
+                          style="margin-left: 1rem"
+                          type="danger"
+                          v-if="isRemoveTheme && isArticleUser"
+                          @click="delHander(route.params.discussId)"
+                      >删除
+                      </el-button
                       >
                     </li>
                     <li>分类： <span>主题</span></li>
@@ -135,18 +139,19 @@
               <template #content>
                 <div>
                   <el-empty
-                    :image-size="100"
-                    style="padding: 20px 0"
-                    v-if="catalogueData.length == 0"
-                    description="无目录"
+                      :image-size="100"
+                      style="padding: 20px 0"
+                      v-if="catalogueData.length == 0"
+                      description="无目录"
                   />
                   <ul v-else class="art-info-ul">
                     <li v-for="(item, i) in catalogueData" :key="i">
                       <el-button
-                        style="width: 100%; justify-content: left"
-                        type="primary"
-                        text
-                        >{{ `${i + 1} ： ${item}` }}</el-button
+                          style="width: 100%; justify-content: left"
+                          type="primary"
+                          text
+                      >{{ `${i + 1} ： ${item}` }}
+                      </el-button
                       >
                     </li>
                   </ul>
@@ -155,54 +160,62 @@
             </InfoCard>
           </el-col>
           <el-col :span="24">
-            <InfoCard :items="items" header="其他" text="更多">
+            <InfoCard :items="themeList" :isPadding="false" header="推荐主题" text="更多" height="500" style="padding:0 20px">
               <template #item="temp">
-                <AvatarInfo />
+                <ThemeData :themeData="temp"/>
               </template>
             </InfoCard>
+            <!--            <InfoCard :items="items" header="其他" text="更多">-->
+            <!--              <template #item="temp">-->
+            <!--                <AvatarInfo />-->
+            <!--              </template>-->
+            <!--            </InfoCard>-->
           </el-col>
-          <el-col :span="24">
-            <InfoCard :items="items" header="其他" text="更多">
-              <template #item="temp">
-                <AvatarInfo />
-              </template>
-            </InfoCard>
-          </el-col>
+          <!--          <el-col :span="24">-->
+          <!--            <InfoCard :items="items" header="其他" text="更多">-->
+          <!--              <template #item="temp">-->
+          <!--                <AvatarInfo />-->
+          <!--              </template>-->
+          <!--            </InfoCard>-->
+          <!--          </el-col>-->
         </el-row>
       </el-col>
     </el-row>
   </div>
 </template>
 <script setup>
-import { h, ref, onMounted, watch, computed } from "vue";
+import {h, ref, onMounted, watch, computed} from "vue";
 import AvatarInfo from "@/components/AvatarInfo.vue";
 import InfoCard from "@/components/InfoCard.vue";
 import ArticleContentInfo from "@/components/ArticleContentInfo.vue";
 import CommentInfo from "@/components/CommentInfo.vue";
 import BottomInfo from "@/components/BottomInfo.vue";
 import TreeArticleInfo from "@/components/TreeArticleInfo.vue";
-import { useRoute, useRouter } from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import AgreeInfo from "@/components/AgreeInfo.vue";
-import { get as discussGet, del as discussDel } from "@/apis/discussApi.js";
+import {get as discussGet, del as discussDel} from "@/apis/discussApi.js";
 import {
   all as articleall,
   del as articleDel,
   get as articleGet,
 } from "@/apis/articleApi.js";
 import Breadcrumb from "@/components/Breadcrumb/index.vue";
-import { getPermission } from "@/utils/auth";
+import {getPermission} from "@/utils/auth";
 import useUserStore from "@/stores/user.js";
-
+import ThemeData from "@/views/home/components/RecommendTheme/index.vue";
+import {getRecommendedTopic, getAuthorTopic} from "@/apis/analyseApi";
 //数据定义
 const route = useRoute();
 const router = useRouter();
-const spacer = h(ElDivider, { direction: "vertical" });
-const items = [{ user: "用户1" }, { user: "用户2" }, { user: "用户3" }];
-
+const spacer = h(ElDivider, {direction: "vertical"});
 //子文章数据
 const articleData = ref([]);
 //主题内容
 const discuss = ref({});
+//推荐主题
+const themeList = ref([]);
+//作者主题
+const authorList = ref([]);
 //封面url
 const getUrl = (str) => {
   return `${import.meta.env.VITE_APP_BASEAPI}/file/${str}`;
@@ -217,10 +230,10 @@ const catalogueData = ref([]);
 const breadcrumbsList = ref([]);
 const resultRouters = ["index", "discuss", "themeCover"];
 breadcrumbsList.value = route.matched[0].children
-  .filter((item) => resultRouters.includes(item.name))
-  .sort((a, b) => {
-    return resultRouters.indexOf(a.name) - resultRouters.indexOf(b.name);
-  });
+    .filter((item) => resultRouters.includes(item.name))
+    .sort((a, b) => {
+      return resultRouters.indexOf(a.name) - resultRouters.indexOf(b.name);
+    });
 
 // 当前文章名称
 const currentArticle = ref("");
@@ -234,9 +247,9 @@ const loadArticleData = async () => {
 //主题初始化
 const isDisabledCreateComment = ref(false);
 const isArticleUser = ref(false);
-const { isHasPermission: isAddArticle } = getPermission("bbs:article:add");
-const { isHasPermission: isEditTheme } = getPermission("bbs:discuss:update");
-const { isHasPermission: isRemoveTheme } = getPermission("bbs:discuss:del");
+const {isHasPermission: isAddArticle} = getPermission("bbs:article:add");
+const {isHasPermission: isEditTheme} = getPermission("bbs:discuss:update");
+const {isHasPermission: isRemoveTheme} = getPermission("bbs:discuss:del");
 const loadDiscuss = async (isRewrite) => {
   if (isRewrite) {
     //跳转路由
@@ -369,45 +382,63 @@ const delArticle = (node, data) => {
     });
   });
 };
+const loadThemeData = async () => {
+  const {data: themeData} = await getRecommendedTopic();
+  themeList.value = themeData;
+}
+const loadAuthorData = async () => {
+  const {data: authorData} = await getAuthorTopic(discuss.value.user.id);
+  authorList.value = authorData;
+}
 onMounted(async () => {
   await loadDiscuss();
   await loadArticleData();
+  await loadAuthorData();
+  await loadThemeData();
 });
+//路由发送变化，重新加载
+watch(() => route.params, async () => {
+      await loadDiscuss();
+      await loadArticleData();
+      await loadAuthorData();
+      await loadThemeData();
+    }
+)
 
 watch(
-  () => currentArticle.value,
-  (val) => {
-    if (val !== "") {
-      breadcrumbsList.value[3] = {
-        name: "article",
-        path: "/article/:discussId",
-        meta: {
-          title: currentArticle.value,
-        },
-      };
+    () => currentArticle.value,
+    (val) => {
+      if (val !== "") {
+        breadcrumbsList.value[3] = {
+          name: "article",
+          path: "/article/:discussId",
+          meta: {
+            title: currentArticle.value,
+          },
+        };
+      }
     }
-  }
 );
 watch(
-  () => route.params.articleId,
-  async (val) => {
-    if (val === "") {
-      discuss.value = (await discussGet(route.params.discussId)).data;
+    () => route.params.articleId,
+    async (val) => {
+      if (val === "") {
+        discuss.value = (await discussGet(route.params.discussId)).data;
+      }
     }
-  }
 );
 </script>
 <style scoped lang="scss">
 
-.subtitle
-{
-  color:#999AAA;
+.subtitle {
+  color: #999AAA;
   margin: 0;
 }
 
 .article-box {
-  width: 1400px;
+  width: 1500px;
   height: 100%;
+
   .comment {
     min-height: 40rem;
   }

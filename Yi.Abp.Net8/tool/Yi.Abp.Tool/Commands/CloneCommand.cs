@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
@@ -35,15 +36,24 @@ namespace Yi.Abp.Tool.Commands
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = "cmd.exe",
-                Arguments = $"/c chcp 65001&{string.Join("&", cmdCommands)}",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
-
+            // 判断操作系统
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                psi.FileName = "cmd.exe";
+                psi.Arguments = $"/c chcp 65001&{string.Join("&", cmdCommands)}";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                psi.FileName = "/bin/bash";
+                psi.Arguments = $"-c \"{string.Join("; ", cmdCommands)}\"";
+            }
+            
             Process proc = new Process
             {
                 StartInfo = psi

@@ -31,7 +31,14 @@ namespace Yi.Framework.ChatHub.Domain.Managers
         private IRedisClient RedisClient => LazyServiceProvider.LazyGetRequiredService<IRedisClient>();
         private string CacheKeyPrefix => LazyServiceProvider.LazyGetRequiredService<IOptions<AbpDistributedCacheOptions>>().Value.KeyPrefix;
 
-        public async Task SendMessageAsync(MessageContext context)
+        
+        /// <summary>
+        ///  发送消息
+        /// </summary>
+        /// <param name="context">消息内容</param>
+        /// <param name="relStr">关联字符</param>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task SendMessageAsync(MessageContext context,string relStr=null)
         {
             switch (context.MessageType)
             {
@@ -39,20 +46,20 @@ namespace Yi.Framework.ChatHub.Domain.Managers
                     var userModel = await GetUserAsync(context.ReceiveId.Value);
                     if (userModel is not null)
                     {
-                        await _hubContext.Clients.Client(userModel.ClientId).SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType, context);
+                        await _hubContext.Clients.Client(userModel.ClientId).SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType,relStr, context);
                     }
                     break;
                 case MessageTypeEnum.Group:
                     throw new NotImplementedException();
                     break;
                 case MessageTypeEnum.All:
-                    await _hubContext.Clients.All.SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType, context);
+                    await _hubContext.Clients.All.SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType,relStr, context);
                     break;
                 case MessageTypeEnum.Ai:
                     var userModel2 = await GetUserAsync(context.ReceiveId.Value);
                     if (userModel2 is not null)
                     {
-                        await _hubContext.Clients.Client(userModel2.ClientId).SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType, context);
+                        await _hubContext.Clients.Client(userModel2.ClientId).SendAsync(ChatConst.ClientActionReceiveMsg, context.MessageType,relStr, context);
                     }
                     break;
 

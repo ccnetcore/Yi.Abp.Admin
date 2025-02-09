@@ -1,10 +1,14 @@
 <style scoped lang="scss">
 
-::v-deep(.li-list){
-    list-style: inside !important;
-    //list-style: decimal !important;
-    
-}
+//::v-deep(ol .li-list){
+//  list-style: decimal;
+//}
+//::v-deep(ul .li-list){
+//  list-style: disc;
+//}
+
+
+
 ::v-deep(.pre-out)
 {
 padding: 0;

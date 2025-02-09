@@ -1,9 +1,15 @@
+@media (max-width: 720px) {
+    .div-logo {
+        display: none !important;
+    }
+}
+
 .container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-color: #272162;
+    /*background-color: #272162;*/
 }
 
 .div-content

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.Ddd.Application.Contracts\Yi.Framework.Ddd.Application.Contracts.csproj" />
+	<ProjectReference Include="..\Yi.Framework.DigitalCollectibles.Domain.Shared\Yi.Framework.DigitalCollectibles.Domain.Shared.csproj" />
+      <ProjectReference Include="..\..\rbac\Yi.Framework.Rbac.Application.Contracts\Yi.Framework.Rbac.Application.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -31,5 +31,15 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         /// 是否禁止评论创建功能
         /// </summary>
         public bool IsDisableCreateComment { get; set; }
+
+        /// <summary>
+        /// 标签
+        /// </summary>
+        public List<Guid>? DiscussLableIds { get; set; }
+
+        /// <summary>
+        /// 角色
+        /// </summary>
+        public List<string>? PermissionRoleCodes { get; set; } = new List<string>();
     }
 }

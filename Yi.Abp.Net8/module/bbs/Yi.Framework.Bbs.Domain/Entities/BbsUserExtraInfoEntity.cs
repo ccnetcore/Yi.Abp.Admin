@@ -10,7 +10,7 @@ using Yi.Framework.Bbs.Domain.Shared.Enums;
 namespace Yi.Framework.Bbs.Domain.Entities
 {
     /// <summary>
-    /// 评论表
+    /// bbs用户表
     /// </summary>
     [SugarTable("BbsUserExtraInfo")]
     [SugarIndex($"index_{nameof(UserId)}", nameof(UserId), OrderByType.Asc)]

@@ -23,8 +23,8 @@ public class AccessLogCacheJob : HangfireBackgroundWorkerBase
     {
         _localEventBus = localEventBus;
         RecurringJobId = "访问日志写入缓存";
-        //每10秒执行一次，将本地缓存转入redis，防止丢数据
-        CronExpression = "*/10 * * * * *";
+        //每分钟执行一次，将本地缓存转入redis，防止丢数据
+        CronExpression = "0 * * * * ?";
         //
         // JobDetail = JobBuilder.Create<AccessLogCacheJob>().WithIdentity(nameof(AccessLogCacheJob))
         //     .Build();

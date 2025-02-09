@@ -23,14 +23,13 @@ namespace Yi.Framework.ChatHub.Application.Services
         /// <param name="chatContext"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost]
-
-        public async Task ChatAsync([FromBody] List<AiChatContextDto> chatContext)
+        [HttpPost("ai-chat/chat/{model}")]
+        public async Task ChatAsync([FromRoute]string model, [FromBody] List<AiChatContextDto> chatContext)
         {
             const int maxChar = 10;
             var contextId = Guid.NewGuid();
             Queue<string> stringQueue = new Queue<string>();
-            await foreach (var aiResult in _aiManager.ChatAsStreamAsync(chatContext))
+            await foreach (var aiResult in _aiManager.ChatAsStreamAsync(model,chatContext))
             {
                 stringQueue.Enqueue(aiResult);
 
@@ -42,7 +41,7 @@ namespace Yi.Framework.ChatHub.Application.Services
                         var str = stringQueue.Dequeue();
                         currentStr.Append(str);
                     }
-                    await _userMessageManager.SendMessageAsync(MessageContext.CreateAi(currentStr.ToString(), CurrentUser.Id!.Value, contextId));
+                    await _userMessageManager.SendMessageAsync(MessageContext.CreateAi(currentStr.ToString(), CurrentUser.Id!.Value, contextId),model);
                 }
             }
 
@@ -52,9 +51,7 @@ namespace Yi.Framework.ChatHub.Application.Services
                 var str = stringQueue.Dequeue();
                 currentEndStr.Append(str);
             }
-            await _userMessageManager.SendMessageAsync(MessageContext.CreateAi(currentEndStr.ToString(), CurrentUser.Id!.Value, contextId));
-
-            //await _userMessageManager.SendMessageAsync(MessageContext.CreateAi(null, CurrentUser.Id!.Value, contextId));
+            await _userMessageManager.SendMessageAsync(MessageContext.CreateAi(currentEndStr.ToString(), CurrentUser.Id!.Value, contextId),model);
         }
     }
 }

@@ -12,15 +12,17 @@
         <el-menu-item index="1" @click="enterIndex">主页</el-menu-item>
 
         <el-menu-item index="2" @click="enterStart"
-          style="color: red;font-weight: bolder;font-size: large;">开始</el-menu-item>
-        <el-menu-item index="3" @click="enterWatermelon"
-                     >数字藏品</el-menu-item>
-        <el-sub-menu index="4">
-          <template #title>学习</template>
-          <el-menu-item index="3-1">前端</el-menu-item>
-          <el-menu-item index="3-2">后端</el-menu-item>
-          <el-menu-item index="3-3">运维</el-menu-item>
-        </el-sub-menu>
+         >开始</el-menu-item>
+        <el-menu-item index="3" @click="enterBook"  style="color: red;font-weight: bolder;font-size: large;"
+                     >面试宝典</el-menu-item>
+        <el-menu-item index="4" @click="enterShop"
+        >商城</el-menu-item>
+<!--        <el-sub-menu index="4">-->
+<!--          <template #title>学习</template>-->
+<!--          <el-menu-item index="3-1">前端</el-menu-item>-->
+<!--          <el-menu-item index="3-2">后端</el-menu-item>-->
+<!--          <el-menu-item index="3-3">运维</el-menu-item>-->
+<!--        </el-sub-menu>-->
 
 <!--        <el-sub-menu index="5">-->
 <!--          <template #title>问答</template>-->
@@ -40,7 +42,7 @@
     <div class="user">
 
 
-      <div class="money" v-if="isLogin">钱钱：<span>{{ money }}</span></div>
+      <div class="money" v-if="isLogin">钱钱：<span>{{ moneyFixed }}</span></div>
       <el-dropdown v-if="!isIcp" trigger="click">
         <AvatarInfo  :size="30" :isSelf="true" />
 
@@ -48,7 +50,7 @@
 
 
           <el-dropdown-menu v-if="isLogin">
-            <el-dropdown-item>你的钱钱：{{ money }}</el-dropdown-item>
+            <el-dropdown-item>你的钱钱：{{ moneyFixed }}</el-dropdown-item>
             <el-dropdown-item @click="enterProfile">进入个人中心</el-dropdown-item>
             <el-dropdown-item @click="enterActivity">进入活动页面</el-dropdown-item>
             <el-dropdown-item @click="logout">登出</el-dropdown-item>
@@ -147,7 +149,7 @@ const configStore = useConfigStore();
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
-const { money } = storeToRefs(userStore)
+const { moneyFixed } = storeToRefs(userStore)
 const activeIndex = ref("1");
 const searchText = ref("");
 const noticeForNoReadCount = computed(() => {
@@ -231,8 +233,11 @@ const enterStart = () => {
   router.push("/start");
 }
 
-const enterWatermelon=()=>{
-  alert("即将发布，敬请期待~")
+const enterBook=()=>{
+  router.push("/book");
+}
+const enterShop=()=>{
+  router.push("/shop");
 }
 </script>
 

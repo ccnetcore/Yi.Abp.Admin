@@ -2,64 +2,70 @@
   <div style="width: 1300px">
     <div class="body-div">
       <el-form
-        label-width="120px"
-        :model="editForm"
-        label-position="left"
-        :rules="rules"
-        ref="ruleFormRef"
+          label-width="120px"
+          :model="editForm"
+          label-position="left"
+          :rules="rules"
+          ref="ruleFormRef"
       >
         <el-form-item label="类型：">
           <el-radio-group v-model="radio">
             <el-radio-button label="discuss" :disabled="artType !== 'discuss'"
-              >主题</el-radio-button
+            >主题
+            </el-radio-button
             >
             <el-radio-button label="article" :disabled="artType !== 'article'"
-              >文章</el-radio-button
+            >文章
+            </el-radio-button
             >
             <el-radio-button label="plate" :disabled="artType !== 'plate'"
-              >板块</el-radio-button
+            >板块
+            </el-radio-button
             >
             <el-radio-button label="orther" :disabled="artType !== 'orther'"
-              >其他</el-radio-button
+            >其他
+            </el-radio-button
             >
           </el-radio-group>
         </el-form-item>
-
         <el-form-item label="权限：" v-if="radio == 'discuss'">
           <el-radio-group v-model="perRadio">
             <el-radio-button label="Public">公开</el-radio-button>
-            <el-radio-button label="Oneself">仅自己可见</el-radio-button>
-            <el-radio-button label="User">部分用户可见</el-radio-button>
+            <el-radio-button label="Role">所选角色可见</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item
-          label="可见用户："
-          v-if="radio == 'discuss' && perRadio == 'User'"
+            label="可见角色："
+            v-if="radio == 'discuss' && perRadio == 'Role'"
         >
-          <UserSelectInfo v-model="editForm.permissionUserIds" />
+          <el-input-tag
+              v-model="editForm.permissionRoleCodes"
+              placeholder="请输入角色code"
+              aria-label="按下回车，可选择多个"
+          />
         </el-form-item>
 
         <el-form-item
-          v-if="radio == 'article'"
-          label="子文章名称："
-          prop="name"
+            v-if="radio == 'article'"
+            label="子文章名称："
+            prop="name"
         >
-          <el-input placeholder="请输入" v-model="editForm.name" />
+          <el-input placeholder="请输入" v-model="editForm.name"/>
         </el-form-item>
         <el-form-item v-else label="标题：" prop="title">
-          <el-input placeholder="请输入" v-model="editForm.title" />
+          <el-input placeholder="请输入" v-model="editForm.title"/>
         </el-form-item>
         <el-form-item label="描述：" prop="introduction">
-          <el-input placeholder="请输入" v-model="editForm.introduction" />
+          <el-input placeholder="请输入" v-model="editForm.introduction"/>
         </el-form-item>
         <el-form-item label="内容：" prop="content">
           <MavonEdit
-            height="30rem"
-            v-model="editForm.content"
-            :codeStyle="codeStyle"
+              height="30rem"
+              v-model="editForm.content"
+              :codeStyle="codeStyle"
           />
         </el-form-item>
-        <el-form-item label="封面：" v-if="radio == 'discuss'">
+        <el-form-item label="首页：" v-if="radio == 'discuss'">
 
           <el-image
               v-if="dialogImageUrl"
@@ -67,77 +73,103 @@
               style="width: 178px; height: 178px"
               class="avatar"
           />
-          
-          <!-- 主题封面选择 -->
+
+          <!-- 主题首页选择 -->
           <el-upload
-            class="avatar-uploader"
-            :action="fileUploadUrl"
-            :show-file-list="false"
-            :on-success="onSuccess"
+              class="avatar-uploader"
+              :action="fileUploadUrl"
+              :show-file-list="false"
+              :on-success="onSuccess"
           >
-            <el-icon  class="avatar-uploader-icon"><Plus /></el-icon>
+            <el-icon class="avatar-uploader-icon">
+              <Plus/>
+            </el-icon>
           </el-upload>
         </el-form-item>
-        <el-form-item label="标签：" prop="types">
-          <el-input placeholder="请输入" v-model="editForm.types" />
+        <el-form-item label="分类标签：" prop="discussLable" v-if="radio == 'discuss'">
+          <el-select
+              value-key="id"
+              v-model="selectLabelList"
+              multiple
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请选择合适的文章标签"
+              :remote-method="remoteMethod"
+              :loading="labelLoading"
+              style="width: 435px"
+          >
+            <el-option
+                v-for="item in labelListData"
+                :key="item.id"
+                :label="item.name"
+                :value="item"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button
-            @click="submit(ruleFormRef)"
-            class="submit-btn"
-            type="primary"
-            >提交</el-button
-          ></el-form-item
+              @click="submit(ruleFormRef)"
+              class="submit-btn"
+              type="primary"
+          >提交
+          </el-button
+          >
+        </el-form-item
         >
       </el-form>
       <div class="import-content" v-show="radio == 'article'">
         <div class="text">上传类型：</div>
         <el-select
-          v-model="currentType"
-          placeholder="请选择"
-          style="width: 120px"
+            v-model="currentType"
+            placeholder="请选择"
+            style="width: 120px"
         >
           <el-option
-            v-for="item in typeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+              v-for="item in typeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
         <el-button
-          type="primary"
-          :icon="Download"
-          :loading="importLoading"
-          @click="handleImport"
-          class="import-btn"
-          >导入文章</el-button
+            type="primary"
+            :icon="Download"
+            :loading="importLoading"
+            @click="handleImport"
+            class="import-btn"
+        >导入文章
+        </el-button
         >
       </div>
     </div>
     <!-- 文件弹框 -->
     <div>
       <input
-        v-show="false"
-        ref="fileRef"
-        type="file"
-        multiple
-        @change="getFile"
+          v-show="false"
+          ref="fileRef"
+          type="file"
+          multiple
+          @change="getFile"
       />
     </div>
   </div>
 </template>
 <script setup>
 import MavonEdit from "@/components/MavonEdit.vue";
-import UserSelectInfo from "@/components/UserSelectInfo.vue";
 import {ref, reactive, onMounted, computed} from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { Plus, Download } from "@element-plus/icons-vue";
+import {useRoute, useRouter} from "vue-router";
+import {Plus, Download} from "@element-plus/icons-vue";
 
 import {
   add as discussAdd,
   update as discussUpdate,
   get as discussGet,
 } from "@/apis/discussApi.js";
+
+import {
+  getAllList as getLableAllList
+} from "@/apis/discussLableApi"
 
 import {
   add as articleAdd,
@@ -161,13 +193,25 @@ const fileUploadUrl = `${import.meta.env.VITE_APP_BASEAPI}/file`;
 //封面的url
 const dialogImageUrl = ref("");
 
+//远程文章标签
+const labelListData = ref([]);
+const labelLoading = ref(false);
+const selectLabelList = ref([]);
+//远程下拉框查询文章标签
+const remoteMethod = async (query) => {
+  labelLoading.value = true
+  const {data} = await getLableAllList({name:query});
+  labelLoading.value = false
+  labelListData.value = data.items;
+}
+
 //文件上传成功后
 const onSuccess = (response) => {
   dialogImageUrl.value = response[0].id;
 };
 
 //封面url
-const getUrl=computed(()=>{
+const getUrl = computed(() => {
   return `${import.meta.env.VITE_APP_BASEAPI}/file/${dialogImageUrl.value}`;
 })
 
@@ -175,11 +219,11 @@ const getUrl=computed(()=>{
 //整个页面上的表单
 const editForm = reactive({
   title: "",
-  types: "",
   introduction: "",
   content: "",
   name: "",
-  permissionUserIds: [],
+  permissionRoleCodes: [],
+  discussLableIds:[]
 });
 
 //组装主题内容： 需要更新主题信息
@@ -192,13 +236,13 @@ const article = {};
 const ruleFormRef = ref(null);
 const rules = reactive({
   title: [
-    { required: true, message: "请输入标题", trigger: "blur" },
-    { min: 3, max: 40, message: "长度 3 到 20", trigger: "blur" },
+    {required: true, message: "请输入标题", trigger: "blur"},
+    {min: 3, max: 40, message: "长度 3 到 20", trigger: "blur"},
   ],
-  name: [{ required: true, message: "请输入子文章名称", trigger: "blur" }],
+  name: [{required: true, message: "请输入子文章名称", trigger: "blur"}],
   content: [
-    { required: true, message: "请输入内容", trigger: "blur" },
-    { min: 10, message: "长度 大于 10", trigger: "blur" },
+    {required: true, message: "请输入内容", trigger: "blur"},
+    {min: 10, message: "长度 大于 10", trigger: "blur"},
   ],
 });
 //提交按钮,需要区分操作类型
@@ -208,15 +252,14 @@ const submit = async (formEl) => {
     if (valid) {
       //dicuss主题处理
       if (radio.value == "discuss") {
+        discuss.discussLableIds=selectLabelList.value.map((item) =>item.id);
         discuss.title = editForm.title;
-        discuss.types = editForm.types;
         discuss.introduction = editForm.introduction;
         discuss.content = editForm.content;
         discuss.plateId = discuss.plateId ?? route.query.plateId;
         discuss.cover = dialogImageUrl.value;
         discuss.permissionType = perRadio.value;
-
-        discuss.permissionUserIds = editForm.permissionUserIds;
+        discuss.permissionRoleCodes = editForm.permissionRoleCodes;
         //主题创建
         if (route.query.operType == "create") {
           const response = await discussAdd(discuss);
@@ -225,18 +268,19 @@ const submit = async (formEl) => {
             message: `[${discuss.title}]主题创建成功！`,
             type: "success",
           });
-          var routerPer = { path: `/article/${response.data.id}` };
+          var routerPer = {path: `/article/${response.data.id}`};
           router.push(routerPer);
         }
         //主题更新
         else if (route.query.operType == "update") {
+          discuss.discussLableIds=selectLabelList.value.map((item) =>item.id);
           await discussUpdate(route.query.discussId, discuss);
 
           ElMessage({
             message: `[${discuss.title}]主题更新成功！`,
             type: "success",
           });
-          var routerPer = { path: `/article/${route.query.discussId}` };
+          var routerPer = {path: `/article/${route.query.discussId}`};
           router.push(routerPer);
         }
       }
@@ -273,11 +317,6 @@ const submit = async (formEl) => {
           router.push(routerPer);
         }
       }
-      //添加成功后跳转到该页面
-      // var routerPer = { path: `/discuss/${discuss.plateId}` };
-      // router.push(routerPer);
-      // ruleFormRef.value.resetFields();
-      // discuss.plateId = route.query.plateId;
     }
   });
 };
@@ -301,12 +340,18 @@ const loadDiscuss = async () => {
   const res = response.data;
   editForm.content = res.content;
   editForm.title = res.title;
-  editForm.types = res.types;
   editForm.introduction = res.introduction;
+  editForm.discussLableIds=res.discussLableIds;
+  editForm.permissionRoleCodes = res.permissionRoleCodes;
+  
+  //编辑状态，已选择的就是全部
+  labelListData.value=res.lables;
+  selectLabelList.value=res.lables;
+  
   discuss.plateId = res.plateId;
   dialogImageUrl.value = res.cover;
   perRadio.value = res.permissionType;
-  editForm.permissionUserIds = res.permissionUserIds;
+
 };
 //加载文章
 const loadArticle = async () => {
@@ -342,19 +387,19 @@ const getFile = async (e) => {
       formData.append("file", e.target.files[i]);
     }
     await importArticle(
-      {
-        discussId: route.query.discussId,
-        articleParentId: route.query.parentArticleId,
-        importType: currentType.value,
-      },
-      formData
+        {
+          discussId: route.query.discussId,
+          articleParentId: route.query.parentArticleId,
+          importType: currentType.value,
+        },
+        formData
     );
     ElMessage({
       message: `导入成功！`,
       type: "success",
     });
     importLoading.value = false;
-    const routerPer = { path: `/article/${route.query.discussId}` };
+    const routerPer = {path: `/article/${route.query.discussId}`};
     router.push(routerPer);
   } catch (error) {
     ElMessage.error(error.message);
@@ -373,16 +418,19 @@ const getFile = async (e) => {
   background-color: #fff;
   margin: 1.5rem;
   padding: 1.5rem;
+
   .import-content {
     display: flex;
     align-items: center;
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
+
     .text {
       margin-right: 10px;
     }
   }
+
   .import-btn {
     margin-left: 10px;
   }
@@ -408,6 +456,7 @@ const getFile = async (e) => {
   height: 178px;
   text-align: center;
 }
+
 .el-upload {
 }
 </style>

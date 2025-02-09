@@ -100,7 +100,7 @@ const router = createRouter({
           path: "/article/:discussId",
           component: () => import("../views/Article.vue"),
           meta: {
-            title: "主题封面",
+            title: "主题首页",
           },
         },
         {
@@ -126,6 +126,22 @@ const router = createRouter({
           component: () => import("../views/shop/Index.vue"),
           meta: {
             title: "商城",
+          },
+        },
+        {
+          name:"dc",
+          path:"/dc",
+          component: () => import("../views/dc/Index.vue"),
+          meta: {
+            title: "数字藏品",
+          },
+        },
+        {
+          name: "book",
+          path: "/book",
+          component: () => import("../views/book/Index.vue"),
+          meta: {
+            title: "面试宝典",
           },
         },
       ],

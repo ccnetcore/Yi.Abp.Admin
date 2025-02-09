@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
+	  <PackageReference Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
+	  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.Caching.FreeRedis\Yi.Framework.Caching.FreeRedis.csproj" />
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.Mapster\Yi.Framework.Mapster.csproj" />
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.SqlSugarCore.Abstractions\Yi.Framework.SqlSugarCore.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\framework\Yi.Framework.WeChat.MiniProgram\Yi.Framework.WeChat.MiniProgram.csproj" />
+    <ProjectReference Include="..\..\setting-management\Yi.Framework.SettingManagement.Domain\Yi.Framework.SettingManagement.Domain.csproj" />
+	<ProjectReference Include="..\Yi.Framework.DigitalCollectibles.Domain.Shared\Yi.Framework.DigitalCollectibles.Domain.Shared.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

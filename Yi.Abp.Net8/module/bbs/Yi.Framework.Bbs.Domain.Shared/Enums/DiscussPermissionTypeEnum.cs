@@ -14,14 +14,9 @@ namespace Yi.Framework.Bbs.Domain.Shared.Enums
         Public = 0,
 
         /// <summary>
-        /// 仅自己可见
+        /// 角色要求可见
         /// </summary>
-        Oneself,
-
-        /// <summary>
-        /// 部分用户可见
-        /// </summary>
-        User
+        Role=1
 
     }
 }

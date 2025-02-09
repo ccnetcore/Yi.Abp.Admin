@@ -9,6 +9,7 @@ using Yi.Framework.Bbs.Domain.Entities;
 using Yi.Framework.Bbs.Domain.Entities.Integral;
 using Yi.Framework.Bbs.Domain.Managers;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
+using Yi.Framework.DigitalCollectibles.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
@@ -20,11 +21,16 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
     {
         private BbsUserManager _bbsUserManager;
         private IOnlineService _onlineService;
+        private readonly IPointAnalyseService _pointAnalyseService;
+        private readonly IValueAnalyseService _valueAnalyseService;
 
-        public BbsUserAnalyseService(BbsUserManager bbsUserManager, IOnlineService onlineService)
+        public BbsUserAnalyseService(BbsUserManager bbsUserManager, IOnlineService onlineService,
+            IPointAnalyseService pointAnalyseService, IValueAnalyseService valueAnalyseService)
         {
             _bbsUserManager = bbsUserManager;
             _onlineService = onlineService;
+            _pointAnalyseService = pointAnalyseService;
+            _valueAnalyseService = valueAnalyseService;
         }
 
 
@@ -170,6 +176,119 @@ namespace Yi.Framework.Bbs.Application.Services.Analyses
 
                 return output;
             }
+        }
+
+
+        /// <summary>
+        /// 积分排行榜
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("analyse/dc-user/points-top/{userId?}")]
+        public async Task<PagedResultDto<PointsTopUserDto>> GetPointsTopAsync([FromQuery] PagedResultRequestDto input,
+            [FromRoute] Guid? userId)
+        {
+            var result = await _pointAnalyseService.GetValueTopAsync(input, null);
+
+            var userIds = result.Items.Select(x => x.UserId).ToList();
+
+            var baseOutput = await _bbsUserManager._userRepository._DbQueryable
+                .Where(u => userIds.Contains(u.Id))
+                .LeftJoin<BbsUserExtraInfoEntity>((u, info) => u.Id == info.UserId)
+                .Select((u, info) =>
+                    new BaseAnalyseTopUserDto
+                    {
+                        UserName = u.UserName,
+                        Nick = u.Nick,
+                        Icon = u.Icon,
+                        Level = info.Level,
+                        UserLimit = info.UserLimit,
+                        UserId = info.UserId
+                    }
+                ).ToListAsync();
+
+
+            var output = new List<PointsTopUserDto>();
+            var levelCache = await _bbsUserManager.GetLevelCacheMapAsync();
+            result.Items.ToList().ForEach(x =>
+            {
+                var currentUserInfo = baseOutput.Where(u => u.UserId == x.UserId).FirstOrDefault();
+
+                if (currentUserInfo is not null)
+                {
+                    output.Add(new PointsTopUserDto
+                    {
+                        UserName = currentUserInfo.UserName,
+                        Nick = currentUserInfo.Nick,
+                        Order = x.Order,
+                        Icon = currentUserInfo.Icon,
+                        Level = currentUserInfo.Level,
+                        LevelName = levelCache[currentUserInfo.Level].Name,
+                        UserLimit = UserLimitEnum.Normal,
+                        Points = x.Points
+                    });
+                }
+            });
+            return new PagedResultDto<PointsTopUserDto>
+            {
+                Items = output,
+                TotalCount = result.TotalCount
+            };
+        }
+
+        /// <summary>
+        /// 价值排行榜
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("analyse/dc-user/value-top/{userId?}")]
+        public async Task<PagedResultDto<ValueTopUserDto>> GetValueTopAsync([FromQuery] PagedResultRequestDto input,
+            [FromRoute] Guid? userId)
+        {
+            var result = await _valueAnalyseService.GetValueTopAsync(input, null);
+
+            var userIds = result.Items.Select(x => x.UserId).ToList();
+
+            var baseOutput = await _bbsUserManager._userRepository._DbQueryable
+                .Where(u => userIds.Contains(u.Id))
+                .LeftJoin<BbsUserExtraInfoEntity>((u, info) => u.Id == info.UserId)
+                .Select((u, info) =>
+                    new BaseAnalyseTopUserDto
+                    {
+                        UserName = u.UserName,
+                        Nick = u.Nick,
+                        Icon = u.Icon,
+                        Level = info.Level,
+                        UserLimit = info.UserLimit,
+                        UserId = info.UserId
+                    }
+                ).ToListAsync();
+
+
+            var output = new List<ValueTopUserDto>();
+            var levelCache = await _bbsUserManager.GetLevelCacheMapAsync();
+            result.Items.ToList().ForEach(x =>
+            {
+                var currentUserInfo = baseOutput.Where(u => u.UserId == x.UserId).FirstOrDefault();
+
+                if (currentUserInfo is not null)
+                {
+                    output.Add(new ValueTopUserDto
+                    {
+                        UserName = currentUserInfo.UserName,
+                        Nick = currentUserInfo.Nick,
+                        Order = x.Order,
+                        Icon = currentUserInfo.Icon,
+                        Level = currentUserInfo.Level,
+                        LevelName =levelCache[currentUserInfo.Level].Name,
+                        UserLimit = UserLimitEnum.Normal,
+                        Value = x.Value
+                    });
+                }
+            });
+            return new PagedResultDto<ValueTopUserDto>
+            {
+                Items = output,
+                TotalCount = result.TotalCount
+            };
         }
     }
 }

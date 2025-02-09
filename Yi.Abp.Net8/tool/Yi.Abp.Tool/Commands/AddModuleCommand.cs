@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.CommandLineUtils;
@@ -39,12 +40,11 @@ namespace Yi.Abp.Tool.Commands
                 }
                 
                 CheckFirstSlnPath(slnPath);
-                var dotnetSlnCommandPart1 = $"dotnet sln \"{slnPath}\" add \"{modulePath}\\{moduleName}.";
-                var dotnetSlnCommandPart2 = new List<string>() { "Application", "Application.Contracts", "Domain", "Domain.Shared", "SqlSugarCore" };
-                var paths = dotnetSlnCommandPart2.Select(x => $@"{modulePath}\{moduleName}." + x).ToArray();
+                var dotnetSlnCommandPart = new List<string>() { "Application", "Application.Contracts", "Domain", "Domain.Shared", "SqlSugarCore" };
+                var paths = dotnetSlnCommandPart.Select(x => Path.Combine(modulePath, $"{moduleName}.{x}")).ToArray();
                 CheckPathExist(paths);
-                
-                var cmdCommands = dotnetSlnCommandPart2.Select(x => dotnetSlnCommandPart1 + x+"\"").ToArray();
+
+                var cmdCommands = dotnetSlnCommandPart.Select(x => $"dotnet sln \"{slnPath}\" add \"{Path.Combine(modulePath, $"{moduleName}.{x}")}\"").ToArray();
                 StartCmd(cmdCommands);
                 
                 Console.WriteLine("恭喜~模块添加成功！");
@@ -81,15 +81,24 @@ namespace Yi.Abp.Tool.Commands
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = "cmd.exe",
-                Arguments = $"/c chcp 65001&{string.Join("&", cmdCommands)}",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
-
+            // 判断操作系统
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                psi.FileName = "cmd.exe";
+                psi.Arguments = $"/c chcp 65001&{string.Join("&", cmdCommands)}";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                psi.FileName = "/bin/bash";
+                psi.Arguments = $"-c \"{string.Join("; ", cmdCommands)}\"";
+            }
+            
             Process proc = new Process
             {
                 StartInfo = psi

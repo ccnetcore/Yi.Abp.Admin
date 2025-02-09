@@ -1,6 +1,8 @@
 using Volo.Abp.Application.Dtos;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
+using Yi.Framework.Bbs.Application.Contracts.Dtos.DiscussLable;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Plate;
+using Yi.Framework.Bbs.Domain.Shared.Consts;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.User;
 
@@ -9,11 +11,10 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
     public class DiscussGetOutputDto : EntityDto<Guid>
     {
         /// <summary>
-        /// ÊÇ·ñ½ûÖ¹ÆÀÂÛ´´½¨¹¦ÄÜ
+        /// æ˜¯å¦ç¦æ­¢è¯„è®ºåˆ›å»ºåŠŸèƒ½
         /// </summary>
         public bool IsDisableCreateComment { get; set; }
         public string Title { get; set; }
-        public string? Types { get; set; }
         public string? Introduction { get; set; }
         public int AgreeNum { get; set; }
         public int SeeNum { get; set; }
@@ -21,24 +22,48 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public string? Color { get; set; }
 
         public Guid PlateId { get; set; }
-        //ÊÇ·ñÖÃ¶¥£¬Ä¬ÈÏfalse
+        //æ˜¯å¦ç½®é¡¶ï¼Œé»˜è®¤false
         public bool IsTop { get; set; }
 
         /// <summary>
-        /// ·âÃæ
+        /// å°é¢
         /// </summary>
         public string? Cover { get; set; }
-        //ÊÇ·ñË½ÓĞ£¬Ä¬ÈÏfalse
+        //æ˜¯å¦ç§æœ‰ï¼Œé»˜è®¤false
         public bool IsPrivate { get; set; }
 
-        //Ë½ÓĞĞèÒªÅĞ¶ÏcodeÈ¨ÏŞ
+        //ç§æœ‰éœ€è¦åˆ¤æ–­codeæƒé™
         public string? PrivateCode { get; set; }
         public DateTime CreationTime { get; set; }
         public DiscussPermissionTypeEnum PermissionType { get; set; }
         public bool IsAgree { get; set; } = false;
-        public List<Guid>? PermissionUserIds { get; set; }
+        public List<string> PermissionRoleCodes { get; set; } = new List<string>();
+        
+        
+        
         public BbsUserGetListOutputDto User { get; set; }
 
         public PlateGetOutputDto Plate { get; set; }
+
+        public List<Guid>? DiscussLableIds { get; set; } = new List<Guid>();
+        public List<DiscussLableGetOutputDto> Lables { get; set; } =new List<DiscussLableGetOutputDto>();
+
+        public bool HasPermission { get;internal set; }
+
+        /// <summary>
+        /// è®¾ç½®æƒé™
+        /// </summary>
+        public void SetPassPermission()
+        {
+            HasPermission = true;
+        }
+        /// <summary>
+        /// è®¾ç½®æ— æƒé™
+        /// </summary>
+        public void SetNoPermission()
+        {
+            HasPermission = false;
+            Content=DiscussConst.Privacy;
+        }
     }
 }

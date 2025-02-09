@@ -263,6 +263,7 @@ src/Acme.BookStore.Blazor.Server.Tiered/Logs/*
 
 # Use abp install-libs to restore.
 **/wwwroot/libs/*
+public
 dist
 .vscode
 /Yi.Abp.Net8/src/Yi.Abp.Web/appsettings.Development.json

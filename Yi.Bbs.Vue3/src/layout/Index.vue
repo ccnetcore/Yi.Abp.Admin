@@ -68,7 +68,7 @@ const handleScroll = () => {
   margin: 0;
   padding: 0;
   min-height: 10rem;
-  background-color: #f0f2f5;
+  //background-color: #f0f2f5;
 }
 
 .fixed {

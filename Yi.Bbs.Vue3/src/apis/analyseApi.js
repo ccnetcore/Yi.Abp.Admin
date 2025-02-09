@@ -1,6 +1,21 @@
 import request from "@/config/axios/service";
 
 /**
+ * 获取作者主题
+ * @param userId
+ * @param {*} data
+ * @returns
+ */
+export function getAuthorTopic(userId,data) {
+  return request({
+    url: `/analyse/bbs-discuss/author/${userId}`,
+    method: "get",
+    data,
+  });
+}
+
+
+/**
  * 获取推荐主题
  * @param {*} data
  * @returns
@@ -27,17 +42,46 @@ export function getRecommendedFriend(data) {
 }
 
 /**
- * 获取积分排行
+ * 获取钱钱排行
  * @param {*} data
  * @returns
  */
-export function getRankingPoints(data) {
+export function getMoneyTop(data) {
   return request({
     url: "/analyse/bbs-user/money-top",
     method: "get",
     params: data
   });
 }
+
+
+/**
+ * 获取价值排行
+ * @param {*} data
+ * @returns
+ */
+export function getValueTop(data) {
+  return request({
+    url: "/analyse/dc-user/value-top",
+    method: "get",
+    params: data
+  });
+}
+
+/**
+ * 获取积分排行
+ * @param {*} data
+ * @returns
+ */
+export function getPointsTop(data) {
+  return request({
+    url: "/analyse/dc-user/points-top",
+    method: "get",
+    params: data
+  });
+}
+
+
 
 /**
  * 获取用户分析

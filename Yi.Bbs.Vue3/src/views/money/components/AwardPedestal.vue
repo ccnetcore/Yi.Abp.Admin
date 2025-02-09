@@ -68,7 +68,7 @@ h3{
 }
 
 .gold:hover {
-            box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.7); /* 金色光辉效果 */
+            box-shadow: 0 0 40px 20px rgba(255, 215, 0, 0.7); /* 金色光辉效果 */
         }
 
 .gold {
@@ -76,13 +76,18 @@ h3{
     height: 250px;
     box-shadow: 0 8px 20px rgba(255, 215, 0, 0.5);
 }
+.silver:hover {
+  box-shadow: 0 0 20px 10px rgba(192, 192, 192, 0.7); /* 金色光辉效果 */
+}
 
 .silver {
     background: linear-gradient(to bottom, #c0c0c0 0%, #d3d3d3 100%);
     height: 200px;
     box-shadow: 0 6px 18px rgba(192, 192, 192, 0.5);
 }
-
+.bronze:hover {
+  box-shadow: 0 0 20px 10px rgba(205, 127, 50, 0.7); /* 金色光辉效果 */
+}
 .bronze {
     background: linear-gradient(to bottom, #cd7f32 0%, #a0522d 100%);
     height: 170px;

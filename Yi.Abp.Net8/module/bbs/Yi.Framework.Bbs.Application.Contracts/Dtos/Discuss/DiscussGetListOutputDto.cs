@@ -1,5 +1,6 @@
 using Volo.Abp.Application.Dtos;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.BbsUser;
+using Yi.Framework.Bbs.Application.Contracts.Dtos.DiscussLable;
 using Yi.Framework.Bbs.Domain.Shared.Consts;
 using Yi.Framework.Bbs.Domain.Shared.Enums;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.User;
@@ -17,7 +18,6 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         /// </summary>
         public bool IsAgree { get; set; } = false;
         public string Title { get; set; }
-        public string Types { get; set; }
         public string? Introduction { get; set; }
 
         public int AgreeNum { get; set; }
@@ -41,57 +41,16 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         /// 封面
         /// </summary>
         public string? Cover { get; set; }
-
-        //私有需要判断code权限
-        public string? PrivateCode { get; set; }
+        
         public DateTime CreationTime { get; set; }
 
-        public List<Guid>? PermissionUserIds { get; set; }
+        /// <summary>
+        /// 所需角色
+        /// </summary>
+        public List<string>? PermissionRoleCodes { get; set; } = new List<string>();
 
         public BbsUserGetListOutputDto User { get; set; }
-
-        public void SetBan()
-        {
-            Title = DiscussConst.Privacy;
-            Introduction = "";
-            Cover = null;
-            //被禁止
-            IsBan = true;
-        }
+        public List<Guid>? DiscussLableIds { get; set; } = new List<Guid>();
+        public List<DiscussLableGetOutputDto> Lables { get; set; } = new List<DiscussLableGetOutputDto>();
     }
-
-
-    public static class DiscussGetListOutputDtoExtension
-    {
-
-        public static void ApplyPermissionTypeFilter(this List<DiscussGetListOutputDto> dtos, Guid userId)
-        {
-              dtos?.ForEach(dto =>
-            {
-                switch (dto.PermissionType)
-                {
-                    case DiscussPermissionTypeEnum.Public:
-                        break;
-                    case DiscussPermissionTypeEnum.Oneself:
-                        //当前主题是仅自己可见，同时不是当前登录用户
-                        if (dto.User.Id != userId)
-                        {
-                            dto.SetBan();
-                        }
-                        break;
-                    case DiscussPermissionTypeEnum.User:
-                        //当前主题为部分可见，同时不是当前登录用户 也 不在可见用户列表中
-                        if (dto.User.Id != userId && !dto.PermissionUserIds.Contains(userId))
-                        {
-                            dto.SetBan();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-
-    }
-
 }
