@@ -22,8 +22,10 @@ namespace Yi.Framework.SqlSugarCore
 
         private IAbpLazyServiceProvider LazyServiceProvider { get; }
 
+        private TenantConfigurationWrapper TenantConfigurationWrapper=> LazyServiceProvider.LazyGetRequiredService<TenantConfigurationWrapper>();
         private ICurrentTenant CurrentTenant => LazyServiceProvider.LazyGetRequiredService<ICurrentTenant>();
-        public DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
+
+        private DbConnOptions Options => LazyServiceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
 
         private ISerializeService SerializeService => LazyServiceProvider.LazyGetRequiredService<ISerializeService>();
 
@@ -36,19 +38,13 @@ namespace Yi.Framework.SqlSugarCore
         {
             LazyServiceProvider = lazyServiceProvider;
 
-            var connectionString = GetCurrentConnectionString();
-            
+           var tenantConfiguration= AsyncHelper.RunSync(async () =>await TenantConfigurationWrapper.GetAsync());
+           
             var connectionConfig =BuildConnectionConfig(action: options =>
             {
-                options.ConnectionString = connectionString;
-                options.DbType = GetCurrentDbType();
+                options.ConnectionString =tenantConfiguration.GetCurrentConnectionString();
+                options.DbType = GetCurrentDbType(tenantConfiguration.GetCurrentConnectionName());
             });
-            // var connectionConfig = ConnectionConfigCache.GetOrAdd(connectionString, (_) =>
-            //     BuildConnectionConfig(action: options =>
-            //     {
-            //         options.ConnectionString = connectionString;
-            //         options.DbType = GetCurrentDbType();
-            //     }));
             SqlSugarClient = new SqlSugarClient(connectionConfig);
             //生命周期，以下都可以直接使用sqlsugardb了
 
@@ -188,41 +184,18 @@ namespace Yi.Framework.SqlSugarCore
 
             return connectionConfig;
         }
-
-        /// <summary>
-        /// db切换多库支持
-        /// </summary>
-        /// <returns></returns>
-        protected virtual string GetCurrentConnectionString()
+        
+        protected virtual DbType GetCurrentDbType(string tenantName)
         {
-            var connectionStringResolver = LazyServiceProvider.LazyGetRequiredService<IConnectionStringResolver>();
-            var connectionString =
-                AsyncHelper.RunSync(() => connectionStringResolver.ResolveAsync());
-
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (tenantName == ConnectionStrings.DefaultConnectionStringName)
             {
-                Check.NotNull(Options.Url, "dbUrl未配置");
+                return Options.DbType!.Value;
             }
-
-            return connectionString!;
+            var dbTypeFromTenantName = GetDbTypeFromTenantName(tenantName);
+            return dbTypeFromTenantName!.Value;
         }
 
-        protected virtual DbType GetCurrentDbType()
-        {
-            if (CurrentTenant.Name is not null)
-            {
-                var dbTypeFromTenantName = GetDbTypeFromTenantName(CurrentTenant.Name);
-                if (dbTypeFromTenantName is not null)
-                {
-                    return dbTypeFromTenantName.Value;
-                }
-            }
-
-            Check.NotNull(Options.DbType, "默认DbType未配置！");
-            return Options.DbType!.Value;
-        }
-
-        //根据租户name进行匹配db类型:  Test_Sqlite，[来自AI]
+        //根据租户name进行匹配db类型:  Test@Sqlite，[form:AI]
         private DbType? GetDbTypeFromTenantName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -230,25 +203,26 @@ namespace Yi.Framework.SqlSugarCore
                 return null;
             }
 
-            // 查找下划线的位置
-            int underscoreIndex = name.LastIndexOf('_');
+            // 查找@符号的位置
+            int atIndex = name.LastIndexOf('@');
 
-            if (underscoreIndex == -1 || underscoreIndex == name.Length - 1)
+            if (atIndex == -1 || atIndex == name.Length - 1)
             {
                 return null;
             }
 
             // 提取 枚举 部分
-            string enumString = name.Substring(underscoreIndex + 1);
+            string enumString = name.Substring(atIndex + 1);
 
             // 尝试将 尾缀 转换为枚举
             if (Enum.TryParse<DbType>(enumString, out DbType result))
             {
                 return result;
             }
-
-            // 条件不满足时返回 null
-            return null;
+            else
+            {
+                throw new ArgumentException($"数据库{name}db类型错误或不支持：无法匹配{enumString}数据库类型");
+            }
         }
 
         public virtual void BackupDataBase()

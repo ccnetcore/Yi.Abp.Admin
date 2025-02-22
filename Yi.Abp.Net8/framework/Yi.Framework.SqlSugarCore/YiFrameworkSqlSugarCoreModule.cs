@@ -10,6 +10,8 @@ using Volo.Abp.Data;
 using Volo.Abp.Domain;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
+using Volo.Abp.MultiTenancy;
+using Volo.Abp.MultiTenancy.ConfigurationStore;
 using Yi.Framework.SqlSugarCore.Abstractions;
 using Yi.Framework.SqlSugarCore.Repositories;
 using Yi.Framework.SqlSugarCore.Uow;
@@ -51,7 +53,7 @@ namespace Yi.Framework.SqlSugarCore
                 options.DefaultSequentialGuidType = guidType;
             });
             
-            service.TryAddScoped<ISqlSugarDbContext, SqlSugarDbContextFactory>();
+            service.TryAddTransient<ISqlSugarDbContext, SqlSugarDbContextFactory>();
 
             //不开放sqlsugarClient
             //service.AddTransient<ISqlSugarClient>(x => x.GetRequiredService<ISqlsugarDbContext>().SqlSugarClient);
@@ -69,7 +71,25 @@ namespace Yi.Framework.SqlSugarCore
             var dbConfig = section.Get<DbConnOptions>();
             //将默认db传递给abp连接字符串模块
             Configure<AbpDbConnectionOptions>(x => { x.ConnectionStrings.Default = dbConfig.Url; });
-
+            //配置abp默认租户，对接abp模块
+            Configure<AbpDefaultTenantStoreOptions>(x => {
+                var tenantList = x.Tenants.ToList();
+                foreach(var tenant in tenantList)
+                {
+                    tenant.NormalizedName = tenant.Name.Contains("@") ? 
+                        tenant.Name.Substring(0, tenant.Name.LastIndexOf("@")) : 
+                        tenant.Name;
+                }
+                tenantList.Insert(0, new TenantConfiguration
+                {
+                    Id = Guid.Empty,
+                    Name = $"{ConnectionStrings.DefaultConnectionStringName}",
+                    NormalizedName = ConnectionStrings.DefaultConnectionStringName,
+                    ConnectionStrings = new ConnectionStrings() { { ConnectionStrings.DefaultConnectionStringName, dbConfig.Url } },
+                    IsActive = true
+                });
+                x.Tenants = tenantList.ToArray();
+            });
              context.Services.AddYiDbContext<DefaultSqlSugarDbContext>();
             return Task.CompletedTask;
         }

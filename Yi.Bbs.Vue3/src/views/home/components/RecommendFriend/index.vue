@@ -36,7 +36,7 @@
 </template>
 
 <script setup name="RecommendFriend">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
 import UserInfoCard from "@/components/UserInfoCard/index.vue";
 import UserLimitTag from "@/components/UserLimitTag.vue";
 const props = defineProps({

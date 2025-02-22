@@ -362,9 +362,7 @@ const handleNodeClick = async (data) => {
 
   router.push(`/article/${route.params.discussId}/${data.id}`);
 
-  const response = await articleGet(data.id);
-  discuss.value.content = response.data.content;
-  ContentHander();
+
 };
 //删除子文章
 const delArticle = (node, data) => {
@@ -396,14 +394,7 @@ onMounted(async () => {
   await loadAuthorData();
   await loadThemeData();
 });
-//路由发送变化，重新加载
-watch(() => route.params, async () => {
-      await loadDiscuss();
-      await loadArticleData();
-      await loadAuthorData();
-      await loadThemeData();
-    }
-)
+
 
 watch(
     () => currentArticle.value,
@@ -420,13 +411,27 @@ watch(
     }
 );
 watch(
-    () => route.params.articleId,
+    () => route.params,
     async (val) => {
-      if (val === "") {
+      if (val.articleId !=="")
+      {
+        const response = await articleGet(route.params.articleId);
+        discuss.value.content = response.data.content;
+        ContentHander();
+      }
+      else if (val.discussId !== "") {
         discuss.value = (await discussGet(route.params.discussId)).data;
       }
     }
 );
+//路由发送变化，重新加载
+// watch(() => route.params, async () => {
+//       await loadDiscuss();
+//       await loadArticleData();
+//       await loadAuthorData();
+//       await loadThemeData();
+//     }
+// )
 </script>
 <style scoped lang="scss">
 

@@ -63,7 +63,7 @@
 </template>
 
 <script setup name="UserInfoCard">
-import { computed, defineProps } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import UserLimitTag from "../UserLimitTag.vue";
 const props = defineProps({

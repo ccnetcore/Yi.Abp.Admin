@@ -18,6 +18,7 @@ import {getUrl} from '@/utils/icon'
 
 //markdown ai显示
 import {marked} from 'marked';
+import markedKatex from "marked-katex-extension";
 import '@/assets/atom-one-dark.css';
 import '@/assets/github-markdown.css';
 import hljs from "highlight.js";
@@ -39,11 +40,11 @@ const currentInputValue = ref("");
 //临时存储的输入框，根据用户id及组name、all组为key，data为value
 const inputListDataStore = ref([
   {key: "all", name: "官方学习交流群", titleName: "官方学习交流群", logo: "yilogo.png", value: ""},
-  {key: "ai@deepseek-chat", name: "DeepSeek聊天", titleName: "DeepSeek-聊天模式", logo: "deepSeekAi.png", value: ""},
+  {key: "ai@deepseek-chat", name: "DeepSeek聊天", titleName: "满血！DeepSeek-聊天模式", logo: "deepSeekAi.png", value: ""},
   {
-    key: "ai@DeepSeek-R1",
+    key: "ai@deepseek-ai/deepseek-r1",
     name: "DeepSeek思索",
-    titleName: "DeepSeek-思索模式",
+    titleName: "满血！DeepSeek-思索模式",
     logo: "deepSeekAi.png",
     value: ""
   },
@@ -66,6 +67,25 @@ onMounted(async () => {
       onclickClose();
     }, 3000);
   }
+  marked.use(markedKatex({
+    throwOnError: false,
+    nonStandard: true
+  }));
+  marked.setOptions({
+        renderer: new marked.Renderer(),
+        highlight: function (code, language) {
+          return codeHandler(code, language);
+        },
+        pedantic: false,
+        gfm: true,//允许 Git Hub标准的markdown
+        tables: true,//支持表格
+        breaks: true,
+        sanitize: false,
+        smartypants: false,
+        xhtml: false,
+        smartLists: true,
+      }
+  );
   //all的聊天消息
   chatStore.setMsgList((await getChatAccountMessageList()).data);
   //在线用户列表
@@ -117,7 +137,7 @@ const currentMsgContext = computed(() => {
 });
 //获取聊天内容的头像
 const getChatUrl = (url, position) => {
-  if (position === "left" && (selectIsAi()||selectIsAll())) {
+  if (position === "left" && selectIsAi()) {
     return imageSrc(inputListDataStore.value.find(x=>x.key===currentSelectUser.value).logo)
   }
   return getUrl(url);
@@ -125,7 +145,7 @@ const getChatUrl = (url, position) => {
 //当前聊天框显示的名称
 const currentHeaderName = computed(() => {
   if (selectIsAll()||selectIsAi()) {
-    return inputListDataStore.value.find(x=>x.key===currentSelectUser.value).name;
+    return inputListDataStore.value.find(x=>x.key===currentSelectUser.value).titleName;
   } else {
     return currentSelectUser.value.userName;
   }
@@ -333,27 +353,14 @@ const clearAiMsg = () => {
 
 //转换markdown
 const toMarkDownHtml = (text) => {
-  marked.setOptions({
-        renderer: new marked.Renderer(),
-        highlight: function (code, language) {
-          return codeHandler(code, language);
-        },
-        pedantic: false,
-        gfm: true,//允许 Git Hub标准的markdown
-        tables: true,//支持表格
-        breaks: true,
-        sanitize: false,
-        smartypants: false,
-        xhtml: false,
-        smartLists: true,
-      }
-  );
+  //处理数学公式
+  let soureMd=text.replace(/\\\[/g, '$').replace(/\\\]/g, '$');
   //需要注意代码块样式
-  const soureHtml = marked(text);
+  let soureHtml = marked(soureMd);
   nextTick(() => {
     addCopyEvent();
   })
-  return soureHtml;
+  return  soureHtml;
 }
 //code部分处理、高亮
 const codeHandler = (code, language) => {
@@ -421,7 +428,7 @@ const clickCopyEvent = async function (event) {
   const spanId = event.target.id;
   console.log(codeCopyDic, "codeCopyDic")
   console.log(spanId, "spanId")
-  await navigator.clipboard.writeText(codeCopyDic.filter(x => x.id === spanId)[0].code);
+  await navigator.clipboard.writeText(codeCopyDic.filter(x => x.id == spanId)[0].code);
   ElMessage({
     message: "代码块复制成功",
     type: "success",
@@ -433,7 +440,7 @@ const clickCopyEvent = async function (event) {
 <template>
 
   <div style="position: absolute; top: 0;left: 0;" v-show="isShowTipNumber>0">
-    <p>当前版本：2.0.0</p>
+    <p>当前版本：2.1.0</p>
     <p>tip:官方学习交流群每次发送消息消耗 1 钱钱</p>
     <p>tip:点击聊天窗口右上角“X”可退出</p>
     <p>tip:多人同时在聊天室时，左侧可显示其他成员</p>
@@ -1122,17 +1129,39 @@ ul {
   color: red;
   cursor: pointer; /* 设置鼠标悬浮为手型 */
 }
-
+::v-deep(.katex-html)
+{
+  color: #7B7C7C;
+  font-size: smaller;
+}
 ::v-deep(.nav-ul) {
   border-right: 1px solid #FFFFFF;
   margin-top: 12px;
+  margin-left: 0 !important;
   padding-left: 10px;
   padding-right: 2px;
-
   .nav-li {
     margin: 1.0px 0;
     text-align: right;
     margin-right: 3px;
   }
 }
+.content-msg-common ::v-deep(ul){
+  margin-left: 20px;
+}
+.content-msg-common ::v-deep(ol){
+  margin-left: 20px;
+}
+::v-deep(.katex){
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: larger;
+}
+
+
+
 </style>

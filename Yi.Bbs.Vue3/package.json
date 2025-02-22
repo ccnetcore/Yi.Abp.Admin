@@ -22,6 +22,7 @@
     "i": "^0.3.7",
     "lodash": "^4.17.21",
     "marked": "^4.2.12",
+    "marked-katex-extension": "^5.1.4",
     "mavon-editor": "^3.0.0",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^6.2.1",

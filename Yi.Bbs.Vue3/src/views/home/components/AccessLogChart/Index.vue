@@ -3,7 +3,7 @@
   </template>
   
   <script setup name="AccessLogChart">
-  import { ref, defineEmits, defineProps, defineExpose } from "vue";
+  import { ref } from "vue";
   import useEcharts from "@/hooks/useEcharts";
   import { accessLogEchartsConfig } from "../../hooks/accessLogEchartsConfig";
   const props = defineProps({

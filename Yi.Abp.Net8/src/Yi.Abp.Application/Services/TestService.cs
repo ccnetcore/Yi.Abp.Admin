@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Volo.Abp.Application.Services;
 using Volo.Abp.DistributedLocking;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
 using Volo.Abp.Uow;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Banner;
@@ -214,6 +216,54 @@ namespace Yi.Abp.Application.Services
                     number2 += 1;
             });
             return $"加锁结果：{number},不加锁结果：{number2}";
+        }
+
+        public ICurrentTenant CurrentTenant { get; set; }
+        public IRepository<BannerAggregateRoot> repository { get; set; }
+        /// <summary>
+        /// 多租户
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string>  GetMultiTenantAsync()
+        {
+            using (var uow=UnitOfWorkManager.Begin())
+            {
+                //此处会实例化一个db,连接默认库
+                var defautTenantData1= await repository.GetListAsync();
+                using (CurrentTenant.Change(null,"Default"))
+                {
+                    var defautTenantData2= await repository.GetListAsync();
+                    await repository.InsertAsync(new BannerAggregateRoot
+                    {
+                        Name = "default",
+                    });
+                    var defautTenantData3= await repository.GetListAsync(x=>x.Name=="default");
+                }
+                //此处会实例化一个新的db连接MES
+                using (CurrentTenant.Change(null,"Mes"))
+                {
+                    var otherTenantData1= await repository.GetListAsync();
+                    await repository.InsertAsync(new BannerAggregateRoot
+                    {
+                        Name = "Mes1",
+                    });
+                    var otherTenantData2= await repository.GetListAsync(x=>x.Name=="Mes1");
+                }
+                //此处会复用Mesdb，不会实例化新的db
+                using (CurrentTenant.Change(Guid.Parse("33333333-3d72-4339-9adc-845151f8ada0")))
+                {
+                    var otherTenantData1= await repository.GetListAsync();
+                    await repository.InsertAsync(new BannerAggregateRoot
+                    {
+                        Name = "Mes2",
+                    });
+                    var otherTenantData2= await repository.GetListAsync(x=>x.Name=="Mes2");
+                }
+                //此处会将多库进行一起提交，前面的操作有报错，全部回滚
+                await uow.CompleteAsync();
+                return "根据租户切换不同的数据库，并管理db实例连接，涉及多库事务统一到最后提交";
+            }
+         
         }
     }
 }

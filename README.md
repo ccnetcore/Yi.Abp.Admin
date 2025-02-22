@@ -22,7 +22,7 @@ YiFramework是一个基于.Net8+Abp.vNext+SqlSugar的DDD领域驱动设计后端
 
 Yi框架-一套与SqlSugar一样爽的.Net8开源框架。
 与Sqlsugar理念一致，以用户体验出发。
-适合.Net8学习、Sqlsugar学习 、项目二次开发。
+全生态拥抱AI，接入AI，100%代码经过AI洗礼
 集大成者，终究轮子
 
 （更新频繁，可watching持续关注。）
@@ -73,6 +73,8 @@ Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456�
 ****
 
 ##  🍇  详细到爆炸的Yi框架教程导航：
+
+0. [社区导航大全](https://ccnetcore.com/article/aaa00329-7f35-d3fe-d258-3a0f8380b742/fb8c871b-41fc-21bc-474f-3a154498f42b)
 
 1. [框架快速开始教程](https://ccnetcore.com/article/aaa00329-7f35-d3fe-d258-3a0f8380b742)(已完成)
 2. [框架功能模块教程](https://ccnetcore.com/article/8c464ab3-8ba5-2761-a4b0-3a0f83a9f312)(已完成)

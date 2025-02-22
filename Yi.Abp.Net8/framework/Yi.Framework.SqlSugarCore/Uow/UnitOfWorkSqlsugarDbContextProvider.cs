@@ -15,8 +15,8 @@ namespace Yi.Framework.SqlSugarCore.Uow
     {
         public ILogger<UnitOfWorkSqlsugarDbContextProvider<TDbContext>> Logger { get; set; }
         public IServiceProvider ServiceProvider { get; set; }
-
         private static AsyncLocalDbContextAccessor ContextInstance => AsyncLocalDbContextAccessor.Instance;
+        protected readonly TenantConfigurationWrapper _tenantConfigurationWrapper;
         protected readonly IUnitOfWorkManager UnitOfWorkManager;
         protected readonly IConnectionStringResolver ConnectionStringResolver;
         protected readonly ICancellationTokenProvider CancellationTokenProvider;
@@ -26,26 +26,25 @@ namespace Yi.Framework.SqlSugarCore.Uow
             IUnitOfWorkManager unitOfWorkManager,
             IConnectionStringResolver connectionStringResolver,
             ICancellationTokenProvider cancellationTokenProvider,
-            ICurrentTenant currentTenant
-        )
+            ICurrentTenant currentTenant, TenantConfigurationWrapper tenantConfigurationWrapper)
         {
             UnitOfWorkManager = unitOfWorkManager;
             ConnectionStringResolver = connectionStringResolver;
             CancellationTokenProvider = cancellationTokenProvider;
             CurrentTenant = currentTenant;
+            _tenantConfigurationWrapper = tenantConfigurationWrapper;
             Logger = NullLogger<UnitOfWorkSqlsugarDbContextProvider<TDbContext>>.Instance;
         }
         
         public virtual async Task<TDbContext> GetDbContextAsync()
         {
-
-            var connectionStringName = ConnectionStrings.DefaultConnectionStringName;
-
             //获取当前连接字符串，未多租户时，默认为空
-            var connectionString = await ResolveConnectionStringAsync(connectionStringName);
+            var tenantConfiguration= await _tenantConfigurationWrapper.GetAsync();
+            //由于sqlsugar的特殊性，没有db区分，不再使用连接字符串解析器
+            var connectionStringName = tenantConfiguration.GetCurrentConnectionName();
+            var connectionString = tenantConfiguration.GetCurrentConnectionString();
             var dbContextKey = $"{this.GetType().Name}_{connectionString}";
-
-
+            
             var unitOfWork = UnitOfWorkManager.Current;
             if (unitOfWork == null )
             {
@@ -67,8 +66,6 @@ namespace Yi.Framework.SqlSugarCore.Uow
                 databaseApi = new SqlSugarDatabaseApi(
                   await CreateDbContextAsync(unitOfWork, connectionStringName, connectionString)
                 );
-
-                //await Console.Out.WriteLineAsync(">>>----------------实例化了db"+ ((SqlSugarDatabaseApi)databaseApi).DbContext.SqlSugarClient.ContextID.ToString());
                 //创建的db加入到当前工作单元中
                 unitOfWork.AddDatabaseApi(dbContextKey, databaseApi);
 
@@ -98,7 +95,7 @@ namespace Yi.Framework.SqlSugarCore.Uow
         protected virtual async Task<TDbContext> CreateDbContextWithTransactionAsync(IUnitOfWork unitOfWork)
         {
             //事务key
-            var transactionApiKey = $"SqlsugarCore_{SqlSugarDbContextCreationContext.Current.ConnectionString}";
+            var transactionApiKey = $"SqlSugarCore_{SqlSugarDbContextCreationContext.Current.ConnectionString}";
 
             //尝试查找事务
             var activeTransaction = unitOfWork.FindTransactionApi(transactionApiKey) as SqlSugarTransactionApi;
@@ -123,20 +120,5 @@ namespace Yi.Framework.SqlSugarCore.Uow
 
 
         }
-
-
-        protected virtual async Task<string> ResolveConnectionStringAsync(string connectionStringName)
-        {
-            if (typeof(TDbContext).IsDefined(typeof(IgnoreMultiTenancyAttribute), false))
-            {
-                using (CurrentTenant.Change(null))
-                {
-                    return await ConnectionStringResolver.ResolveAsync(connectionStringName);
-                }
-            }
-
-            return await ConnectionStringResolver.ResolveAsync(connectionStringName);
-        }
-
     }
 }

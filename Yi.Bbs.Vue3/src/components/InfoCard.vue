@@ -37,7 +37,8 @@ const onClickText=()=>{
 .el-divider {
   margin: 0.2rem 0;
 }
-.VisitsLineChart /deep/ .el-card__body{
+
+::v-deep(.VisitsLineChart  .el-card__body){
   padding: 0 20px;
 }
  .box-card-info {

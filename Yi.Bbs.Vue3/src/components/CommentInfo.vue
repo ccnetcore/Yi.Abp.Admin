@@ -131,7 +131,7 @@
   />
 </template>
 <script setup>
-import { onMounted, reactive, ref, defineProps } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getListByDiscussId, add, del } from "@/apis/commentApi.js";
 import AvatarInfo from "./AvatarInfo.vue";

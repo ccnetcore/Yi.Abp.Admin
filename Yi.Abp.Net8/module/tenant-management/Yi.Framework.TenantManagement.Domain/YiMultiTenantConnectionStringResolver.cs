@@ -53,10 +53,8 @@ public class YiMultiTenantConnectionStringResolver : DefaultConnectionStringReso
                 : Options.ConnectionStrings.Default!;
         }
 
-
-
         //Requesting specific connection string...
-        var connString = tenant.ConnectionStrings?.FirstOrDefault().Value;
+        var connString = tenant.ConnectionStrings?.GetOrDefault(connectionStringName);
         if (!connString.IsNullOrWhiteSpace())
         {
             //Found for the tenant
