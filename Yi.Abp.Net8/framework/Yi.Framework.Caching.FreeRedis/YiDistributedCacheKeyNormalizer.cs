@@ -10,28 +10,43 @@ using Volo.Abp.MultiTenancy;
 
 namespace Yi.Framework.Caching.FreeRedis
 {
-    [Dependency(ReplaceServices =true)]
+    /// <summary>
+    /// 缓存键标准化处理器
+    /// 用于处理缓存键的格式化和多租户支持
+    /// </summary>
+    [Dependency(ReplaceServices = true)]
     public class YiDistributedCacheKeyNormalizer : IDistributedCacheKeyNormalizer, ITransientDependency
     {
-        protected ICurrentTenant CurrentTenant { get; }
+        private readonly ICurrentTenant _currentTenant;
+        private readonly AbpDistributedCacheOptions _distributedCacheOptions;
 
-        protected AbpDistributedCacheOptions DistributedCacheOptions { get; }
-
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="currentTenant">当前租户服务</param>
+        /// <param name="distributedCacheOptions">分布式缓存配置选项</param>
         public YiDistributedCacheKeyNormalizer(
             ICurrentTenant currentTenant,
             IOptions<AbpDistributedCacheOptions> distributedCacheOptions)
         {
-            CurrentTenant = currentTenant;
-            DistributedCacheOptions = distributedCacheOptions.Value;
+            _currentTenant = currentTenant;
+            _distributedCacheOptions = distributedCacheOptions.Value;
         }
 
+        /// <summary>
+        /// 标准化缓存键
+        /// </summary>
+        /// <param name="args">缓存键标准化参数</param>
+        /// <returns>标准化后的缓存键</returns>
         public virtual string NormalizeKey(DistributedCacheKeyNormalizeArgs args)
         {
-            var normalizedKey = $"{DistributedCacheOptions.KeyPrefix}{args.Key}";
+            // 添加全局缓存前缀
+            var normalizedKey = $"{_distributedCacheOptions.KeyPrefix}{args.Key}";
 
-            //if (!args.IgnoreMultiTenancy && CurrentTenant.Id.HasValue)
+            //todo 多租户支持已注释，如需启用取消注释即可
+            //if (!args.IgnoreMultiTenancy && _currentTenant.Id.HasValue)
             //{
-            //    normalizedKey = $"t:{CurrentTenant.Id.Value},{normalizedKey}";
+            //    normalizedKey = $"t:{_currentTenant.Id.Value},{normalizedKey}";
             //}
 
             return normalizedKey;

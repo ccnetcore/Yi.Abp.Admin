@@ -6,114 +6,139 @@ using Volo.Abp.Users;
 
 namespace Yi.Framework.BackgroundWorkers.Hangfire;
 
-public class YiTokenAuthorizationFilter : IDashboardAsyncAuthorizationFilter, ITransientDependency
+/// <summary>
+/// Hangfire 仪表盘的令牌认证过滤器
+/// </summary>
+public sealed class YiTokenAuthorizationFilter : IDashboardAsyncAuthorizationFilter, ITransientDependency
 {
-    private const string Bearer = "Bearer: ";
-    private string RequireUser { get; set; } = "cc";
-    private TimeSpan ExpiresTime { get; set; } = TimeSpan.FromMinutes(10);
-    private IServiceProvider _serviceProvider;
+    private const string BearerPrefix = "Bearer ";
+    private const string TokenCookieKey = "Token";
+    private const string HtmlContentType = "text/html";
+    
+    private readonly IServiceProvider _serviceProvider;
+    private string _requiredUsername = "cc";
+    private TimeSpan _tokenExpiration = TimeSpan.FromMinutes(10);
 
+    /// <summary>
+    /// 初始化令牌认证过滤器
+    /// </summary>
+    /// <param name="serviceProvider">服务提供者</param>
     public YiTokenAuthorizationFilter(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public YiTokenAuthorizationFilter SetRequireUser(string userName)
+    /// <summary>
+    /// 设置需要的用户名
+    /// </summary>
+    /// <param name="username">允许访问的用户名</param>
+    /// <returns>当前实例，支持链式调用</returns>
+    public YiTokenAuthorizationFilter SetRequiredUsername(string username)
     {
-        RequireUser = userName;
+        _requiredUsername = username ?? throw new ArgumentNullException(nameof(username));
         return this;
     }
 
-    public YiTokenAuthorizationFilter SetExpiresTime(TimeSpan expiresTime)
+    /// <summary>
+    /// 设置令牌过期时间
+    /// </summary>
+    /// <param name="expiration">过期时间间隔</param>
+    /// <returns>当前实例，支持链式调用</returns>
+    public YiTokenAuthorizationFilter SetTokenExpiration(TimeSpan expiration)
     {
-        ExpiresTime = expiresTime;
+        _tokenExpiration = expiration;
         return this;
     }
 
+    /// <summary>
+    /// 授权验证
+    /// </summary>
+    /// <param name="context">仪表盘上下文</param>
+    /// <returns>是否通过授权</returns>
     public bool Authorize(DashboardContext context)
     {
         var httpContext = context.GetHttpContext();
-        var _currentUser = _serviceProvider.GetRequiredService<ICurrentUser>();
-        //如果验证通过，设置cookies
-        if (_currentUser.IsAuthenticated)
+        var currentUser = _serviceProvider.GetRequiredService<ICurrentUser>();
+
+        if (!currentUser.IsAuthenticated)
         {
-            var cookieOptions = new CookieOptions
-            {
-                Expires = DateTimeOffset.Now + ExpiresTime, // 设置 cookie 过期时间,10分钟
-            };
-
-
-            var authorization = httpContext.Request.Headers["Authorization"].ToString();
-            if (!string.IsNullOrWhiteSpace(authorization))
-            {
-                var token = httpContext.Request.Headers["Authorization"].ToString().Substring(Bearer.Length - 1);
-                httpContext.Response.Cookies.Append("Token", token, cookieOptions);
-            }
-
-            if (_currentUser.UserName == RequireUser)
-            {
-                return true;
-            }
+            SetChallengeResponse(httpContext);
+            return false;
         }
 
-        SetChallengeResponse(httpContext);
-        return false;
+        // 如果验证通过，设置 cookie
+        var authorization = httpContext.Request.Headers.Authorization.ToString();
+        if (!string.IsNullOrWhiteSpace(authorization) && authorization.StartsWith(BearerPrefix))
+        {
+            var token = authorization[BearerPrefix.Length..];
+            SetTokenCookie(httpContext, token);
+        }
+
+        return currentUser.UserName == _requiredUsername;
     }
 
+    /// <summary>
+    /// 设置认证挑战响应
+    /// 当用户未认证时，返回一个包含令牌输入表单的HTML页面
+    /// </summary>
+    /// <param name="httpContext">HTTP 上下文</param>
     private void SetChallengeResponse(HttpContext httpContext)
     {
         httpContext.Response.StatusCode = 401;
-        httpContext.Response.ContentType = "text/html; charset=utf-8";
-        string html = """
-                      <!DOCTYPE html>
-                      <html lang="zh">
-                      <head>
-                          <meta charset="UTF-8">
-                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                          <title>Token 输入</title>
-                          <script>
-                              function sendToken() {
-                                  // 获取输入的 token
-                                  var token = document.getElementById("tokenInput").value;
-                                  token = token.replace('Bearer ','');
-                                  // 构建请求 URL
-                                  var url = "/hangfire";
-                                  // 发送 GET 请求
-                                  fetch(url,{
-                                      headers: {
-                                         'Content-Type': 'application/json', // 设置内容类型为 JSON
-                                         'Authorization': 'Bearer '+encodeURIComponent(token), // 设置授权头，例如使用 Bearer token
-                                        },
-                                      })
-                                      .then(response => {
-                                          if (response.ok) {
-                                              return response.text(); // 或使用 response.json() 如果返回的是 JSON
-                                          }
-                                          throw new Error('Network response was not ok.');
-                                      })
-                                      .then(data => {
-                                          // 处理成功返回的数据
-                                           document.open();
-                                           document.write(data);
-                                           document.close();
-                                      })
-                                      .catch(error => {
-                                          // 处理错误
-                                          console.error('There has been a problem with your fetch operation:', error);
-                                          alert("请求失败: " + error.message);
-                                      });
-                              }
-                          </script>
-                      </head>
-                      <body style="text-align: center;">
-                          <h1>Yi-hangfire</h1>
-                          <h1>输入您的Token，我们将验证您是否为管理员</h1>
-                          <textarea id="tokenInput" placeholder="请输入 token" style="width: 80%;height: 120px;margin: 0 10%;"></textarea>
-                          <button onclick="sendToken()">校验</button>
-                      </body>
-                      </html>
-                      """;
+        httpContext.Response.ContentType = HtmlContentType;
+        
+        var html = @"
+            <html>
+            <head>
+                <title>Hangfire Dashboard Authorization</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 40px; }
+                    .container { max-width: 400px; margin: 0 auto; }
+                    .form-group { margin-bottom: 15px; }
+                    input[type='text'] { width: 100%; padding: 8px; }
+                    button { background: #337ab7; color: white; border: none; padding: 10px 15px; cursor: pointer; }
+                    button:hover { background: #286090; }
+                </style>
+            </head>
+            <body>
+                <div class='container'>
+                    <h2>Authorization Required</h2>
+                    <div class='form-group'>
+                        <input type='text' id='token' placeholder='Enter your Bearer token...' />
+                    </div>
+                    <button onclick='authorize()'>Authorize</button>
+                </div>
+                <script>
+                    function authorize() {
+                        var token = document.getElementById('token').value;
+                        if (token) {
+                            document.cookie = 'Token=' + token + '; path=/';
+                            window.location.reload();
+                        }
+                    }
+                </script>
+            </body>
+            </html>";
+
         httpContext.Response.WriteAsync(html);
+    }
+
+    /// <summary>
+    /// 设置令牌 Cookie
+    /// </summary>
+    /// <param name="httpContext">HTTP 上下文</param>
+    /// <param name="token">令牌值</param>
+    private void SetTokenCookie(HttpContext httpContext, string token)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            Expires = DateTimeOffset.Now.Add(_tokenExpiration),
+            HttpOnly = true,
+            Secure = httpContext.Request.IsHttps,
+            SameSite = SameSiteMode.Lax
+        };
+
+        httpContext.Response.Cookies.Append(TokenCookieKey, token, cookieOptions);
     }
 
     public Task<bool> AuthorizeAsync(DashboardContext context)

@@ -13,8 +13,8 @@
 
         <el-menu-item index="2" @click="enterStart"
          >开始</el-menu-item>
-        <el-menu-item index="3" @click="enterBook"  style="color: red;font-weight: bolder;font-size: large;"
-                     >面试宝典</el-menu-item>
+        <el-menu-item index="3" @click="enterTemp"  style="color: red;font-weight: bolder;font-size: large;"
+                     >Ai炒股</el-menu-item>
         <el-menu-item index="4" @click="enterShop"
         >商城</el-menu-item>
 <!--        <el-sub-menu index="4">-->
@@ -233,8 +233,8 @@ const enterStart = () => {
   router.push("/start");
 }
 
-const enterBook=()=>{
-  router.push("/book");
+const enterTemp=()=>{
+  router.push("/stock");
 }
 const enterShop=()=>{
   router.push("/shop");

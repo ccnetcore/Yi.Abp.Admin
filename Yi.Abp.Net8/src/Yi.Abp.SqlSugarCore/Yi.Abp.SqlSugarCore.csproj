@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\module\digital-collectibles\Yi.Framework.DigitalCollectibles.SqlSugarCore\Yi.Framework.DigitalCollectibles.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.SqlSugarCore\Yi.Framework.Rbac.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\module\ai-stock\Yi.Framework.Stock.SqlSugarCore\Yi.Framework.Stock.SqlSugarCore.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.SqlSugarCore\Yi.Framework.TenantManagement.SqlSugarCore.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain\Yi.Abp.Domain.csproj" />
   </ItemGroup>

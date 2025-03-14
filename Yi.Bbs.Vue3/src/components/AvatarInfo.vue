@@ -37,15 +37,9 @@
 </template>
 <script setup>
 import useUserStore from "@/stores/user";
-import { reactive, watch, onMounted, computed, ref } from "vue";
-import { upload } from "@/apis/fileApi";
-import useAuths from "@/hooks/useAuths";
+import { reactive, watch, onMounted, ref } from "vue";
 import UserInfoCard from "./UserInfoCard/index.vue";
 import UserLimitTag from "./UserLimitTag.vue";
-
-
-const { getToken } = useAuths();
-const isHasToken = getToken();
 
 //userInfo
 //{icon,name,role,id},根据判断userInfo是否等于未定义，来觉得是当前登录用户信息，还是其他人信息

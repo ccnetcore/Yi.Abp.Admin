@@ -75,9 +75,9 @@ export function getUserProfile() {
 }
 
 // 查询bbs个人信息
-export function getBbsUserProfile(userName) {
+export function getBbsUserProfile(userNameOrId) {
   return request({
-    url: `/bbs-user/${userName}`,
+    url: `/bbs-user/${userNameOrId}`,
     method: "get",
   });
 }

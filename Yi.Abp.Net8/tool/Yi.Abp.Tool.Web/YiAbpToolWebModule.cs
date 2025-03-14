@@ -150,7 +150,7 @@ namespace Yi.Abp.Tool.Web
             app.UseYiSwagger();
 
             //请求处理
-            app.UseYiApiHandlinge();
+            app.UseApiInfoHandling();
             //静态资源
             app.UseStaticFiles("/api/app/wwwroot");
             app.UseDefaultFiles();

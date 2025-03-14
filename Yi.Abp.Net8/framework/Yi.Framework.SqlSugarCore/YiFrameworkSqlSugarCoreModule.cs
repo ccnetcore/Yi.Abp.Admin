@@ -18,142 +18,177 @@ using Yi.Framework.SqlSugarCore.Uow;
 
 namespace Yi.Framework.SqlSugarCore
 {
+    /// <summary>
+    /// SqlSugar Core模块
+    /// </summary>
     [DependsOn(typeof(AbpDddDomainModule))]
     public class YiFrameworkSqlSugarCoreModule : AbpModule
     {
         public override Task ConfigureServicesAsync(ServiceConfigurationContext context)
         {
-            var service = context.Services;
-            var configuration = service.GetConfiguration();
+            var services = context.Services;
+            var configuration = services.GetConfiguration();
+
+            // 配置数据库连接选项
+            ConfigureDbOptions(services, configuration);
+
+            // 配置GUID生成器
+            ConfigureGuidGenerator(services);
+
+            // 注册仓储和服务
+            RegisterRepositories(services);
+
+            return Task.CompletedTask;
+        }
+
+        private void ConfigureDbOptions(IServiceCollection services, IConfiguration configuration)
+        {
             var section = configuration.GetSection("DbConnOptions");
             Configure<DbConnOptions>(section);
+
             var dbConnOptions = new DbConnOptions();
             section.Bind(dbConnOptions);
 
-            //很多人遗漏了这一点，不同的数据库，对于主键的使用规约不一样，需要根据数据库进行判断
-            SequentialGuidType guidType;
-            switch (dbConnOptions.DbType)
-            {
-                case DbType.MySql:
-                case DbType.PostgreSQL:
-                    guidType= SequentialGuidType.SequentialAsString;
-                    break;
-                case DbType.SqlServer:
-                    guidType = SequentialGuidType.SequentialAtEnd;
-                    break;
-                case DbType.Oracle:
-                    guidType = SequentialGuidType.SequentialAsBinary;
-                    break;
-                default:
-                    guidType = SequentialGuidType.SequentialAtEnd;
-                    break;
-            }
+            // 配置默认连接字符串
+            Configure<AbpDbConnectionOptions>(options => 
+            { 
+                options.ConnectionStrings.Default = dbConnOptions.Url; 
+            });
+
+            // 配置默认租户
+            ConfigureDefaultTenant(services, dbConnOptions);
+        }
+
+        private void ConfigureGuidGenerator(IServiceCollection services)
+        {
+            var dbConnOptions = services.GetConfiguration()
+                .GetSection("DbConnOptions")
+                .Get<DbConnOptions>();
+
+            var guidType = GetSequentialGuidType(dbConnOptions?.DbType);
             Configure<AbpSequentialGuidGeneratorOptions>(options =>
             {
                 options.DefaultSequentialGuidType = guidType;
             });
-            
-            service.TryAddTransient<ISqlSugarDbContext, SqlSugarDbContextFactory>();
-
-            //不开放sqlsugarClient
-            //service.AddTransient<ISqlSugarClient>(x => x.GetRequiredService<ISqlsugarDbContext>().SqlSugarClient);
-
-
-            service.AddTransient(typeof(IRepository<>), typeof(SqlSugarRepository<>));
-            service.AddTransient(typeof(IRepository<,>), typeof(SqlSugarRepository<,>));
-            service.AddTransient(typeof(ISqlSugarRepository<>), typeof(SqlSugarRepository<>));
-            service.AddTransient(typeof(ISqlSugarRepository<,>), typeof(SqlSugarRepository<,>));
-
-            service.AddTransient(typeof(ISugarDbContextProvider<>), typeof(UnitOfWorkSqlsugarDbContextProvider<>));
-            //替换Sqlsugar默认序列化器，用来解决.Select()不支持嵌套对象/匿名对象的非公有访问器 值无法绑定,如Id属性
-            context.Services.AddSingleton<ISerializeService, SqlSugarNonPublicSerializer>();
-
-            var dbConfig = section.Get<DbConnOptions>();
-            //将默认db传递给abp连接字符串模块
-            Configure<AbpDbConnectionOptions>(x => { x.ConnectionStrings.Default = dbConfig.Url; });
-            //配置abp默认租户，对接abp模块
-            Configure<AbpDefaultTenantStoreOptions>(x => {
-                var tenantList = x.Tenants.ToList();
-                foreach(var tenant in tenantList)
-                {
-                    tenant.NormalizedName = tenant.Name.Contains("@") ? 
-                        tenant.Name.Substring(0, tenant.Name.LastIndexOf("@")) : 
-                        tenant.Name;
-                }
-                tenantList.Insert(0, new TenantConfiguration
-                {
-                    Id = Guid.Empty,
-                    Name = $"{ConnectionStrings.DefaultConnectionStringName}",
-                    NormalizedName = ConnectionStrings.DefaultConnectionStringName,
-                    ConnectionStrings = new ConnectionStrings() { { ConnectionStrings.DefaultConnectionStringName, dbConfig.Url } },
-                    IsActive = true
-                });
-                x.Tenants = tenantList.ToArray();
-            });
-             context.Services.AddYiDbContext<DefaultSqlSugarDbContext>();
-            return Task.CompletedTask;
         }
 
+        private void RegisterRepositories(IServiceCollection services)
+        {
+            services.TryAddTransient<ISqlSugarDbContext, SqlSugarDbContextFactory>();
+            services.AddTransient(typeof(IRepository<>), typeof(SqlSugarRepository<>));
+            services.AddTransient(typeof(IRepository<,>), typeof(SqlSugarRepository<,>));
+            services.AddTransient(typeof(ISqlSugarRepository<>), typeof(SqlSugarRepository<>));
+            services.AddTransient(typeof(ISqlSugarRepository<,>), typeof(SqlSugarRepository<,>));
+            services.AddTransient(typeof(ISugarDbContextProvider<>), typeof(UnitOfWorkSqlsugarDbContextProvider<>));
+            services.AddSingleton<ISerializeService, SqlSugarNonPublicSerializer>();
+            services.AddYiDbContext<DefaultSqlSugarDbContext>();
+        }
+
+        private void ConfigureDefaultTenant(IServiceCollection services, DbConnOptions dbConfig)
+        {
+            Configure<AbpDefaultTenantStoreOptions>(options => 
+            {
+                var tenants = options.Tenants.ToList();
+                
+                // 规范化租户名称
+                foreach (var tenant in tenants)
+                {
+                    tenant.NormalizedName = tenant.Name.Contains("@") 
+                        ? tenant.Name.Substring(0, tenant.Name.LastIndexOf("@")) 
+                        : tenant.Name;
+                }
+
+                // 添加默认租户
+                tenants.Insert(0, new TenantConfiguration
+                {
+                    Id = Guid.Empty,
+                    Name = ConnectionStrings.DefaultConnectionStringName,
+                    NormalizedName = ConnectionStrings.DefaultConnectionStringName,
+                    ConnectionStrings = new ConnectionStrings 
+                    { 
+                        { ConnectionStrings.DefaultConnectionStringName, dbConfig.Url } 
+                    },
+                    IsActive = true
+                });
+
+                options.Tenants = tenants.ToArray();
+            });
+        }
+
+        private SequentialGuidType GetSequentialGuidType(DbType? dbType)
+        {
+            return dbType switch
+            {
+                DbType.MySql or DbType.PostgreSQL => SequentialGuidType.SequentialAsString,
+                DbType.SqlServer => SequentialGuidType.SequentialAtEnd,
+                DbType.Oracle => SequentialGuidType.SequentialAsBinary,
+                _ => SequentialGuidType.SequentialAtEnd
+            };
+        }
 
         public override async Task OnPreApplicationInitializationAsync(ApplicationInitializationContext context)
         {
-            //进行CodeFirst
-            var service = context.ServiceProvider;
-            var options = service.GetRequiredService<IOptions<DbConnOptions>>().Value;
+            var serviceProvider = context.ServiceProvider;
+            var options = serviceProvider.GetRequiredService<IOptions<DbConnOptions>>().Value;
+            var logger = serviceProvider.GetRequiredService<ILogger<YiFrameworkSqlSugarCoreModule>>();
 
-            var logger = service.GetRequiredService<ILogger<YiFrameworkSqlSugarCoreModule>>();
+            // 记录配置信息
+            LogConfiguration(logger, options);
 
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine();
-            sb.AppendLine("==========Yi-SQL配置:==========");
-            sb.AppendLine($"数据库连接字符串：{options.Url}");
-            sb.AppendLine($"数据库类型：{options.DbType.ToString()}");
-            sb.AppendLine($"是否开启种子数据：{options.EnabledDbSeed}");
-            sb.AppendLine($"是否开启CodeFirst：{options.EnabledCodeFirst}");
-            sb.AppendLine($"是否开启Saas多租户：{options.EnabledSaasMultiTenancy}");
-            sb.AppendLine("===============================");
-
-
-            logger.LogInformation(sb.ToString());
-
+            // 初始化数据库
             if (options.EnabledCodeFirst)
             {
-                CodeFirst(service);
+                await InitializeDatabase(serviceProvider);
             }
 
+            // 初始化种子数据
             if (options.EnabledDbSeed)
             {
-                await DataSeedAsync(service);
+                await InitializeSeedData(serviceProvider);
             }
         }
 
-        private void CodeFirst(IServiceProvider service)
+        private void LogConfiguration(ILogger logger, DbConnOptions options)
         {
-            var moduleContainer = service.GetRequiredService<IModuleContainer>();
-            var db = service.GetRequiredService<ISqlSugarDbContext>().SqlSugarClient;
+            var logMessage = new StringBuilder()
+                .AppendLine()
+                .AppendLine("==========Yi-SQL配置:==========")
+                .AppendLine($"数据库连接字符串：{options.Url}")
+                .AppendLine($"数据库类型：{options.DbType}")
+                .AppendLine($"是否开启种子数据：{options.EnabledDbSeed}")
+                .AppendLine($"是否开启CodeFirst：{options.EnabledCodeFirst}")
+                .AppendLine($"是否开启Saas多租户：{options.EnabledSaasMultiTenancy}")
+                .AppendLine("===============================")
+                .ToString();
 
-            //尝试创建数据库
+            logger.LogInformation(logMessage);
+        }
+
+        private async Task InitializeDatabase(IServiceProvider serviceProvider)
+        {
+            var moduleContainer = serviceProvider.GetRequiredService<IModuleContainer>();
+            var db = serviceProvider.GetRequiredService<ISqlSugarDbContext>().SqlSugarClient;
+
+            // 创建数据库
             db.DbMaintenance.CreateDatabase();
 
-            List<Type> types = new List<Type>();
-            foreach (var module in moduleContainer.Modules)
-            {
-                types.AddRange(module.Assembly.GetTypes()
-                    .Where(x => x.GetCustomAttribute<IgnoreCodeFirstAttribute>() == null)
-                    .Where(x => x.GetCustomAttribute<SugarTable>() != null)
-                    .Where(x => x.GetCustomAttribute<SplitTableAttribute>() is null));
-            }
+            // 获取需要创建表的实体类型
+            var entityTypes = moduleContainer.Modules
+                .SelectMany(m => m.Assembly.GetTypes())
+                .Where(t => t.GetCustomAttribute<IgnoreCodeFirstAttribute>() == null
+                    && t.GetCustomAttribute<SugarTable>() != null
+                    && t.GetCustomAttribute<SplitTableAttribute>() == null)
+                .ToList();
 
-            if (types.Count > 0)
+            if (entityTypes.Any())
             {
-                db.CopyNew().CodeFirst.InitTables(types.ToArray());
+                db.CopyNew().CodeFirst.InitTables(entityTypes.ToArray());
             }
         }
 
-        private async Task DataSeedAsync(IServiceProvider service)
+        private async Task InitializeSeedData(IServiceProvider serviceProvider)
         {
-            var dataSeeder = service.GetRequiredService<IDataSeeder>();
+            var dataSeeder = serviceProvider.GetRequiredService<IDataSeeder>();
             await dataSeeder.SeedAsync();
         }
     }

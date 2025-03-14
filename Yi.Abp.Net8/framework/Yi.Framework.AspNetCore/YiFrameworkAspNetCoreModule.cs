@@ -19,15 +19,24 @@ using Yi.Framework.Core;
 
 namespace Yi.Framework.AspNetCore
 {
-    [DependsOn(typeof(YiFrameworkCoreModule)
-        )]
+    /// <summary>
+    /// Yi框架ASP.NET Core模块
+    /// </summary>
+    [DependsOn(typeof(YiFrameworkCoreModule))]
     public class YiFrameworkAspNetCoreModule : AbpModule
     {
+        /// <summary>
+        /// 配置服务后的处理
+        /// </summary>
         public override void PostConfigureServices(ServiceConfigurationContext context)
         {
             var services = context.Services;
-            services.Replace(new ServiceDescriptor(typeof(IWebClientInfoProvider),
-                typeof(RealIpHttpContextWebClientInfoProvider), ServiceLifetime.Transient));
+
+            // 替换默认的WebClientInfoProvider为支持代理的实现
+            services.Replace(new ServiceDescriptor(
+                typeof(IWebClientInfoProvider),
+                typeof(RealIpHttpContextWebClientInfoProvider), 
+                ServiceLifetime.Transient));
         }
     }
 }

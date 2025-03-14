@@ -1,49 +1,55 @@
 ﻿namespace Yi.Framework.AspNetCore
 {
+    /// <summary>
+    /// 远程服务成功响应信息
+    /// </summary>
     [Serializable]
     public class RemoteServiceSuccessInfo
     {
         /// <summary>
-        /// Creates a new instance of <see cref="RemoteServiceSuccessInfo"/>.
+        /// 获取或设置响应代码
+        /// </summary>
+        public string? Code { get; private set; }
+
+        /// <summary>
+        /// 获取或设置响应消息
+        /// </summary>
+        public string? Message { get; private set; }
+
+        /// <summary>
+        /// 获取或设置详细信息
+        /// </summary>
+        public string? Details { get; private set; }
+
+        /// <summary>
+        /// 获取或设置响应数据
+        /// </summary>
+        public object? Data { get; private set; }
+
+        /// <summary>
+        /// 初始化远程服务成功响应信息的新实例
         /// </summary>
         public RemoteServiceSuccessInfo()
         {
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="RemoteServiceSuccessInfo"/>.
+        /// 使用指定参数初始化远程服务成功响应信息的新实例
         /// </summary>
-        /// <param name="code">Error code</param>
-        /// <param name="details">Error details</param>
-        /// <param name="message">Error message</param>
-        /// <param name="data">Error data</param>
-        public RemoteServiceSuccessInfo(string message, string? details = null, string? code = null, object? data = null)
+        /// <param name="message">响应消息</param>
+        /// <param name="details">详细信息</param>
+        /// <param name="code">响应代码</param>
+        /// <param name="data">响应数据</param>
+        public RemoteServiceSuccessInfo(
+            string message, 
+            string? details = null, 
+            string? code = null, 
+            object? data = null)
         {
             Message = message;
             Details = details;
             Code = code;
             Data = data;
         }
-
-        /// <summary>
-        /// code.
-        /// </summary>
-        public string? Code { get; set; }
-
-        /// <summary>
-        /// message.
-        /// </summary>
-        public string? Message { get; set; }
-
-        /// <summary>
-        /// details.
-        /// </summary>
-        public string? Details { get; set; }
-
-        /// <summary>
-        /// data.
-        /// </summary>
-        public object? Data { get; set; }
-
     }
 }

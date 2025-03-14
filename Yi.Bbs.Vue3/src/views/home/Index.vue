@@ -108,10 +108,10 @@ margin: 10px auto;">
           <el-col v-if="!isIcp" :span="24">
             <InfoCard header="活动">
               <template #content>
-                <div class="top">祝各位，蛇年大吉~</div>
+                <div class="top">与AI同行，创造无限可能</div>
                 <el-row class="active">
 
-                  <el-col style="padding: 5px 0px;" v-for="item in activeList" :span="6" @click="handleToRouter(item.path)">
+                  <el-col style="padding: 5px 0px;box-shadow:none" v-for="item in activeList" :span="6" @click="handleToRouter(item.path)">
 
                     <el-icon color="#70aafb" size="30px">
                       <component :is="item.icon"></component>
@@ -132,7 +132,9 @@ margin: 10px auto;">
               </template>
             </InfoCard>
 
-            <el-dialog v-model="accessLogDialogVisible" title="全站历史统计" width="1200px" center>
+          
+          </el-col>
+          <el-dialog v-model="accessLogDialogVisible" title="全站历史统计" width="1200px" center>
               <el-tabs v-model="accessLogTab">
                 <el-tab-pane label="访问统计（近3月）" name="AccessLogChart"
                              style="display: flex;justify-content: center;">
@@ -147,8 +149,6 @@ margin: 10px auto;">
 
 
             </el-dialog>
-          </el-col>
-
           <el-col :span="24">
             <InfoCard header="简介" text="">
               <template #content>
@@ -214,7 +214,7 @@ margin: 10px auto;">
             </template>
           </el-col>
 
-          <el-col :span="24" style="background: transparent">
+          <el-col :span="24" style="background-color: #ffffff;">
             <BottomInfo/>
           </el-col>
         </el-row>
@@ -311,10 +311,11 @@ const activeList = [
   {name: "排行榜", path: "/money", icon: "Money"},
   {name: "开始", path: "/start", icon: "Position"},
   {name: "聊天室", path: "/chat", icon: "ChatRound"},
-    
+
   {name: "商城", path: "/shop", icon: "ShoppingCart"},
   {name: "数字藏品", path: "/dc", icon: "Trophy"},
   {name: "面试宝典", path: "/book", icon: "Memo"},
+  {name: "AI炒股", path: "/stock", icon: "TrendCharts"},
   // {name: "小程序", path: "/", icon: "Position"},
   // {name: "公众号", path: "/", icon: "ChatRound"},
 ];
@@ -431,7 +432,6 @@ const registerLogOptins = computed(() => {
 });
 
 const onClickMoneyTop = () => {
-
   router.push("/money");
 };
 
@@ -526,27 +526,41 @@ const onClickToWeChat = () => {
 </script>
 <style scoped lang="scss">
 .home-box {
-  width: 1300px;
-  height: 100%;
-
+  width: 100%;  /* 改为100%使其更具响应性 */
+  max-width: 1300px;  /* 保持最大宽度限制 */
+  margin: 0 auto;  /* 居中显示 */
+  
+  .left-div .el-col,
+  .right-div .el-col {
+    background-color: #ffffff;
+    margin-bottom: 1rem;
+    border-radius: 8px;  /* 增加圆角 */
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);  /* 添加微妙阴影 */
+    transition: all 0.3s ease;  /* 过渡效果 */
+    
+    &:hover {
+      transform: translateY(-5px);  /* 悬停时微抬升 */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);  /* 悬停时增强阴影 */
+    }
+  }
+  
+  /* 简介卡片样式特别处理 */
   .introduce {
-    color: rgba(0, 0, 0, 0.45);
-    font-size: small;
+    color: rgba(0, 0, 0, 0.65);  /* 更深的颜色提高对比度 */
+    font-size: 14px;  /* 稍微增大字体 */
+    line-height: 1.6;  /* 增加行高 */
+    padding: 15px 5px;  /* 增加内边距 */
+    letter-spacing: 0.5px;  /* 字间距 */
+    
+    span {
+      color: #1890ff;
+      font-weight: 600;  /* 加粗 */
+      padding: 0 2px;  /* 增加内边距 */
+    }
   }
 
   .plate {
     background: transparent !important;
-  }
-
-  .left-div .el-col {
-    background-color: #ffffff;
-
-    margin-bottom: 1rem;
-  }
-
-  .right-div .el-col {
-    background-color: #ffffff;
-    margin-bottom: 1rem;
   }
 
   .carousel-font {
@@ -633,43 +647,40 @@ const onClickToWeChat = () => {
 
   .active {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: center;
-    color: #8a919f;
-
-
+    /* gap: 10px; */
+    /* padding: 15px; */
+    /* background-color: #f9f9f9; */
+    border-radius: 8px;
+    
     .el-col {
       flex-direction: column;
       align-items: center;
       display: flex;
       cursor: pointer;
-      padding: 10px 0px;
-    }
-
-    .el-col:hover {
-      background-color: #cce1ff;
-      /* 悬浮时背景色变化 */
-      color: #70aafb;
-      /* 悬浮时文字颜色变化 */
-    }
-
-    &-btn {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 74px;
-      height: 36px;
-      border-radius: 4px;
-      border: 1px solid rgba(30, 128, 255, 0.3);
-      background-color: rgba(30, 128, 255, 0.1);
-      color: #1e80ff;
+      padding: 15px 0;  /* 增加内边距 */
+      border-radius: 6px;  /* 圆角 */
+      transition: all 0.3s ease;
+      
+      .el-icon {
+        font-size: 24px;  /* 增大图标 */
+        margin-bottom: 8px;  /* 增加与文字间距 */
+        color: #606266;  /* 初始颜色 */
+      }
+      
+      &:hover {
+        background-color: #ebf5ff;  /* 更柔和的悬停色 */
+        color: #409eff;  /* 文字颜色变化 */
+        
+        .el-icon {
+          color: #409eff;  /* 图标颜色跟随变化 */
+          transform: scale(1.1);  /* 图标微放大 */
+        }
+      }
     }
   }
 
-  .VisitsLineChart > > > .el-card__body {
-    padding: 0.5rem;
-  }
 
   .VisitsLineChart p {
     display: flex;
@@ -727,21 +738,92 @@ const onClickToWeChat = () => {
 }
 
 
-/* 设置滚动条的样式 */
+/* 美化滚动条样式 */
 .scrollable-div::-webkit-scrollbar {
-  width: 3px; /* 设置滚动条的宽度 */
+  width: 6px;  /* 稍微加宽 */
 }
 
 .scrollable-div::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 滚动条轨道背景 */
+  background: #f5f5f5; 
+  border-radius: 10px;
 }
 
 .scrollable-div::-webkit-scrollbar-thumb {
-  background: #cccccc; /* 滚动条的颜色 */
-  border-radius: 10px; /* 设置圆角 */
+  background: linear-gradient(to bottom, #e0e0e0, #bdbdbd);  /* 渐变色滚动条 */
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 .scrollable-div::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 滚动条 hover 时的颜色 */
+  background: linear-gradient(to bottom, #bdbdbd, #9e9e9e);  /* 悬停时颜色变深 */
 }
+
+/* 优化切换按钮 */
+.switch-span {
+  display: inline-block;
+  padding: 5px 12px;
+  background-color: #ecf5ff;
+  color: #409eff;
+  border-radius: 20px;  /* 更圆润的形状 */
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(64, 158, 255, 0.15);  /* 添加微妙阴影 */
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    background-color: #409eff;
+    color: #fff !important;/* 悬浮时文字变为白色 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(64, 158, 255, 0.25);
+  }
+  
+  &:active {
+    transform: translateY(0);  /* 点击时回到原位 */
+    box-shadow: 0 1px 3px rgba(64, 158, 255, 0.2);  /* 点击时减弱阴影 */
+  }
+  
+  /* 添加图标指示切换功能 */
+  &::after {
+    content: "⟳";  /* 添加旋转图标 */
+    margin-left: 5px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover::after {
+    transform: rotate(180deg);  /* 悬停时图标旋转 */
+  }
+}
+
+// /* 媒体查询添加对不同屏幕尺寸的适应 */
+// @media (max-width: 1400px) {
+//   .home-box {
+//     width: 95%;
+//   }
+// }
+
+// @media (max-width: 768px) {
+//   .home-box {
+//     width: 100%;
+    
+//     .analyse {
+//       flex-direction: column;
+//       height: auto;
+      
+//       .item {
+//         width: 90%;
+//         margin-bottom: 15px;
+//       }
+//     }
+    
+//     .active {
+//       .el-col {
+//         width: 25%;  /* 小屏幕时每行显示4个 */
+//       }
+//     }
+//   }
+// }
 </style>

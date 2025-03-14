@@ -34,7 +34,7 @@ public class DiscussLableRepository : SqlSugarRepository<DiscussLableAggregateRo
                 return entities.Adapt<List<DiscussLableCacheItem>>();
             }, () =>
                 new DistributedCacheEntryOptions()
-                    { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(2) }
+                    { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(2) },hideErrors:true
         );
         return cahce.ToDictionary(x => x.Id);
     }

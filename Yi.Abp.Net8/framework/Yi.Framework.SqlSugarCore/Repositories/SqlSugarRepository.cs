@@ -21,34 +21,39 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         public ISugarQueryable<TEntity> _DbQueryable => _Db.Queryable<TEntity>();
 
-        private ISugarDbContextProvider<ISqlSugarDbContext> _sugarDbContextProvider;
+        private readonly ISugarDbContextProvider<ISqlSugarDbContext> _dbContextProvider;
+        
+        /// <summary>
+        /// 异步查询执行器
+        /// </summary>
         public IAsyncQueryableExecuter AsyncExecuter { get; }
 
+        /// <summary>
+        /// 是否启用变更追踪
+        /// </summary>
         public bool? IsChangeTrackingEnabled => false;
 
-        public SqlSugarRepository(ISugarDbContextProvider<ISqlSugarDbContext> sugarDbContextProvider)
+        public SqlSugarRepository(ISugarDbContextProvider<ISqlSugarDbContext> dbContextProvider)
         {
-            _sugarDbContextProvider = sugarDbContextProvider;
+            _dbContextProvider = dbContextProvider;
         }
 
         /// <summary>
-        /// 获取DB
+        /// 获取数据库上下文
         /// </summary>
-        /// <returns></returns>
         public virtual async Task<ISqlSugarClient> GetDbContextAsync()
         {
-            var db = (await _sugarDbContextProvider.GetDbContextAsync()).SqlSugarClient;
-            return db;
+            var dbContext = await _dbContextProvider.GetDbContextAsync();
+            return dbContext.SqlSugarClient;
         }
 
         /// <summary>
-        /// 获取简单Db
+        /// 获取简单数据库客户端
         /// </summary>
-        /// <returns></returns>
         public virtual async Task<SimpleClient<TEntity>> GetDbSimpleClientAsync()
         {
-            var db = await GetDbContextAsync();
-            return new SimpleClient<TEntity>(db);
+            var dbContext = await GetDbContextAsync();
+            return new SimpleClient<TEntity>(dbContext);
         }
 
         #region Abp模块
@@ -166,7 +171,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
         {
             return (await GetDbSimpleClientAsync()).AsInsertable(insertObj);
         }
-
+        
         public virtual async Task<IInsertable<TEntity>> AsInsertable(TEntity[] insertObjs)
         {
             return (await GetDbSimpleClientAsync()).AsInsertable(insertObjs);

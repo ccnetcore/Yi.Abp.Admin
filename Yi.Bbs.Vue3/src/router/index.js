@@ -195,7 +195,14 @@ const router = createRouter({
         },
       ],
     },
-
+    {
+      name: "stock",
+      path: "/stock",
+      component: () => import("../views/stock/Index.vue"),
+      meta: {
+        title: "股票",
+      },
+    },
     {
       path: "/hub",
       name: "hub",

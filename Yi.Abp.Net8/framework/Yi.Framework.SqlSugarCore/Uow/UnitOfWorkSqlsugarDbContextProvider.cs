@@ -13,112 +13,121 @@ namespace Yi.Framework.SqlSugarCore.Uow
 {
     public class UnitOfWorkSqlsugarDbContextProvider<TDbContext> : ISugarDbContextProvider<TDbContext> where TDbContext : ISqlSugarDbContext
     {
+        /// <summary>
+        /// 日志记录器
+        /// </summary>
         public ILogger<UnitOfWorkSqlsugarDbContextProvider<TDbContext>> Logger { get; set; }
+
+        /// <summary>
+        /// 服务提供者
+        /// </summary>
         public IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
+        /// 数据库上下文访问器实例
+        /// </summary>
         private static AsyncLocalDbContextAccessor ContextInstance => AsyncLocalDbContextAccessor.Instance;
-        protected readonly TenantConfigurationWrapper _tenantConfigurationWrapper;
-        protected readonly IUnitOfWorkManager UnitOfWorkManager;
-        protected readonly IConnectionStringResolver ConnectionStringResolver;
-        protected readonly ICancellationTokenProvider CancellationTokenProvider;
-        protected readonly ICurrentTenant CurrentTenant;
+
+        private readonly TenantConfigurationWrapper _tenantConfigurationWrapper;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
+        private readonly IConnectionStringResolver _connectionStringResolver;
+        private readonly ICancellationTokenProvider _cancellationTokenProvider;
+        private readonly ICurrentTenant _currentTenant;
 
         public UnitOfWorkSqlsugarDbContextProvider(
             IUnitOfWorkManager unitOfWorkManager,
             IConnectionStringResolver connectionStringResolver,
             ICancellationTokenProvider cancellationTokenProvider,
-            ICurrentTenant currentTenant, TenantConfigurationWrapper tenantConfigurationWrapper)
+            ICurrentTenant currentTenant, 
+            TenantConfigurationWrapper tenantConfigurationWrapper)
         {
-            UnitOfWorkManager = unitOfWorkManager;
-            ConnectionStringResolver = connectionStringResolver;
-            CancellationTokenProvider = cancellationTokenProvider;
-            CurrentTenant = currentTenant;
+            _unitOfWorkManager = unitOfWorkManager;
+            _connectionStringResolver = connectionStringResolver;
+            _cancellationTokenProvider = cancellationTokenProvider;
+            _currentTenant = currentTenant;
             _tenantConfigurationWrapper = tenantConfigurationWrapper;
             Logger = NullLogger<UnitOfWorkSqlsugarDbContextProvider<TDbContext>>.Instance;
         }
-        
+
+        /// <summary>
+        /// 获取数据库上下文
+        /// </summary>
         public virtual async Task<TDbContext> GetDbContextAsync()
         {
-            //获取当前连接字符串，未多租户时，默认为空
-            var tenantConfiguration= await _tenantConfigurationWrapper.GetAsync();
-            //由于sqlsugar的特殊性，没有db区分，不再使用连接字符串解析器
+            // 获取当前租户配置
+            var tenantConfiguration = await _tenantConfigurationWrapper.GetAsync();
+            
+            // 获取连接字符串信息
             var connectionStringName = tenantConfiguration.GetCurrentConnectionName();
             var connectionString = tenantConfiguration.GetCurrentConnectionString();
             var dbContextKey = $"{this.GetType().Name}_{connectionString}";
-            
-            var unitOfWork = UnitOfWorkManager.Current;
-            if (unitOfWork == null )
-            {
-                //var dbContext = (TDbContext)ServiceProvider.GetRequiredService<ISqlSugarDbContext>();
-                //如果不启用工作单元，创建一个新的db，不开启事务即可
-                //return dbContext;
-                
-                //2024-11-30，改回强制性使用工作单元，否则容易造成歧义
-                throw new AbpException("DbContext 只能在工作单元内工作，当前DbContext没有工作单元，如需创建新线程并发操作，请手动创建工作单元");
 
+            var unitOfWork = _unitOfWorkManager.Current;
+            if (unitOfWork == null)
+            {
+                throw new AbpException(
+                    "DbContext 只能在工作单元内工作，当前DbContext没有工作单元，如需创建新线程并发操作，请手动创建工作单元");
             }
-            //尝试当前工作单元获取db
+
+            // 尝试从当前工作单元获取数据库API
             var databaseApi = unitOfWork.FindDatabaseApi(dbContextKey);
 
-            //当前没有db创建一个新的db
+            // 当前没有数据库API则创建新的
             if (databaseApi == null)
             {
-                //db根据连接字符串来创建
                 databaseApi = new SqlSugarDatabaseApi(
-                  await CreateDbContextAsync(unitOfWork, connectionStringName, connectionString)
+                    await CreateDbContextAsync(unitOfWork, connectionStringName, connectionString)
                 );
-                //创建的db加入到当前工作单元中
                 unitOfWork.AddDatabaseApi(dbContextKey, databaseApi);
-
             }
+
             return (TDbContext)((SqlSugarDatabaseApi)databaseApi).DbContext;
         }
 
-
-
-        protected virtual async Task<TDbContext> CreateDbContextAsync(IUnitOfWork unitOfWork, string connectionStringName, string connectionString)
+        /// <summary>
+        /// 创建数据库上下文
+        /// </summary>
+        protected virtual async Task<TDbContext> CreateDbContextAsync(
+            IUnitOfWork unitOfWork, 
+            string connectionStringName, 
+            string connectionString)
         {
             var creationContext = new SqlSugarDbContextCreationContext(connectionStringName, connectionString);
-            //将连接key进行传值
             using (SqlSugarDbContextCreationContext.Use(creationContext))
             {
-                var dbContext = await CreateDbContextAsync(unitOfWork);
-                return dbContext;
+                return await CreateDbContextAsync(unitOfWork);
             }
         }
 
+        /// <summary>
+        /// 根据工作单元创建数据库上下文
+        /// </summary>
         protected virtual async Task<TDbContext> CreateDbContextAsync(IUnitOfWork unitOfWork)
         {
             return unitOfWork.Options.IsTransactional
                 ? await CreateDbContextWithTransactionAsync(unitOfWork)
                 : unitOfWork.ServiceProvider.GetRequiredService<TDbContext>();
         }
+
+        /// <summary>
+        /// 创建带事务的数据库上下文
+        /// </summary>
         protected virtual async Task<TDbContext> CreateDbContextWithTransactionAsync(IUnitOfWork unitOfWork)
         {
-            //事务key
             var transactionApiKey = $"SqlSugarCore_{SqlSugarDbContextCreationContext.Current.ConnectionString}";
-
-            //尝试查找事务
             var activeTransaction = unitOfWork.FindTransactionApi(transactionApiKey) as SqlSugarTransactionApi;
 
-            //该db还没有进行开启事务
             if (activeTransaction == null)
             {
-                //获取到db添加事务即可
                 var dbContext = unitOfWork.ServiceProvider.GetRequiredService<TDbContext>();
-                var transaction = new SqlSugarTransactionApi(
-                          dbContext
-                      );
+                var transaction = new SqlSugarTransactionApi(dbContext);
                 unitOfWork.AddTransactionApi(transactionApiKey, transaction);
 
                 await dbContext.SqlSugarClient.Ado.BeginTranAsync();
                 return dbContext;
             }
-            else
-            {
-                return (TDbContext)activeTransaction.GetDbContext();
-            }
 
-
+            return (TDbContext)activeTransaction.GetDbContext();
         }
     }
 }

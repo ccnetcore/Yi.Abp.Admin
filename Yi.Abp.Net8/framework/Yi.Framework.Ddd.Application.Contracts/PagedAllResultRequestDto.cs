@@ -2,48 +2,50 @@
 
 namespace Yi.Framework.Ddd.Application.Contracts
 {
+    /// <summary>
+    /// 分页查询请求DTO，包含时间范围和自定义排序功能
+    /// </summary>
     public class PagedAllResultRequestDto : PagedAndSortedResultRequestDto, IPagedAllResultRequestDto
     {
         /// <summary>
-        /// 查询开始时间条件
+        /// 查询开始时间
         /// </summary>
         public DateTime? StartTime { get; set; }
 
         /// <summary>
-        /// 查询结束时间条件
+        /// 查询结束时间
         /// </summary>
         public DateTime? EndTime { get; set; }
 
         /// <summary>
-        /// 排序列名，字段名对应前端
+        /// 排序列名
         /// </summary>
         public string? OrderByColumn { get; set; }
 
         /// <summary>
-        /// 是否顺序，字段名对应前端
+        /// 排序方向（ascending/descending）
         /// </summary>
         public string? IsAsc { get; set; }
 
         /// <summary>
-        /// 是否顺序
+        /// 是否为升序排序
         /// </summary>
-        public bool CanAsc => IsAsc?.ToLower() == "ascending" ? true : false;
+        public bool IsAscending => string.Equals(IsAsc, "ascending", StringComparison.OrdinalIgnoreCase);
 
-        private string _sorting;
+        private string? _sorting;
 
-        //排序引用
-        public new string? Sorting
+        /// <summary>
+        /// 排序表达式
+        /// </summary>
+        public override string? Sorting
         {
             get
             {
-                if (!OrderByColumn.IsNullOrWhiteSpace())
+                if (!string.IsNullOrWhiteSpace(OrderByColumn))
                 {
-                    return $"{OrderByColumn} {(CanAsc ? "ASC" : "DESC")}";
+                    return $"{OrderByColumn} {(IsAscending ? "ASC" : "DESC")}";
                 }
-                else
-                {
-                    return _sorting;
-                }
+                return _sorting;
             }
             set => _sorting = value;
         }

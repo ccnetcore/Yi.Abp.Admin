@@ -27,6 +27,7 @@ using Volo.Abp.AspNetCore.VirtualFileSystem;
 using Volo.Abp.Auditing;
 using Volo.Abp.Autofac;
 using Volo.Abp.BackgroundJobs.Hangfire;
+using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Caching;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Swashbuckle;
@@ -49,6 +50,7 @@ using Yi.Framework.Rbac.Application;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.Rbac.Domain.Shared.Options;
+using Yi.Framework.Stock.Application;
 using Yi.Framework.TenantManagement.Application;
 
 namespace Yi.Abp.Web
@@ -58,15 +60,16 @@ namespace Yi.Abp.Web
         typeof(YiAbpApplicationModule),
         typeof(AbpAspNetCoreMultiTenancyModule),
         typeof(AbpAspNetCoreMvcModule),
-        typeof(AbpAutofacModule),
+
         typeof(AbpSwashbuckleModule),
         typeof(AbpAspNetCoreSerilogModule),
         typeof(AbpAuditingModule),
-        typeof(YiFrameworkBackgroundWorkersHangfireModule),
-        typeof(AbpBackgroundJobsHangfireModule),
         typeof(AbpAspNetCoreAuthenticationJwtBearerModule),
         typeof(YiFrameworkAspNetCoreModule),
-        typeof(YiFrameworkAspNetCoreAuthenticationOAuthModule)
+        typeof(YiFrameworkAspNetCoreAuthenticationOAuthModule),
+        
+        typeof(YiFrameworkBackgroundWorkersHangfireModule),
+        typeof(AbpAutofacModule)
     )]
     public class YiAbpWebModule : AbpModule
     {
@@ -91,6 +94,8 @@ namespace Yi.Abp.Web
                     options => options.RemoteServiceName = "code-gen");
                 options.ConventionalControllers.Create(typeof(YiFrameworkDigitalCollectiblesApplicationModule).Assembly,
                     options => options.RemoteServiceName = "digital-collectibles");
+                options.ConventionalControllers.Create(typeof(YiFrameworkStockApplicationModule).Assembly,
+                    options => options.RemoteServiceName = "ai-stock");
                 //统一前缀
                 options.ConventionalControllers.ConventionalControllerSettings.ForEach(x => x.RootPath = "api/app");
             });
@@ -102,6 +107,15 @@ namespace Yi.Abp.Web
             var host = context.Services.GetHostingEnvironment();
             var service = context.Services;
 
+            //本地开发环境，禁用作业执行
+            if (host.IsDevelopment())
+            {
+                Configure<AbpBackgroundWorkerOptions> (options =>
+                {
+                    options.IsEnabled = false; 
+                });
+            }
+            
             //请求日志
             Configure<AbpAuditingOptions>(options =>
             {
@@ -193,10 +207,12 @@ namespace Yi.Abp.Web
                 bool.TryParse( configuration["Redis:IsEnabled"], out var redisEnabled);
                 if (redisEnabled)
                 {
+                    var jobDb=configuration.GetSection("Redis").GetValue<int>("JobDb");
                     config.UseRedisStorage(
                         ConnectionMultiplexer.Connect(redisConfiguration),
                         new RedisStorageOptions()
                         {
+                            Db =jobDb,
                             InvisibilityTimeout = TimeSpan.FromHours(1), //JOB允许执行1小时
                             Prefix = "Yi:HangfireJob:"
                         }).WithJobExpirationTimeout(TimeSpan.FromHours(1));
@@ -359,7 +375,7 @@ namespace Yi.Abp.Web
             app.UseAccessLog();
 
             //请求处理
-            app.UseYiApiHandlinge();
+            app.UseApiInfoHandling();
 
             //静态资源
             app.UseStaticFiles(new StaticFileOptions

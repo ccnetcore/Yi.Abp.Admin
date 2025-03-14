@@ -182,18 +182,16 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false
             };
             entities.Add(server);
+            
 
             //定时任务
             MenuAggregateRoot task = new MenuAggregateRoot(_guidGenerator.Create(), monitoring.Id)
             {
                 MenuName = "定时任务",
-                PermissionCode = "monitor:job:list",
                 MenuType = MenuTypeEnum.Menu,
-                Router = "job",
+                Router = "http://ccnetcore.com:16001/hangfire",
                 IsShow = true,
-                IsLink = false,
-                IsCache = true,
-                Component = "monitor/job/index",
+                IsLink = true,
                 MenuIcon = "job",
                 OrderNum = 97,
                 IsDeleted = false
@@ -219,7 +217,7 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
             {
                 MenuName = "接口文档",
                 MenuType = MenuTypeEnum.Menu,
-                Router = "http://localhost:19001/swagger",
+                Router = "http://ccnetcore.com:16001/swagger",
                 IsShow = true,
                 IsLink = true,
                 MenuIcon = "list",

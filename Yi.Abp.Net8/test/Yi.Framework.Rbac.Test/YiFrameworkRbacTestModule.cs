@@ -15,8 +15,7 @@ namespace Yi.Framework.Rbac.Test
         typeof(YiFrameworkRbacApplicationModule),
         typeof(YiFrameworkRbacSqlSugarCoreModule),
 
-        typeof(AbpAutofacModule),
-        typeof(AbpAuditingModule)
+        typeof(AbpAutofacModule)
         )]
     public class YiFrameworkRbacTestModule : AbpModule
     {

@@ -3,10 +3,14 @@ using ArgumentException = System.ArgumentException;
 
 namespace Yi.Framework.SqlSugarCore.Abstractions
 {
+    /// <summary>
+    /// 数据库连接配置选项
+    /// </summary>
     public class DbConnOptions
     {
         /// <summary>
-        /// 连接字符串(如果开启多租户，也就是默认库了)，必填
+        /// 主数据库连接字符串
+        /// 如果开启多租户，此为默认租户数据库
         /// </summary>
         public string? Url { get; set; }
 
@@ -16,42 +20,42 @@ namespace Yi.Framework.SqlSugarCore.Abstractions
         public DbType? DbType { get; set; }
 
         /// <summary>
-        /// 开启种子数据
+        /// 是否启用种子数据初始化
         /// </summary>
         public bool EnabledDbSeed { get; set; } = false;
 
         /// <summary>
-        /// 开启驼峰转下划线
+        /// 是否启用驼峰命名转下划线命名
         /// </summary>
         public bool EnableUnderLine { get; set; } = false;
 
         /// <summary>
-        /// 开启codefirst
+        /// 是否启用Code First模式
         /// </summary>
         public bool EnabledCodeFirst { get; set; } = false;
 
         /// <summary>
-        /// 开启sql日志
+        /// 是否启用SQL日志记录
         /// </summary>
         public bool EnabledSqlLog { get; set; } = true;
 
         /// <summary>
-        /// 实体程序集
+        /// 实体类所在程序集名称列表
         /// </summary>
         public List<string>? EntityAssembly { get; set; }
 
         /// <summary>
-        /// 开启读写分离
+        /// 是否启用读写分离
         /// </summary>
         public bool EnabledReadWrite { get; set; } = false;
 
         /// <summary>
-        /// 读写分离
+        /// 只读数据库连接字符串列表
         /// </summary>
         public List<string>? ReadUrl { get; set; }
 
         /// <summary>
-        /// 开启Saas多租户
+        /// 是否启用SaaS多租户
         /// </summary>
         public bool EnabledSaasMultiTenancy { get; set; } = false;
     }

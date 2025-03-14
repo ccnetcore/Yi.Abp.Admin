@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Ddd.Domain.Shared" Version="$(AbpVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.SettingManagement.Domain.Shared" Version="$(AbpVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Consts\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Etos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\bbs\Yi.Framework.Bbs.Domain.Shared\Yi.Framework.Bbs.Domain.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

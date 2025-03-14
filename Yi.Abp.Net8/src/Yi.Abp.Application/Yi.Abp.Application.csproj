@@ -3,7 +3,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\framework\Yi.Framework.BackgroundWorkers.Hangfire\Yi.Framework.BackgroundWorkers.Hangfire.csproj" />
     <ProjectReference Include="..\..\framework\Yi.Framework.Ddd.Application\Yi.Framework.Ddd.Application.csproj" />
     <ProjectReference Include="..\..\module\bbs\Yi.Framework.Bbs.Application\Yi.Framework.Bbs.Application.csproj" />
     <ProjectReference Include="..\..\module\chat-hub\Yi.Framework.ChatHub.Application\Yi.Framework.ChatHub.Application.csproj" />
@@ -11,6 +10,7 @@
     <ProjectReference Include="..\..\module\digital-collectibles\Yi.Framework.DigitalCollectibles.Application\Yi.Framework.DigitalCollectibles.Application.csproj" />
     <ProjectReference Include="..\..\module\rbac\Yi.Framework.Rbac.Application\Yi.Framework.Rbac.Application.csproj" />
     <ProjectReference Include="..\..\module\setting-management\Yi.Framework.SettingManagement.Application\Yi.Framework.SettingManagement.Application.csproj" />
+    <ProjectReference Include="..\..\module\ai-stock\Yi.Framework.Stock.Application\Yi.Framework.Stock.Application.csproj" />
     <ProjectReference Include="..\..\module\tenant-management\Yi.Framework.TenantManagement.Application\Yi.Framework.TenantManagement.Application.csproj" />
     <ProjectReference Include="..\Yi.Abp.Application.Contracts\Yi.Abp.Application.Contracts.csproj" />
     <ProjectReference Include="..\Yi.Abp.Domain\Yi.Abp.Domain.csproj" />

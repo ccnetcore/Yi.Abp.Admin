@@ -8,15 +8,18 @@ using Volo.Abp.DependencyInjection;
 
 namespace Yi.Framework.SqlSugarCore.Abstractions
 {
+    /// <summary>
+    /// SqlSugar数据库上下文接口
+    /// </summary>
     public interface ISqlSugarDbContext
     {
         /// <summary>
-        /// SqlSugarDb
+        /// 获取SqlSugar客户端实例
         /// </summary>
         ISqlSugarClient SqlSugarClient { get; }
         
         /// <summary>
-        /// 数据库备份
+        /// 执行数据库备份
         /// </summary>
         void BackupDataBase();
     }

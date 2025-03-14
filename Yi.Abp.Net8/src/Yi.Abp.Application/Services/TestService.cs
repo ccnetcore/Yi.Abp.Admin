@@ -30,7 +30,6 @@ namespace Yi.Abp.Application.Services
         public ISqlSugarRepository<BannerAggregateRoot> sqlSugarRepository { get; set; }
 
         /// <summary>
-        /// 动态Api
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>

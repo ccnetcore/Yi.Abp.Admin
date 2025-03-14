@@ -6,11 +6,19 @@ using Volo.Abp.MultiTenancy;
 
 namespace Yi.Framework.Ddd.Application
 {
-    public abstract class YiCacheCrudAppService<TEntity, TEntityDto, TKey> : YiCrudAppService<TEntity, TEntityDto, TKey, PagedAndSortedResultRequestDto>
-          where TEntity : class, IEntity<TKey>
-          where TEntityDto : IEntityDto<TKey>
+    /// <summary>
+    /// 带缓存的CRUD应用服务基类
+    /// </summary>
+    /// <typeparam name="TEntity">实体类型</typeparam>
+    /// <typeparam name="TEntityDto">实体DTO类型</typeparam>
+    /// <typeparam name="TKey">主键类型</typeparam>
+    public abstract class YiCacheCrudAppService<TEntity, TEntityDto, TKey> 
+        : YiCrudAppService<TEntity, TEntityDto, TKey, PagedAndSortedResultRequestDto>
+        where TEntity : class, IEntity<TKey>
+        where TEntityDto : IEntityDto<TKey>
     {
-        protected YiCacheCrudAppService(IRepository<TEntity, TKey> repository) : base(repository)
+        protected YiCacheCrudAppService(IRepository<TEntity, TKey> repository) 
+            : base(repository)
         {
         }
     }
@@ -47,73 +55,92 @@ namespace Yi.Framework.Ddd.Application
     }
 
 
+    /// <summary>
+    /// 完整的带缓存CRUD应用服务实现
+    /// </summary>
     public abstract class YiCacheCrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
         : YiCrudAppService<TEntity, TGetOutputDto, TGetListOutputDto, TKey, TGetListInput, TCreateInput, TUpdateInput>
-    where TEntity : class, IEntity<TKey>
-    where TGetOutputDto : IEntityDto<TKey>
-    where TGetListOutputDto : IEntityDto<TKey>
+        where TEntity : class, IEntity<TKey>
+        where TGetOutputDto : IEntityDto<TKey>
+        where TGetListOutputDto : IEntityDto<TKey>
     {
-        protected IDistributedCache<TEntity> Cache => LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TEntity>>();
+        /// <summary>
+        /// 分布式缓存访问器
+        /// </summary>
+        private IDistributedCache<TEntity> EntityCache => 
+            LazyServiceProvider.LazyGetRequiredService<IDistributedCache<TEntity>>();
 
-        protected string GetCacheKey(TKey id) => typeof(TEntity).Name + ":" + CurrentTenant.Id ?? Guid.Empty + ":" + id.ToString();
-        protected YiCacheCrudAppService(IRepository<TEntity, TKey> repository) : base(repository)
+        /// <summary>
+        /// 获取缓存键
+        /// </summary>
+        protected virtual string GenerateCacheKey(TKey id) => 
+            $"{typeof(TEntity).Name}:{CurrentTenant.Id ?? Guid.Empty}:{id}";
+
+        protected YiCacheCrudAppService(IRepository<TEntity, TKey> repository) 
+            : base(repository)
         {
         }
 
-        public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input) 
+        /// <summary>
+        /// 更新实体并清除缓存
+        /// </summary>
+        public override async Task<TGetOutputDto> UpdateAsync(TKey id, TUpdateInput input)
         {
-            var output = await base.UpdateAsync(id, input);
-            await Cache.RemoveAsync(GetCacheKey(id));
-            return output;
+            var result = await base.UpdateAsync(id, input);
+            await EntityCache.RemoveAsync(GenerateCacheKey(id));
+            return result;
         }
 
-        public override async Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
+        /// <summary>
+        /// 获取实体列表(需要继承实现具体的缓存策略)
+        /// </summary>
+        public override Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
         {
-            //两种方式：
-            //1：全表缓存，使用缓存直接查询
-            //2：非全部缓存，查询到的数据直接添加到缓存
+            // 建议实现两种缓存策略:
+            // 1. 全表缓存: 适用于数据量小且变动不频繁的场景
+            // 2. 按需缓存: 仅缓存常用数据,适用于大数据量场景
+            throw new NotImplementedException("请实现具体的缓存查询策略");
+        }
 
-            //判断是否该实体为全表缓存
+        /// <summary>
+        /// 从数据库获取实体列表
+        /// </summary>
+        protected virtual Task<PagedResultDto<TGetListOutputDto>> GetListFromDatabaseAsync(
+            TGetListInput input)
+        {
             throw new NotImplementedException();
-
-            //IDistributedCache 有局限性，条件查询无法进行缓存了
-            //if (true)
-            //{
-            //    return await GetListByCacheAsync(input);
-            //}
-            //else
-            //{
-            //    return await GetListByDbAsync(input);
-            //}
-
         }
 
-        protected virtual async Task<PagedResultDto<TGetListOutputDto>> GetListByDbAsync(TGetListInput input)
+        /// <summary>
+        /// 从缓存获取实体列表
+        /// </summary>
+        protected virtual Task<PagedResultDto<TGetListOutputDto>> GetListFromCacheAsync(
+            TGetListInput input)
         {
-            //如果不是全表缓存，可以走这个啦
-            throw new NotImplementedException();
-        }
-        protected virtual async Task<PagedResultDto<TGetListOutputDto>> GetListByCacheAsync(TGetListInput input)
-        {
-            //如果是全表缓存，可以走这个啦
-            throw new NotImplementedException();
+            throw new NotImplementedException(); 
         }
 
-
+        /// <summary>
+        /// 获取单个实体(优先从缓存获取)
+        /// </summary>
         protected override async Task<TEntity> GetEntityByIdAsync(TKey id)
         {
-            var output = await Cache.GetOrAddAsync(GetCacheKey(id), async () => await base.GetEntityByIdAsync(id));
-            return output!;
+            return (await EntityCache.GetOrAddAsync(
+                GenerateCacheKey(id),
+                async () => await base.GetEntityByIdAsync(id)))!;
         }
 
-        public override async Task DeleteAsync(IEnumerable<TKey> id)
+        /// <summary>
+        /// 批量删除实体并清除缓存
+        /// </summary>
+        public override async Task DeleteAsync(IEnumerable<TKey> ids)
         {
-            await base.DeleteAsync(id);
-            foreach (var itemId in id)
-            {
-                await Cache.RemoveAsync(GetCacheKey(itemId));
-            }
-
+            await base.DeleteAsync(ids);
+            
+            // 批量清除缓存
+            var tasks = ids.Select(id => 
+                EntityCache.RemoveAsync(GenerateCacheKey(id)));
+            await Task.WhenAll(tasks);
         }
     }
 }

@@ -40,15 +40,16 @@ const currentInputValue = ref("");
 //临时存储的输入框，根据用户id及组name、all组为key，data为value
 const inputListDataStore = ref([
   {key: "all", name: "官方学习交流群", titleName: "官方学习交流群", logo: "yilogo.png", value: ""},
-  {key: "ai@deepseek-chat", name: "DeepSeek聊天", titleName: "满血！DeepSeek-聊天模式", logo: "deepSeekAi.png", value: ""},
-  {
-    key: "ai@deepseek-ai/deepseek-r1",
-    name: "DeepSeek思索",
-    titleName: "满血！DeepSeek-思索模式",
-    logo: "deepSeekAi.png",
-    value: ""
-  },
-  {key: "ai@gpt-4o-mini", name: "ChatGpt聊天", titleName: "ChatGpt-聊天模式", logo: "openAi.png", value: ""},
+
+  {key: "ai@gpt-4o-mini", name: "ChatGpt聊天", titleName: "ChatGpt-全能神！综合能力最强！", logo: "openAi.png", value: ""},
+
+  {key: "ai@claude-3-7-sonnet-20250219", name: "Claude聊天", titleName: "Claude3.7 代码逻辑地表最强！", logo: "claudeAi.png", value: ""},
+  {key: "ai@grok-2-latest", name: "Grok聊天", titleName: "Grok2 即将为3.0王的诞生献上礼炮", logo: "grokAi.png", value: ""},
+
+  {key: "ai@Qwen/QVQ-72B-Preview", name: "QWen聊天", titleName: "国产阿里千问通义72B", logo: "qwenAi.png", value: ""},
+
+  {key: "ai@deepseek-chat", name: "DeepSeek聊天", titleName: "满血DeepSeek-聊天模式，开源模型第一", logo: "deepSeekAi.png", value: ""},
+  {key: "ai@deepseek-ai/deepseek-r1", name: "DeepSeek思索", titleName: "满血DeepSeek-思索模式", logo: "deepSeekAi.png", value: ""}
 ]);
 //AI聊天临时存储
 const sendAiChatContext = ref([]);
@@ -138,14 +139,14 @@ const currentMsgContext = computed(() => {
 //获取聊天内容的头像
 const getChatUrl = (url, position) => {
   if (position === "left" && selectIsAi()) {
-    return imageSrc(inputListDataStore.value.find(x=>x.key===currentSelectUser.value).logo)
+    return imageSrc(inputListDataStore.value.find(x => x.key === currentSelectUser.value).logo)
   }
   return getUrl(url);
 }
 //当前聊天框显示的名称
 const currentHeaderName = computed(() => {
-  if (selectIsAll()||selectIsAi()) {
-    return inputListDataStore.value.find(x=>x.key===currentSelectUser.value).titleName;
+  if (selectIsAll() || selectIsAi()) {
+    return inputListDataStore.value.find(x => x.key === currentSelectUser.value).titleName;
   } else {
     return currentSelectUser.value.userName;
   }
@@ -166,8 +167,8 @@ const selectIsAi = () => {
   return /^ai@/.test(currentSelectUser.value);
 };
 //是否为公共的类型
-const  isPublicType=(itemType)=>{
-  return  itemType==='all'||/^ai@/.test(itemType);
+const isPublicType = (itemType) => {
+  return itemType === 'all' || /^ai@/.test(itemType);
 }
 
 //输入框的值被更改（同时保存到store中）
@@ -193,7 +194,7 @@ const getCurrentInputValue = () => {
   } else {
     //如果不存在初始存储值
     if (!inputListDataStore.value.some(x => x.key === currentSelectUser.value.userId)) {
-      inputListDataStore.value.push({key: currentSelectUser.value.userId, value: "",type:'user'});
+      inputListDataStore.value.push({key: currentSelectUser.value.userId, value: "", type: 'user'});
       return "";
     }
     return inputListDataStore.value.filter(x => x.key === currentSelectUser.value.userId)[0].value;
@@ -247,12 +248,12 @@ const onclickSendMsg = () => {
       sendUserInfo: {user: {icon: userStore.icon}}
     })
     //ai模型，去掉key的ai@开头的字符串
-    const model=currentSelectUser.value.replace(/^ai@/, '');
+    const model = currentSelectUser.value.replace(/^ai@/, '');
     //上下文内容，当前ai进行隔离
-   const content= sendAiChatContext.value.filter(x=>x.messageType===currentSelectUser.value)
-    
+    const content = sendAiChatContext.value.filter(x => x.messageType === currentSelectUser.value)
+
     //发送ai消息
-    sendAiChat(content,model);
+    sendAiChat(content, model);
   } else {
     onclickSendPersonalMsg(currentSelectUser.value.userId, currentInputValue.value);
   }
@@ -287,8 +288,7 @@ const getLastMessage = ((receiveId, itemType) => {
   if (isPublicType(itemType)) {
     const message = chatStore.getMsgContextFunc(itemType);
     return message[message.length - 1]?.content.substring(0, 15);
-  } 
-  else {
+  } else {
     const messageContext = chatStore.personalMsgContext.filter(x => {
       //两个条件
       //接收用户者id为对面id（我发给他）
@@ -354,13 +354,13 @@ const clearAiMsg = () => {
 //转换markdown
 const toMarkDownHtml = (text) => {
   //处理数学公式
-  let soureMd=text.replace(/\\\[/g, '$').replace(/\\\]/g, '$');
+  let soureMd = text.replace(/\\\[/g, '$').replace(/\\\]/g, '$');
   //需要注意代码块样式
   let soureHtml = marked(soureMd);
   nextTick(() => {
     addCopyEvent();
   })
-  return  soureHtml;
+  return soureHtml;
 }
 //code部分处理、高亮
 const codeHandler = (code, language) => {
@@ -440,7 +440,7 @@ const clickCopyEvent = async function (event) {
 <template>
 
   <div style="position: absolute; top: 0;left: 0;" v-show="isShowTipNumber>0">
-    <p>当前版本：2.1.0</p>
+    <p>当前版本：2.2.0</p>
     <p>tip:官方学习交流群每次发送消息消耗 1 钱钱</p>
     <p>tip:点击聊天窗口右上角“X”可退出</p>
     <p>tip:多人同时在聊天室时，左侧可显示其他成员</p>
@@ -498,7 +498,7 @@ const clickCopyEvent = async function (event) {
             10:28
           </div>
         </div>
-        
+
         <div v-for="(item, i) in currentUserItem" :key="i" @click="onclickUserItem(item, 'user')" class="user-div"
              :class="{ 'select-user-item': currentSelectUser?.userId === item.userId }">
           <div class="user-div-left">
@@ -1129,30 +1129,35 @@ ul {
   color: red;
   cursor: pointer; /* 设置鼠标悬浮为手型 */
 }
-::v-deep(.katex-html)
-{
+
+::v-deep(.katex-html) {
   color: #7B7C7C;
   font-size: smaller;
 }
+
 ::v-deep(.nav-ul) {
   border-right: 1px solid #FFFFFF;
   margin-top: 12px;
   margin-left: 0 !important;
   padding-left: 10px;
   padding-right: 2px;
+
   .nav-li {
     margin: 1.0px 0;
     text-align: right;
     margin-right: 3px;
   }
 }
-.content-msg-common ::v-deep(ul){
+
+.content-msg-common ::v-deep(ul) {
   margin-left: 20px;
 }
-.content-msg-common ::v-deep(ol){
+
+.content-msg-common ::v-deep(ol) {
   margin-left: 20px;
 }
-::v-deep(.katex){
+
+::v-deep(.katex) {
   margin: 10px;
   display: flex;
   flex-direction: column;
@@ -1161,7 +1166,6 @@ ul {
   align-items: center;
   font-size: larger;
 }
-
 
 
 </style>

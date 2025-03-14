@@ -7,56 +7,68 @@ using Yi.Framework.SqlSugarCore.Abstractions;
 namespace Yi.Framework.SqlSugarCore;
 
 /// <summary>
-/// 租户配置
+/// 租户配置包装器
 /// </summary>
 public class TenantConfigurationWrapper : ITransientDependency
 {
     private readonly IAbpLazyServiceProvider _serviceProvider;
-    private ICurrentTenant CurrentTenant => _serviceProvider.LazyGetRequiredService<ICurrentTenant>();
-    private ITenantStore TenantStore => _serviceProvider.LazyGetRequiredService<ITenantStore>();
-    private DbConnOptions DbConnOptions => _serviceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
+    
+    private ICurrentTenant CurrentTenantService => 
+        _serviceProvider.LazyGetRequiredService<ICurrentTenant>();
+    
+    private ITenantStore TenantStoreService => 
+        _serviceProvider.LazyGetRequiredService<ITenantStore>();
+    
+    private DbConnOptions DbConnectionOptions => 
+        _serviceProvider.LazyGetRequiredService<IOptions<DbConnOptions>>().Value;
 
+    /// <summary>
+    /// 构造函数
+    /// </summary>
     public TenantConfigurationWrapper(IAbpLazyServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
     /// <summary>
-    /// 获取租户信息
-    /// [from:ai]
+    /// 获取租户配置信息
     /// </summary>
-    /// <returns></returns>
     public async Task<TenantConfiguration?> GetAsync()
     {
-        //未开启多租户
-        if (!DbConnOptions.EnabledSaasMultiTenancy)
+        if (!DbConnectionOptions.EnabledSaasMultiTenancy)
         {
-            return await TenantStore.FindAsync(ConnectionStrings.DefaultConnectionStringName);
+            return await TenantStoreService.FindAsync(ConnectionStrings.DefaultConnectionStringName);
         }
-        
-        TenantConfiguration? tenantConfiguration = null;
-        
-        if (CurrentTenant.Id is not null)
+
+        return await GetTenantConfigurationByCurrentTenant();
+    }
+
+    private async Task<TenantConfiguration?> GetTenantConfigurationByCurrentTenant()
+    {
+        // 通过租户ID查找
+        if (CurrentTenantService.Id.HasValue)
         {
-            tenantConfiguration = await TenantStore.FindAsync(CurrentTenant.Id.Value);
-            if (tenantConfiguration == null)
+            var config = await TenantStoreService.FindAsync(CurrentTenantService.Id.Value);
+            if (config == null)
             {
-                throw new ApplicationException($"未找到租户信息,租户Id:{CurrentTenant.Id}");
+                throw new ApplicationException($"未找到租户信息,租户Id:{CurrentTenantService.Id}");
             }
-            return tenantConfiguration;
+            return config;
         }
-        
-        if (!string.IsNullOrEmpty(CurrentTenant.Name))
+
+        // 通过租户名称查找
+        if (!string.IsNullOrEmpty(CurrentTenantService.Name))
         {
-            tenantConfiguration = await TenantStore.FindAsync(CurrentTenant.Name);
-            if (tenantConfiguration == null)
+            var config = await TenantStoreService.FindAsync(CurrentTenantService.Name);
+            if (config == null)
             {
-                throw new ApplicationException($"未找到租户信息,租户名称:{CurrentTenant.Name}");
+                throw new ApplicationException($"未找到租户信息,租户名称:{CurrentTenantService.Name}");
             }
-            return tenantConfiguration;
+            return config;
         }
-        
-        return await TenantStore.FindAsync(ConnectionStrings.DefaultConnectionStringName);
+
+        // 返回默认配置
+        return await TenantStoreService.FindAsync(ConnectionStrings.DefaultConnectionStringName);
     }
 
     /// <summary>

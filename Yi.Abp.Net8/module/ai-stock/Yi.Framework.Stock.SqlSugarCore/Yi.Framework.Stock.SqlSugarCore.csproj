@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.Mapster\Yi.Framework.Mapster.csproj" />
+    <ProjectReference Include="..\..\..\framework\Yi.Framework.SqlSugarCore\Yi.Framework.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\..\module\audit-logging\Yi.Framework.AuditLogging.SqlSugarCore\Yi.Framework.AuditLogging.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\..\module\rbac\Yi.Framework.Rbac.SqlSugarCore\Yi.Framework.Rbac.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\..\module\tenant-management\Yi.Framework.TenantManagement.SqlSugarCore\Yi.Framework.TenantManagement.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\..\..\module\setting-management\Yi.Framework.SettingManagement.SqlSugarCore\Yi.Framework.SettingManagement.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\Yi.Framework.Stock.Domain\Yi.Framework.Stock.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataSeeds\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

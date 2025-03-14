@@ -18,7 +18,6 @@
     <ProjectReference Include="..\..\..\framework\Yi.Framework.Ddd.Application\Yi.Framework.Ddd.Application.csproj" />
     <ProjectReference Include="..\Yi.Framework.Rbac.Application.Contracts\Yi.Framework.Rbac.Application.Contracts.csproj" />
     <ProjectReference Include="..\Yi.Framework.Rbac.Domain\Yi.Framework.Rbac.Domain.csproj" />
-	  <ProjectReference Include="..\..\..\framework\Yi.Framework.BackgroundWorkers.Hangfire\Yi.Framework.BackgroundWorkers.Hangfire.csproj" />
   </ItemGroup>
 
 </Project>

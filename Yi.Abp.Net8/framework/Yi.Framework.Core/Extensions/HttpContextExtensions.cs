@@ -4,110 +4,131 @@ using Microsoft.AspNetCore.Http;
 
 namespace Yi.Framework.Core.Extensions
 {
+    /// <summary>
+    /// HttpContext扩展方法类
+    /// </summary>
     public static class HttpContextExtensions
     {
         /// <summary>
-        /// 设置文件下载名称
+        /// 设置内联文件下载响应头
         /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="fileName"></param>
+        /// <param name="httpContext">HTTP上下文</param>
+        /// <param name="fileName">文件名</param>
         public static void FileInlineHandle(this HttpContext httpContext, string fileName)
         {
-            string encodeFilename = System.Web.HttpUtility.UrlEncode(fileName, Encoding.GetEncoding("UTF-8"));
-            httpContext.Response.Headers.Add("Content-Disposition", "inline;filename=" + encodeFilename);
-
+            var encodeFilename = System.Web.HttpUtility.UrlEncode(fileName, Encoding.UTF8);
+            httpContext.Response.Headers.Add("Content-Disposition", $"inline;filename={encodeFilename}");
         }
 
         /// <summary>
-        /// 设置文件附件名称
+        /// 设置附件下载响应头
         /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="fileName"></param>
+        /// <param name="httpContext">HTTP上下文</param>
+        /// <param name="fileName">文件名</param>
         public static void FileAttachmentHandle(this HttpContext httpContext, string fileName)
         {
-            string encodeFilename = System.Web.HttpUtility.UrlEncode(fileName, Encoding.GetEncoding("UTF-8"));
-            httpContext.Response.Headers.Add("Content-Disposition", "attachment;filename=" + encodeFilename);
-
+            var encodeFilename = System.Web.HttpUtility.UrlEncode(fileName, Encoding.UTF8);
+            httpContext.Response.Headers.Add("Content-Disposition", $"attachment;filename={encodeFilename}");
         }
 
         /// <summary>
-        /// 获取语言种类
+        /// 获取客户端首选语言
         /// </summary>
-        /// <param name="httpContext"></param>
-        /// <returns></returns>
+        /// <param name="httpContext">HTTP上下文</param>
+        /// <returns>语言代码,默认返回zh-CN</returns>
         public static string GetLanguage(this HttpContext httpContext)
         {
-            string res = "zh-CN";
-            var str = httpContext.Request.Headers["Accept-Language"].FirstOrDefault();
-            if (str is not null)
-            {
-                res = str.Split(",")[0];
-            }
-            return res;
-
+            const string defaultLanguage = "zh-CN";
+            var acceptLanguage = httpContext.Request.Headers["Accept-Language"].FirstOrDefault();
+            
+            return string.IsNullOrEmpty(acceptLanguage) 
+                ? defaultLanguage 
+                : acceptLanguage.Split(',')[0];
         }
 
         /// <summary>
-        /// 判断是否为异步请求
+        /// 判断是否为Ajax请求
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request">HTTP请求</param>
+        /// <returns>是否为Ajax请求</returns>
         public static bool IsAjaxRequest(this HttpRequest request)
         {
-            string header = request.Headers["X-Requested-With"];
-            return "XMLHttpRequest".Equals(header);
+            const string ajaxHeader = "XMLHttpRequest";
+            return ajaxHeader.Equals(request.Headers["X-Requested-With"], 
+                StringComparison.OrdinalIgnoreCase);
         }
+
         /// <summary>
-        /// 获取客户端IP
+        /// 获取客户端IP地址
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">HTTP上下文</param>
+        /// <returns>客户端IP地址</returns>
         public static string GetClientIp(this HttpContext context)
         {
-            if (context == null) return "";
-            var result = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            if (string.IsNullOrEmpty(result))
+            const string localhost = "127.0.0.1";
+            if (context == null) return string.Empty;
+
+            // 尝试获取X-Forwarded-For头
+            var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            
+            // 如果没有代理头,则获取远程IP
+            if (string.IsNullOrEmpty(ip))
             {
-                result = context.Connection.RemoteIpAddress?.ToString();
+                ip = context.Connection.RemoteIpAddress?.ToString();
             }
-            if (string.IsNullOrEmpty(result) || result.Contains("::1"))
-                result = "127.0.0.1";
 
-            result = result.Replace("::ffff:", "127.0.0.1");
-            //如果有端口号，删除端口号
-            result = Regex.Replace(result, @":\d{1,5}$", "");
-            //Ip规则校验
-            var regResult = 
-                Regex.IsMatch(result, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$")
-                || Regex.IsMatch(result, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{1,5}$");
+            // 处理特殊IP
+            if (string.IsNullOrEmpty(ip) || ip.Contains("::1"))
+            {
+                return localhost;
+            }
 
-            result = regResult ? result : "127.0.0.1";
-            return result;
+            // 清理IPv6格式
+            ip = ip.Replace("::ffff:", localhost);
+            
+            // 移除端口号
+            ip = Regex.Replace(ip, @":\d{1,5}$", "");
+
+            // 验证IP格式
+            var isValidIp = Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$") || 
+                           Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{1,5}$");
+
+            return isValidIp ? ip : localhost;
         }
 
         /// <summary>
-        /// 获取浏览器标识
+        /// 获取User-Agent信息
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">HTTP上下文</param>
+        /// <returns>User-Agent字符串</returns>
         public static string GetUserAgent(this HttpContext context)
         {
-            return context.Request.Headers["User-Agent"];
+            return context.Request.Headers["User-Agent"].ToString();
         }
 
+        /// <summary>
+        /// 获取用户权限声明值
+        /// </summary>
+        /// <param name="context">HTTP上下文</param>
+        /// <param name="permissionsName">权限声明名称</param>
+        /// <returns>权限值数组</returns>
         public static string[]? GetUserPermissions(this HttpContext context, string permissionsName)
         {
-            return context.User.Claims.Where(x => x.Type == permissionsName).Select(x => x.Value).ToArray();
+            return context.User.Claims
+                .Where(x => x.Type == permissionsName)
+                .Select(x => x.Value)
+                .ToArray();
         }
         
         /// <summary>
-        /// 判断是否是 WebSocket 请求
+        /// 判断是否为WebSocket请求
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">HTTP上下文</param>
+        /// <returns>是否为WebSocket请求</returns>
         public static bool IsWebSocketRequest(this HttpContext context)
         {
-            return context.WebSockets.IsWebSocketRequest || context.Request.Path == "/ws";
+            return context.WebSockets.IsWebSocketRequest || 
+                   context.Request.Path == "/ws";
         }
     }
 }
