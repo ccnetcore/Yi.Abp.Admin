@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 // using OpenAI;
 // using OpenAI.Managers;
 // using OpenAI.ObjectModels;
@@ -14,61 +17,46 @@ namespace Yi.Framework.ChatHub.Domain.Managers
 {
     public class AiManager : ISingletonDependency
     {
-        public AiManager(IOptions<AiOptions> options)
+        private readonly Kernel _kernel;
+        public AiManager(Kernel kernel)
         {
-            // this.OpenAIService = new OpenAIService(new OpenAiOptions()
-            // {
-            //     ApiKey = options.Value.ApiKey,
-            //     BaseDomain = options.Value.BaseDomain
-            // });
+            _kernel = kernel;
         }
-        // private OpenAIService OpenAIService { get; }
 
-        public async IAsyncEnumerable<string> ChatAsStreamAsync(string model, List<AiChatContextDto> aiChatContextDtos)
+        public async IAsyncEnumerable<string?> ChatAsStreamAsync(string model, List<AiChatContextDto> aiChatContextDtos)
         {
-            throw new NotImplementedException("准备sk重构");
-            yield break;
-            // if (aiChatContextDtos.Count == 0)
-            // {
-            //     yield return null;
-            // }
-            //
-            // List<ChatMessage> messages = aiChatContextDtos.Select(x =>
-            // {
-            //     if (x.AnswererType == AnswererTypeEnum.Ai)
-            //     {
-            //         return ChatMessage.FromSystem(x.Message);
-            //     }
-            //     else
-            //     {
-            //         return ChatMessage.FromUser(x.Message);
-            //     }
-            // }).ToList();
-            // var completionResult = OpenAIService.ChatCompletion.CreateCompletionAsStream(new ChatCompletionCreateRequest
-            // {
-            //     Messages = messages,
-            //     Model =model 
-            // });
-            //
-            // HttpStatusCode? error = null;
-            // await foreach (var result in completionResult)
-            // {
-            //     if (result.Successful)
-            //     {
-            //         yield return result.Choices.FirstOrDefault()?.Message.Content ?? null;
-            //     }
-            //     else
-            //     {
-            //         error = result.HttpStatusCode;
-            //         break;
-            //     }
-            //
-            // }
-            // if (error == HttpStatusCode.PaymentRequired)
-            // {
-            //     yield return "余额不足,请联系站长充值";
-            //  
-            // }
+            if (aiChatContextDtos.Count == 0)
+            {
+                yield return null;
+            }
+            var openSettings = new OpenAIPromptExecutionSettings()
+            {
+                MaxTokens =1000
+            };
+
+            var chatCompletionService = this._kernel.GetRequiredService<IChatCompletionService>(model);
+
+            var  history   =new ChatHistory();
+            foreach (var aiChatContextDto in aiChatContextDtos)
+            {
+                if (aiChatContextDto.AnswererType==AnswererTypeEnum.Ai)
+                {
+                    history.AddSystemMessage(aiChatContextDto.Message);
+                }
+                else if(aiChatContextDto.AnswererType==AnswererTypeEnum.User)
+                {
+                    history.AddUserMessage(aiChatContextDto.Message);
+                }
+            }
+            
+            var results = chatCompletionService.GetStreamingChatMessageContentsAsync(
+                chatHistory: history,
+                executionSettings: openSettings,
+                kernel: _kernel);
+          await foreach (var result in results)
+          {
+              yield return result.Content;
+          }
         }
     }
 }

@@ -35,7 +35,8 @@ export function getStockPriceRecords(stockId, startTime, endTime, periodType = '
       StockId: stockId,
       StartTime: startTime,
       EndTime: endTime,
-      PeriodType: periodType
+      PeriodType: periodType,
+      MaxResultCount : 100
     }
   });
 }

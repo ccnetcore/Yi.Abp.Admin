@@ -211,6 +211,7 @@ namespace Yi.Framework.Stock.Domain.Managers
             // 获取最新的价格记录
             var latestPriceRecord = await _stockPriceRecordRepository._DbQueryable
                 .Where(p => p.StockId == stockId)
+                .Where(x=>x.RecordTime<=DateTime.Now)
                 .OrderByDescending(p => p.RecordTime)
                 .FirstAsync();
 

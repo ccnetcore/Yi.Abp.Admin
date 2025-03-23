@@ -44,12 +44,14 @@ const inputListDataStore = ref([
   {key: "ai@gpt-4o-mini", name: "ChatGpt聊天", titleName: "ChatGpt-全能神！综合能力最强！", logo: "openAi.png", value: ""},
 
   {key: "ai@claude-3-7-sonnet-20250219", name: "Claude聊天", titleName: "Claude3.7 代码逻辑地表最强！", logo: "claudeAi.png", value: ""},
+  {key: "ai@claude-3-7-sonnet-20250219-thinking", name: "Claude思索", titleName: "Claude3.7 思索模式，强中强！", logo: "claudeAi.png", value: ""},
+
   {key: "ai@grok-2-latest", name: "Grok聊天", titleName: "Grok2 即将为3.0王的诞生献上礼炮", logo: "grokAi.png", value: ""},
 
   {key: "ai@Qwen/QVQ-72B-Preview", name: "QWen聊天", titleName: "国产阿里千问通义72B", logo: "qwenAi.png", value: ""},
 
-  {key: "ai@deepseek-chat", name: "DeepSeek聊天", titleName: "满血DeepSeek-聊天模式，开源模型第一", logo: "deepSeekAi.png", value: ""},
-  {key: "ai@deepseek-ai/deepseek-r1", name: "DeepSeek思索", titleName: "满血DeepSeek-思索模式", logo: "deepSeekAi.png", value: ""}
+  {key: "ai@DeepSeek-V3", name: "DeepSeek聊天", titleName: "满血DeepSeek-聊天模式，开源模型第一", logo: "deepSeekAi.png", value: ""},
+  {key: "ai@deepseek-r1-250120", name: "DeepSeek思索", titleName: "满血DeepSeek-思索模式", logo: "deepSeekAi.png", value: ""}
 ]);
 //AI聊天临时存储
 const sendAiChatContext = ref([]);
@@ -440,7 +442,7 @@ const clickCopyEvent = async function (event) {
 <template>
 
   <div style="position: absolute; top: 0;left: 0;" v-show="isShowTipNumber>0">
-    <p>当前版本：2.2.0</p>
+    <p>当前版本：2.3.0</p>
     <p>tip:官方学习交流群每次发送消息消耗 1 钱钱</p>
     <p>tip:点击聊天窗口右上角“X”可退出</p>
     <p>tip:多人同时在聊天室时，左侧可显示其他成员</p>

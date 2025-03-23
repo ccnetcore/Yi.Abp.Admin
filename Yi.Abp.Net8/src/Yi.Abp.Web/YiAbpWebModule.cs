@@ -204,7 +204,7 @@ namespace Yi.Abp.Web
             var redisConfiguration = configuration["Redis:Configuration"];
             context.Services.AddHangfire(config=>
             {
-                bool.TryParse( configuration["Redis:IsEnabled"], out var redisEnabled);
+                var redisEnabled=configuration.GetSection("Redis").GetValue<bool>("IsEnabled");
                 if (redisEnabled)
                 {
                     var jobDb=configuration.GetSection("Redis").GetValue<int>("JobDb");

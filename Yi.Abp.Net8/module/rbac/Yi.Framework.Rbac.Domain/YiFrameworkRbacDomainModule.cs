@@ -1,5 +1,6 @@
 ﻿using Medallion.Threading;
 using Medallion.Threading.Redis;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Volo.Abp.AspNetCore.SignalR;
@@ -42,14 +43,18 @@ namespace Yi.Framework.Rbac.Domain
             //配置阿里云短信
             Configure<AliyunOptions>(configuration.GetSection(nameof(AliyunOptions)));
             
-            //分布式锁
-            context.Services.AddSingleton<IDistributedLockProvider>(sp =>
+            //分布式锁,需要redis
+            if (configuration.GetSection("Redis").GetValue<bool>("IsEnabled"))
             {
-                var connection = ConnectionMultiplexer
-                    .Connect(configuration["Redis:Configuration"]);
-                return new 
-                    RedisDistributedSynchronizationProvider(connection.GetDatabase());
-            });
+                context.Services.AddSingleton<IDistributedLockProvider>(sp =>
+                {
+                    var connection = ConnectionMultiplexer
+                        .Connect(configuration["Redis:Configuration"]);
+                    return new 
+                        RedisDistributedSynchronizationProvider(connection.GetDatabase());
+                });
+            }
+
         }
     }
 }

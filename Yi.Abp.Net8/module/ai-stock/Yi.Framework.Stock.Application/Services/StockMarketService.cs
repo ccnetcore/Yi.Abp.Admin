@@ -96,6 +96,7 @@ namespace Yi.Framework.Stock.Application.Services
                 .WhereIF(input.StartTime.HasValue, p => p.RecordTime >= input.StartTime.Value)
                 .WhereIF(input.EndTime.HasValue, p => p.RecordTime <= input.EndTime.Value)
                 .WhereIF(input.PeriodType.HasValue, p => p.PeriodType == input.PeriodType.Value)
+                .Where(x=>x.RecordTime<=DateTime.Now)
                 .OrderByIF(!string.IsNullOrEmpty(input.Sorting),input.Sorting)
                 .OrderByIF(string.IsNullOrEmpty(input.Sorting),p=>p.RecordTime);
 

@@ -185,12 +185,12 @@ namespace Yi.Abp.Application.Services
         /// <summary>
         /// 分布式送abp版本：abp套了一层娃。但是纯粹鸡肋，不建议使用这个
         /// </summary>
-        public IAbpDistributedLock AbpDistributedLock { get; set; }
-        
+        public IAbpDistributedLock AbpDistributedLock => LazyServiceProvider.LazyGetService<IAbpDistributedLock>();
+
         /// <summary>
         /// 分布式锁推荐使用版本：yyds，分布式锁永远的神！
         /// </summary>
-        public IDistributedLockProvider DistributedLock { get; set; }
+        public IDistributedLockProvider DistributedLock => LazyServiceProvider.LazyGetService<IDistributedLockProvider>();
 
         /// <summary>
         /// 分布式锁

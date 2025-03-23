@@ -213,6 +213,10 @@ public class DefaultSqlSugarDbContext : SqlSugarDbContext
                         {
                             EntityChangeEventHelperService.PublishEntityDeletedEvent(entityInfo.EntityValue);
                         }
+                        else
+                        {
+                            EntityChangeEventHelperService.PublishEntityUpdatedEvent(entityInfo.EntityValue);
+                        }
                     }
                     else
                     {

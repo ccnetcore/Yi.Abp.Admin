@@ -32,9 +32,10 @@ namespace Yi.Framework.Stock.Domain
 #pragma warning disable SKEXP0010
             // 从配置中获取值
             var options = semanticKernelSection.Get<SemanticKernelOptions>();
+            //股市优先使用第一个ai模型
             services.AddKernel()
                 .AddOpenAIChatCompletion(
-                    modelId: options.ModelId,
+                    modelId: options.ModelIds.FirstOrDefault(),
                     endpoint: new Uri(options.Endpoint),
                     apiKey: options.ApiKey);
 #pragma warning restore SKEXP0010
