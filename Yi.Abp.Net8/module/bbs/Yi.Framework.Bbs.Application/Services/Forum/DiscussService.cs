@@ -33,7 +33,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     /// Discuss应用服务实现,用于参数校验、领域服务业务组合、日志记录、事务处理、账户信息
     /// </summary>
     public class DiscussService : YiCrudAppService<DiscussAggregateRoot, DiscussGetOutputDto, DiscussGetListOutputDto,
-            Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>,
+            Guid, DiscussGetListInputVo, DiscussCreateInput, DiscussUpdateInput>,
         IDiscussService
     {
         private ISqlSugarRepository<DiscussTopEntity> _discussTopRepository;
@@ -102,6 +102,17 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             {
                 throw new UserFriendlyException("该主题不存在", "404");
             }
+
+            switch (output.DiscussType)
+            {
+                case DiscussTypeEnum.Article: break;
+                //查询的是悬赏主题
+                case DiscussTypeEnum.Reward: 
+                    var reward=  await _forumManager._discussRewardRepository.GetAsync(x=>x.DiscussId==output.Id);
+                    output.RewardData = reward.Adapt<DiscussRewardGetOutputDto>();
+                    break;
+            }
+            
             
             //组装点赞
             var agreeCreatorList =
@@ -277,7 +288,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <returns></returns>
         [Permission("bbs:discuss:add")]
         [Authorize]
-        public override async Task<DiscussGetOutputDto> CreateAsync(DiscussCreateInputVo input)
+        public override async Task<DiscussGetOutputDto> CreateAsync(DiscussCreateInput input)
         {
             var plate = await _plateEntityRepository.FindAsync(x => x.Id == input.PlateId);
             if (plate is null)
@@ -300,12 +311,31 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 }
             }
 
-            var entity = await _forumManager.CreateDiscussAsync(await MapToEntityAsync(input));
+            var entity = await _forumManager.CreateDiscussAsync(await MapToEntityAsync(input),input.RewardData.Adapt<DiscussRewardAggregateRoot>());
             return await MapToGetOutputDtoAsync(entity);
         }
 
+        /// <summary>
+        /// 设置悬赏主题已解决
+        /// </summary>
+        /// <param name="discussId"></param>
+        /// <exception cref="UserFriendlyException"></exception>
+        [HttpPut("discuss/reward/resolve/{discussId}")]
+        [Authorize]
+        public async Task SetRewardResolvedAsync([FromRoute]Guid discussId)
+        {
+           var reward= await _forumManager._discussRewardRepository.GetFirstAsync(x=>x.DiscussId==discussId);
+           if (reward is null)
+           {
+               throw new UserFriendlyException("未找到该悬赏主题","404");
+           }
 
-        public override Task<DiscussGetOutputDto> UpdateAsync(Guid id, DiscussUpdateInputVo input)
+           //设置已解决
+           reward.SetResolved();
+           await _forumManager._discussRewardRepository.UpdateAsync(reward);
+        }
+
+        public override Task<DiscussGetOutputDto> UpdateAsync(Guid id, DiscussUpdateInput input)
         {
             return base.UpdateAsync(id, input);
         }

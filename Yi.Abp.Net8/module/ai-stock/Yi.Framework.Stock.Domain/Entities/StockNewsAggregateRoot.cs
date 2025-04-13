@@ -52,6 +52,7 @@ namespace Yi.Framework.Stock.Domain.Entities
         /// <summary>
         /// 新闻内容
         /// </summary>
+        [SugarColumn(ColumnDataType = StaticConfig.CodeFirst_BigString)]
         public string Content { get; set; } = string.Empty;
 
         /// <summary>

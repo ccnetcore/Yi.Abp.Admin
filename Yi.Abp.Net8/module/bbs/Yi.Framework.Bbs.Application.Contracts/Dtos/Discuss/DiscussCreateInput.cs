@@ -5,8 +5,10 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
     /// <summary>
     /// Discuss输入创建对象
     /// </summary>
-    public class DiscussCreateInputVo
+    public class DiscussCreateInput
     {
+        public DiscussTypeEnum DiscussType { get; set; }
+        
         public string Title { get; set; }
         public string? Types { get; set; }
         public string? Introduction { get; set; }
@@ -41,5 +43,29 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         /// 角色
         /// </summary>
         public List<string>? PermissionRoleCodes { get; set; } = new List<string>();
+        
+        /// <summary>
+        /// 悬赏类型主题
+        /// </summary>
+        public DiscussRewardCreateInput? RewardData { get; set; }
+    }
+
+
+    public class DiscussRewardCreateInput
+    {
+        /// <summary>
+        /// 悬赏最小价值
+        /// </summary>
+        public decimal MinValue { get; set; }
+
+        /// <summary>
+        /// 悬赏最大价值
+        /// </summary>
+        public decimal? MaxValue { get; set; }
+
+        /// <summary>
+        /// 作者联系方式
+        /// </summary>
+        public string Contact { get; set; }
     }
 }

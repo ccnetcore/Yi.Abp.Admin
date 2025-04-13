@@ -37,10 +37,10 @@ namespace Yi.Framework.Bbs.Domain.Managers
         /// <returns></returns>
         public async Task<Dictionary<int, LevelCacheItem>> GetCacheMapAsync()
         {
-            var items = _levelCache.GetOrAdd(LevelConst.LevelCacheKey, () =>
+            var items =await _levelCache.GetOrAddAsync(LevelConst.LevelCacheKey,async () =>
             {
-                var cacheItem = (_repository.GetListAsync().Result)
-                    .OrderByDescending(x => x.CurrentLevel).ToList()
+                var cacheItem = ((await _repository.GetListAsync())
+                    .OrderByDescending(x => x.CurrentLevel))
                     .Adapt<List<LevelCacheItem>>();
                 return cacheItem;
             });

@@ -39,6 +39,11 @@ namespace Yi.Framework.Bbs.Domain.Entities.Forum
         public string? Introduction { get; set; }
         public int AgreeNum { get; set; }
         public int SeeNum { get; set; }
+        
+        /// <summary>
+        /// 主题类型
+        /// </summary>
+        public DiscussTypeEnum DiscussType { get; set; }
         /// <summary>
         /// 封面
         /// </summary>

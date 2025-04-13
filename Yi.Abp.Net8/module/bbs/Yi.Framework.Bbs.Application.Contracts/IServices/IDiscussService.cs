@@ -6,7 +6,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.IServices
     /// <summary>
     /// Discuss服务抽象
     /// </summary>
-    public interface IDiscussService : IYiCrudAppService<DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInputVo, DiscussUpdateInputVo>
+    public interface IDiscussService : IYiCrudAppService<DiscussGetOutputDto, DiscussGetListOutputDto, Guid, DiscussGetListInputVo, DiscussCreateInput, DiscussUpdateInput>
     {
     }
 }

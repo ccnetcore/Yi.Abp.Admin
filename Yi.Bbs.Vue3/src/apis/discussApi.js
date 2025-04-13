@@ -1,5 +1,12 @@
 import request from "@/config/axios/service";
 
+export function setResolve(discussId) {
+  return request({
+    url: `/discuss/reward/resolve/${discussId}`,
+    method: "put"
+  });
+}
+
 export function getList(data) {
   return request({
     url: "/discuss",

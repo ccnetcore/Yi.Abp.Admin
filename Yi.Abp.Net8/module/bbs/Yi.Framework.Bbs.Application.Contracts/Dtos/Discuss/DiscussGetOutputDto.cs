@@ -24,7 +24,10 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         public Guid PlateId { get; set; }
         //是否置顶，默认false
         public bool IsTop { get; set; }
-
+        /// <summary>
+        /// 主题类型
+        /// </summary>
+        public DiscussTypeEnum DiscussType { get; set; }
         /// <summary>
         /// 封面
         /// </summary>
@@ -50,6 +53,7 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
 
         public bool HasPermission { get;internal set; }
 
+        public DiscussRewardGetOutputDto? RewardData { get; set; }
         /// <summary>
         /// 设置权限
         /// </summary>

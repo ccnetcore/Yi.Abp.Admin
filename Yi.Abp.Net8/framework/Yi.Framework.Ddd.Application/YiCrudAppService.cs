@@ -11,12 +11,12 @@ namespace Yi.Framework.Ddd.Application
     /// <summary>
     /// CRUD应用服务基类 - 基础版本
     /// </summary>
-    public abstract class YiCrudAppService<TEntity, TEntityDto, TKey> 
+    public abstract class YiCrudAppService<TEntity, TEntityDto, TKey>
         : YiCrudAppService<TEntity, TEntityDto, TKey, PagedAndSortedResultRequestDto>
         where TEntity : class, IEntity<TKey>
         where TEntityDto : IEntityDto<TKey>
     {
-        protected YiCrudAppService(IRepository<TEntity, TKey> repository) 
+        protected YiCrudAppService(IRepository<TEntity, TKey> repository)
             : base(repository)
         {
         }
@@ -30,7 +30,7 @@ namespace Yi.Framework.Ddd.Application
         where TEntity : class, IEntity<TKey>
         where TEntityDto : IEntityDto<TKey>
     {
-        protected YiCrudAppService(IRepository<TEntity, TKey> repository) 
+        protected YiCrudAppService(IRepository<TEntity, TKey> repository)
             : base(repository)
         {
         }
@@ -44,7 +44,7 @@ namespace Yi.Framework.Ddd.Application
         where TEntity : class, IEntity<TKey>
         where TEntityDto : IEntityDto<TKey>
     {
-        protected YiCrudAppService(IRepository<TEntity, TKey> repository) 
+        protected YiCrudAppService(IRepository<TEntity, TKey> repository)
             : base(repository)
         {
         }
@@ -58,7 +58,7 @@ namespace Yi.Framework.Ddd.Application
         where TEntity : class, IEntity<TKey>
         where TEntityDto : IEntityDto<TKey>
     {
-        protected YiCrudAppService(IRepository<TEntity, TKey> repository) 
+        protected YiCrudAppService(IRepository<TEntity, TKey> repository)
             : base(repository)
         {
         }
@@ -78,7 +78,7 @@ namespace Yi.Framework.Ddd.Application
         /// </summary>
         private const string TempFilePath = "/wwwroot/temp";
 
-        protected YiCrudAppService(IRepository<TEntity, TKey> repository) 
+        protected YiCrudAppService(IRepository<TEntity, TKey> repository)
             : base(repository)
         {
         }
@@ -96,7 +96,7 @@ namespace Yi.Framework.Ddd.Application
 
             // 获取并验证实体
             var entity = await GetEntityByIdAsync(id);
-            
+
             // 检查更新输入
             await CheckUpdateInputDtoAsync(entity, input);
 
@@ -124,10 +124,10 @@ namespace Yi.Framework.Ddd.Application
         {
             // 检查创建权限
             await CheckCreatePolicyAsync();
-            
+
             // 检查创建输入
             await CheckCreateInputDtoAsync(input);
-            
+
             // 映射到实体
             var entity = await MapToEntityAsync(input);
 
@@ -156,13 +156,13 @@ namespace Yi.Framework.Ddd.Application
         public override async Task<PagedResultDto<TGetListOutputDto>> GetListAsync(TGetListInput input)
         {
             List<TEntity> entities;
-            
+
             // 根据输入类型决定查询方式
             if (input is IPagedResultRequest pagedInput)
             {
                 // 分页查询
                 entities = await Repository.GetPagedListAsync(
-                    pagedInput.SkipCount, 
+                    pagedInput.SkipCount,
                     pagedInput.MaxResultCount,
                     string.Empty
                 );
@@ -176,7 +176,23 @@ namespace Yi.Framework.Ddd.Application
             // 获取总数并映射结果
             var totalCount = await Repository.GetCountAsync();
             var dtos = await MapToGetListOutputDtosAsync(entities);
-            
+
+            return new PagedResultDto<TGetListOutputDto>(totalCount, dtos);
+        }
+
+        /// <summary>
+        /// 获取实体动态下拉框列表，子类重写该方法，通过 keywords 进行筛选
+        /// </summary>
+        /// <param name="keywords">查询关键字</param>
+        /// <returns></returns>
+        public virtual async Task<PagedResultDto<TGetListOutputDto>> GetSelectDataListAsync(string? keywords = null)
+        {
+            List<TEntity> entities = await Repository.GetListAsync();
+
+            // 获取总数并映射结果
+            var totalCount = entities.Count;
+            var dtos = await MapToGetListOutputDtosAsync(entities);
+
             return new PagedResultDto<TGetListOutputDto>(totalCount, dtos);
         }
 

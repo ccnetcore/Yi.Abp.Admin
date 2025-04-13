@@ -53,6 +53,10 @@ namespace Yi.Framework.ChatHub.Domain.Managers
                 chatHistory: history,
                 executionSettings: openSettings,
                 kernel: _kernel);
+            if (results is null)
+            {
+                yield  return null;
+            }
           await foreach (var result in results)
           {
               yield return result.Content;

@@ -32,6 +32,8 @@ namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
         //是否置顶，默认false
         public bool IsTop { get; set; }
 
+        public DiscussTypeEnum DiscussType { get; set; }
+        
         public DiscussPermissionTypeEnum PermissionType { get; set; }
         //是否禁止，默认false
         public bool IsBan { get; set; }

@@ -59,6 +59,6 @@ export function delMenu(menuId) {
   return request({
     url: `/menu`,
     method: 'delete',
-    params:{id:menuId}
+    params:{ids:menuId}
   })
 }

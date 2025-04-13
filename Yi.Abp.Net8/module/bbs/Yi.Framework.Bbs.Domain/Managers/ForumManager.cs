@@ -21,21 +21,30 @@ namespace Yi.Framework.Bbs.Domain.Managers
         public readonly ISqlSugarRepository<PlateAggregateRoot, Guid> _plateEntityRepository;
         public readonly ISqlSugarRepository<CommentAggregateRoot, Guid> _commentRepository;
         public readonly ISqlSugarRepository<ArticleAggregateRoot, Guid> _articleRepository;
-        public ForumManager(ISqlSugarRepository<DiscussAggregateRoot, Guid> discussRepository, ISqlSugarRepository<PlateAggregateRoot, Guid> plateEntityRepository, ISqlSugarRepository<CommentAggregateRoot, Guid> commentRepository, ISqlSugarRepository<ArticleAggregateRoot, Guid> articleRepository)
+        public  readonly ISqlSugarRepository<DiscussRewardAggregateRoot,Guid> _discussRewardRepository;
+        public ForumManager(ISqlSugarRepository<DiscussAggregateRoot, Guid> discussRepository, ISqlSugarRepository<PlateAggregateRoot, Guid> plateEntityRepository, ISqlSugarRepository<CommentAggregateRoot, Guid> commentRepository, ISqlSugarRepository<ArticleAggregateRoot, Guid> articleRepository, ISqlSugarRepository<DiscussRewardAggregateRoot, Guid> discussRewardRepository)
         {
             _discussRepository = discussRepository;
             _plateEntityRepository = plateEntityRepository;
             _commentRepository = commentRepository;
             _articleRepository = articleRepository;
+            _discussRewardRepository = discussRewardRepository;
         }
 
         //主题是不能直接创建的，需要由领域服务统一创建
-        public async Task<DiscussAggregateRoot> CreateDiscussAsync(DiscussAggregateRoot entity)
+        public async Task<DiscussAggregateRoot> CreateDiscussAsync(DiscussAggregateRoot entity,DiscussRewardAggregateRoot rewardEntity=null)
         {
             entity.CreationTime = DateTime.Now;
             entity.AgreeNum = 0;
             entity.SeeNum = 0;
-            return await _discussRepository.InsertReturnEntityAsync(entity);
+            var discuss = await _discussRepository.InsertReturnEntityAsync(entity);
+            if (discuss.DiscussType==DiscussTypeEnum.Reward)
+            {
+                 rewardEntity.DiscussId=discuss.Id;
+                 Check.NotNull(rewardEntity,"悬赏类型，悬赏信息不能为空");
+                 await  _discussRewardRepository.InsertAsync(rewardEntity);
+            }
+            return discuss;
         }
 
         public async Task<CommentAggregateRoot> CreateCommentAsync(Guid discussId, Guid parentId, Guid rootId, string content)

@@ -43,6 +43,8 @@ import ImagePreview from "@/components/ImagePreview"
 import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
 import DictTag from '@/components/DictTag'
+// 动态数据下拉选择框组件
+import SelectDataTag from '@/components/SelectDataTag'
 
 const app = createApp(App)
 
@@ -57,6 +59,7 @@ app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
 
 // 全局组件挂载
+app.component('SelectDataTag', SelectDataTag)
 app.component('DictTag', DictTag)
 app.component('Pagination', Pagination)
 app.component('TreeSelect', TreeSelect)

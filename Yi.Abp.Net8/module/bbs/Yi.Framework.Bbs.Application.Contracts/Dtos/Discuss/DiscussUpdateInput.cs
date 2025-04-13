@@ -2,7 +2,7 @@ using Yi.Framework.Bbs.Domain.Shared.Enums;
 
 namespace Yi.Framework.Bbs.Application.Contracts.Dtos.Discuss
 {
-    public class DiscussUpdateInputVo
+    public class DiscussUpdateInput
     {
         public string Title { get; set; }
         public string? Types { get; set; }

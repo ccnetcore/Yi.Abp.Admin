@@ -54,6 +54,7 @@ margin: 10px auto;">
 
             <el-col :span="24" v-for="i in allDiscussList" :key="i.id">
               <img v-if="isIcp" src="@/assets/login.png" style="height: 150px;width: 100%" alt=""/>
+  
               <DisscussCard v-else :discuss="i"/>
             </el-col>
 

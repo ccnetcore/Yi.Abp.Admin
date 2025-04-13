@@ -26,7 +26,7 @@ public static class SqlSugarCoreExtensions
         ServiceLifetime serviceLifetime = ServiceLifetime.Transient) 
         where TDbContext : class, ISqlSugarDbContextDependencies
     {
-        services.TryAdd(new ServiceDescriptor(
+        services.Add(new ServiceDescriptor(
             typeof(ISqlSugarDbContextDependencies),
             typeof(TDbContext),
             serviceLifetime));

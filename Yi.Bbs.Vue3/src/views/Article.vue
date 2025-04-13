@@ -3,7 +3,7 @@
     <el-row :gutter="20" class="top-div">
       <el-col :span="5">
         <el-row class="art-info-left">
-          <el-col :span="24">
+          <el-col :span="24"  v-if="discuss.discussType=='Article'">
             <InfoCard header="文章信息" text="展开" hideDivider="true" :isPadding="false" style="padding: 10px">
               <template #content>
                 <el-button
@@ -35,6 +35,35 @@
               </template>
             </InfoCard>
           </el-col>
+
+          <el-col :span="24"  v-if="discuss.discussType=='Reward'">
+            <InfoCard header="悬赏信息" text="有偿" hideDivider="true" :isPadding="true" style="padding: 10px">
+              <template #content>
+                <p>
+                  当前状态：
+                <el-tag
+                    v-if="discuss.rewardData.isResolved"
+                    type="success"
+                    effect="dark"
+                    round
+                >已解决</el-tag>
+
+                <el-tag
+                    v-else
+                    type="danger"
+                    effect="dark"
+                    round
+                >未解决</el-tag>
+                </p>
+                <el-divider/>
+                <p>参考价格：{{discuss.rewardData.minValue}}~{{discuss.rewardData.maxValue}}RMB</p>
+                <el-divider/>
+                <p style="color: #AB9AAA">联系作者：</p>
+                <p>{{discuss.rewardData.contact}}</p>
+              </template>
+            </InfoCard>
+          </el-col>
+          
           <el-col :span="24">
             <InfoCard :items="authorList" :isPadding="false" header="作者分享" height="410" text="更多" style="padding:0 20px">
               <template #item="temp">
@@ -42,13 +71,6 @@
               </template>
             </InfoCard>
           </el-col>
-          <!--          <el-col :span="24">-->
-          <!--            <InfoCard :items="items" header="内容推荐" text="更多">-->
-          <!--              <template #item="temp">-->
-          <!--                <AvatarInfo />-->
-          <!--              </template>-->
-          <!--            </InfoCard>-->
-          <!--          </el-col>-->
         </el-row>
       </el-col>
 
@@ -56,16 +78,15 @@
         <el-row class="left-div">
           <el-col :span="24">
             <Breadcrumb :breadcrumbsList="breadcrumbsList" class="breadcrumb"/>
-            <!-- {{ discuss.user }} -->
+
             <AvatarInfo
                 :size="50"
                 :showWatching="true"
                 :time="discuss.creationTime"
                 :userInfo="discuss.user"
             ></AvatarInfo>
-            <!-- :userInfo="{nick:'qwe'} -->
-
-            <h2>{{ discuss.title }}</h2>
+            
+            <h2> <DiscussTypeLable style="margin-right: 8px;height: 35px;" v-model="discuss.discussType" />  {{ discuss.title }}</h2>
             <h5 class="subtitle">{{ discuss.introduction }}</h5>
             <el-image
                 :preview-src-list="[getUrl(discuss.cover)]"
@@ -73,7 +94,14 @@
                 :src="getUrl(discuss.cover)"
                 style="width: 150px; height: 150px"
             />
+
+            <div v-if="discuss.discussType=='Reward'">
+              <el-divider/>
+            <p style="color: red">通过”悬赏主题“发布问题，双方达成一致并解决问题后，建议有偿提供RMB给解决人员</p>
+            <p style="color: red">社区只提供解决问题平台，不参与任何交易，请自行联系</p>
+            </div>
             <el-divider/>
+            <el-skeleton :rows="10" animated v-if="discuss.content==undefined" />
             <ArticleContentInfo
                 :code="discuss.content ?? ''"
             ></ArticleContentInfo>
@@ -111,11 +139,21 @@
                       <el-button
                           type="primary"
                           size="default"
-                          v-if="isEditTheme && isArticleUser"
+                          v-if="isEditTheme && isArticleUser&&discuss.discussType=='Article'"
                           @click="updateHander(route.params.discussId)"
                       >编辑
                       </el-button
                       >
+                      <el-button
+                          type="warning"
+                          size="default"
+                          v-if="isEditTheme && isArticleUser&&discuss.discussType=='Reward'&&discuss.rewardData.isResolved==false"
+                          @click="updateSolveHander(route.params.discussId)"
+                      >设置已解决
+                      </el-button
+                      >
+                      
+                      
                       <el-button
                           style="margin-left: 1rem"
                           type="danger"
@@ -165,19 +203,7 @@
                 <ThemeData :themeData="temp"/>
               </template>
             </InfoCard>
-            <!--            <InfoCard :items="items" header="其他" text="更多">-->
-            <!--              <template #item="temp">-->
-            <!--                <AvatarInfo />-->
-            <!--              </template>-->
-            <!--            </InfoCard>-->
           </el-col>
-          <!--          <el-col :span="24">-->
-          <!--            <InfoCard :items="items" header="其他" text="更多">-->
-          <!--              <template #item="temp">-->
-          <!--                <AvatarInfo />-->
-          <!--              </template>-->
-          <!--            </InfoCard>-->
-          <!--          </el-col>-->
         </el-row>
       </el-col>
     </el-row>
@@ -193,7 +219,8 @@ import BottomInfo from "@/components/BottomInfo.vue";
 import TreeArticleInfo from "@/components/TreeArticleInfo.vue";
 import {useRoute, useRouter} from "vue-router";
 import AgreeInfo from "@/components/AgreeInfo.vue";
-import {get as discussGet, del as discussDel} from "@/apis/discussApi.js";
+import DiscussTypeLable from "@/components/DiscussTypeLable.vue";
+import {get as discussGet, del as discussDel,setResolve} from "@/apis/discussApi.js";
 import {
   all as articleall,
   del as articleDel,
@@ -309,6 +336,22 @@ const delHander = async (ids) => {
       type: "success",
       message: "删除成功",
     });
+  });
+};
+//设置已解决
+const updateSolveHander=(discussId)=>{
+  ElMessageBox.confirm(`确定要将此悬赏主题设置已解决吗？`, "警告", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(async () => {
+    await setResolve(discussId);
+    ElMessage({
+      type: "success",
+      message: "设置成功",
+    });
+    await loadDiscuss();
+    
   });
 };
 //更新操作

@@ -14,7 +14,7 @@
         <el-menu-item index="2" @click="enterStart"
          >开始</el-menu-item>
         <el-menu-item index="3" @click="enterTemp"  style="color: red;font-weight: bolder;font-size: large;"
-                     >Ai炒股</el-menu-item>
+                     >有偿悬赏</el-menu-item>
         <el-menu-item index="4" @click="enterShop"
         >商城</el-menu-item>
 <!--        <el-sub-menu index="4">-->
@@ -234,7 +234,7 @@ const enterStart = () => {
 }
 
 const enterTemp=()=>{
-  router.push("/stock");
+  router.push("/discuss/24cc0526-86e7-aabf-e091-3a0f83c3e604/false");
 }
 const enterShop=()=>{
   router.push("/shop");
