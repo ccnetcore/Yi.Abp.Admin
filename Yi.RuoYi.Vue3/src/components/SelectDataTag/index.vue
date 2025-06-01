@@ -1,7 +1,7 @@
 <template>
   <!-- 动态数据下拉选择框 -->
   <el-select v-model="value" :value-key="servicekey" filterable remote clearable :placeholder="placeholder"
-    :loading="loading" :style="{ width: width + '%' }" :remote-method="remoteMethod" @change="handleChange"
+    :loading="loading" :remote-method="remoteMethod" @change="handleChange"
     @clear="handleClear">
     <el-option v-for="item in options" :key="item[servicekey]" :label="item[servicelabel]" :value="item" />
   </el-select>
@@ -15,10 +15,6 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: '请输入关键字',
-  },
-  width: {
-    type: [String, Number],
-    default: 100,
   },
   /** 动态服务名称 */
   servicename: {
@@ -61,14 +57,16 @@ function remoteMethod(query) {
   if (query) {
     loading.value = true;
 
-    getSelectDataList(query).then(
-      (response) => {
-        list.value = response.data.items;
-        options.value = list.value;
+    setTimeout(() => {
+      getSelectDataList(query).then(
+        (response) => {
+          list.value = response.data.items;
+          options.value = list.value;
 
-        loading.value = false;
-      }
-    );
+          loading.value = false;
+        }
+      );
+    }, 300);
   }
 }
 

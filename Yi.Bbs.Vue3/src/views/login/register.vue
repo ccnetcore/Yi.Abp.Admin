@@ -222,6 +222,8 @@ const captcha = async () => {
         <el-form-item prop="code" >
           <input type="text" v-model.trim="phoneForm.code">
         </el-form-item>
+        <p style="color: red">由于国内短信严格程度在2025年5月连续加强3次，你的验证码有一定概率被运营商拦截</p>
+        <p style="color: red">如果未收到验证码，请联系微信chengzilaoge520 站长进行手动创建</p>
       </div>
       </div>
       <template #footer>

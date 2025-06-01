@@ -8,7 +8,7 @@ namespace Yi.Framework.Bbs.Application.Services
 {
     public class BbsUserInfoService : ApplicationService, IBbsUserInfoService
     {
-        private BbsUserManager _bbsUserManager;
+        private readonly BbsUserManager _bbsUserManager;
         public BbsUserInfoService(BbsUserManager bbsUserManager)
         {
             _bbsUserManager = bbsUserManager;

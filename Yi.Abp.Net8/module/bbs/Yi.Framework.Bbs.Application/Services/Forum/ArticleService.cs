@@ -1,28 +1,20 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using SqlSugar;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Domain.Repositories;
 using Yi.Framework.Bbs.Application.Contracts.Dtos.Article;
-using Yi.Framework.Bbs.Application.Contracts.Dtos.Plate;
 using Yi.Framework.Bbs.Application.Contracts.IServices;
 using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Bbs.Domain.Managers;
 using Yi.Framework.Bbs.Domain.Repositories;
 using Yi.Framework.Bbs.Domain.Shared.Consts;
 using Yi.Framework.Bbs.Domain.Shared.Model;
-using Yi.Framework.Core.Extensions;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Domain.Authorization;
-using Yi.Framework.Rbac.Domain.Extensions;
-using Yi.Framework.Rbac.Domain.Shared.Consts;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
 namespace Yi.Framework.Bbs.Application.Services.Forum
@@ -36,19 +28,16 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
     {
         public ArticleService(IArticleRepository articleRepository,
             ISqlSugarRepository<DiscussAggregateRoot> discussRepository,
-            IDiscussService discussService,
             ForumManager forumManager) : base(articleRepository)
         {
             _articleRepository = articleRepository;
             _discussRepository = discussRepository;
-            _discussService = discussService;
             _forumManager = forumManager;
         }
 
-        private ForumManager _forumManager;
-        private IArticleRepository _articleRepository;
-        private ISqlSugarRepository<DiscussAggregateRoot> _discussRepository;
-        private IDiscussService _discussService;
+        private readonly ForumManager _forumManager;
+        private readonly IArticleRepository _articleRepository;
+        private readonly ISqlSugarRepository<DiscussAggregateRoot> _discussRepository;
 
         public override async Task<PagedResultDto<ArticleGetListOutputDto>> GetListAsync(ArticleGetListInputVo input)
         {
@@ -123,7 +112,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <exception cref="UserFriendlyException"></exception>
         [Permission("bbs:article:add")]
         [Authorize]
-        public async override Task<ArticleGetOutputDto> CreateAsync(ArticleCreateInputVo input)
+        public override async Task<ArticleGetOutputDto> CreateAsync(ArticleCreateInputVo input)
         {
             await VerifyPermissionAsync(input.DiscussId);
             return await base.CreateAsync(input);

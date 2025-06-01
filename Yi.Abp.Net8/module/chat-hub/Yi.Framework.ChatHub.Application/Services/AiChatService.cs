@@ -23,7 +23,7 @@ namespace Yi.Framework.ChatHub.Application.Services
         /// <param name="chatContext"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPost("ai-chat/chat/{model}")]
+        [HttpPost("ai-chat/chat/{*model}")]
         public async Task ChatAsync([FromRoute]string model, [FromBody] List<AiChatContextDto> chatContext)
         {
             const int maxChar = 10;

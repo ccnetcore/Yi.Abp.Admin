@@ -43,21 +43,29 @@ const inputListDataStore = ref([
 
   {key: "ai@gpt-4o-mini", name: "ChatGpt聊天", titleName: "ChatGpt-全能神！综合能力最强！", logo: "openAi.png", value: ""},
 
-  {key: "ai@claude-3-7-sonnet-20250219", name: "Claude聊天", titleName: "Claude3.7 代码逻辑地表最强！", logo: "claudeAi.png", value: ""},
-  {key: "ai@claude-3-7-sonnet-20250219-thinking", name: "Claude思索", titleName: "Claude3.7 思索模式，强中强！", logo: "claudeAi.png", value: ""},
+  {key: "ai@claude-3-7-sonnet", name: "Claude聊天", titleName: "Claude3.7 代码逻辑地表最强！", logo: "claudeAi.png", value: ""},
+  {key: "ai@claude-3.7-sonnet-thinking", name: "Claude思索", titleName: "Claude3.7 思索模式，强中强！", logo: "claudeAi.png", value: ""},
 
-  {key: "ai@grok-2-latest", name: "Grok聊天", titleName: "Grok2 即将为3.0王的诞生献上礼炮", logo: "grokAi.png", value: ""},
+  {key: "ai@grok-3", name: "Grok聊天", titleName: "Grok3 为3.0王的诞生献上礼炮", logo: "grokAi.png", value: ""},
 
-  {key: "ai@Qwen/QVQ-72B-Preview", name: "QWen聊天", titleName: "国产阿里千问通义72B", logo: "qwenAi.png", value: ""},
+  {key: "ai@Qwen/QwQ-32B-Preview", name: "QWen聊天", titleName: "国产阿里千问通义", logo: "qwenAi.png", value: ""},
 
   {key: "ai@DeepSeek-V3", name: "DeepSeek聊天", titleName: "满血DeepSeek-聊天模式，开源模型第一", logo: "deepSeekAi.png", value: ""},
-  {key: "ai@deepseek-r1-250120", name: "DeepSeek思索", titleName: "满血DeepSeek-思索模式", logo: "deepSeekAi.png", value: ""}
+  {key: "ai@DeepSeek-R1", name: "DeepSeek思索", titleName: "满血DeepSeek-思索模式", logo: "deepSeekAi.png", value: ""}
 ]);
 //AI聊天临时存储
 const sendAiChatContext = ref([]);
 var timer = null;
 
 let codeCopyDic = [];
+
+// 添加可调整大小的变量
+const middleWidth = ref(380);
+const contentHeight = ref(535);
+const isDraggingVertical = ref(false);
+const isDraggingHorizontal = ref(false);
+const startX = ref(0);
+const startY = ref(0);
 
 //初始化
 onMounted(async () => {
@@ -94,7 +102,12 @@ onMounted(async () => {
   //在线用户列表
   chatStore.setUserList((await getChatUserList()).data);
   startCountTip();
+
+  // 添加全局鼠标事件监听
+  document.addEventListener('mousemove', handleMouseMove);
+  document.addEventListener('mouseup', handleMouseUp);
 })
+
 onUnmounted(() => {
   if (timer != null) {
     clearInterval(timer)
@@ -102,7 +115,56 @@ onUnmounted(() => {
   if (timerTip != null) {
     clearInterval(timerTip)
   }
+  
+  // 移除全局鼠标事件监听
+  document.removeEventListener('mousemove', handleMouseMove);
+  document.removeEventListener('mouseup', handleMouseUp);
 })
+
+// 开始垂直拖拽（左右分割线）
+const startDragVertical = (e) => {
+  isDraggingVertical.value = true;
+  startX.value = e.clientX;
+  e.preventDefault();
+};
+
+// 开始水平拖拽（上下分割线）
+const startDragHorizontal = (e) => {
+  isDraggingHorizontal.value = true;
+  startY.value = e.clientY;
+  e.preventDefault();
+};
+
+// 处理鼠标移动事件
+const handleMouseMove = (e) => {
+  if (isDraggingVertical.value) {
+    const deltaX = e.clientX - startX.value;
+    const newWidth = middleWidth.value + deltaX;
+    
+    // 限制最小宽度和最大宽度
+    if (newWidth >= 250 && newWidth <= 500) {
+      middleWidth.value = newWidth;
+      startX.value = e.clientX;
+    }
+  }
+  
+  if (isDraggingHorizontal.value) {
+    const deltaY = e.clientY - startY.value;
+    const newHeight = contentHeight.value + deltaY;
+    
+    // 限制最小高度和最大高度
+    if (newHeight >= 300 && newHeight <= 600) {
+      contentHeight.value = newHeight;
+      startY.value = e.clientY;
+    }
+  }
+};
+
+// 处理鼠标松开事件
+const handleMouseUp = () => {
+  isDraggingVertical.value = false;
+  isDraggingHorizontal.value = false;
+};
 
 /*-----计算属性-----*/
 //当前聊天框内容显示的消息
@@ -368,7 +430,7 @@ const toMarkDownHtml = (text) => {
 const codeHandler = (code, language) => {
   const codeIndex = parseInt(Date.now() + "") + Math.floor(Math.random() * 10000000);
   //console.log(codeIndex,"codeIndex");
-  // 格式化第一行是右侧language和 “复制” 按钮；
+  // 格式化第一行是右侧language和 "复制" 按钮；
   if (code) {
     const navCode = navHandler(code)
     try {
@@ -442,9 +504,9 @@ const clickCopyEvent = async function (event) {
 <template>
 
   <div style="position: absolute; top: 0;left: 0;" v-show="isShowTipNumber>0">
-    <p>当前版本：2.3.0</p>
+    <p>当前版本：2.4.0</p>
     <p>tip:官方学习交流群每次发送消息消耗 1 钱钱</p>
-    <p>tip:点击聊天窗口右上角“X”可退出</p>
+    <p>tip:点击聊天窗口右上角"X"可退出</p>
     <p>tip:多人同时在聊天室时，左侧可显示其他成员</p>
 
     <p>tip:当前支持多种AI模式，由于接口收费原因，还请各位手下留情</p>
@@ -475,7 +537,7 @@ const clickCopyEvent = async function (event) {
       </ul>
     </div>
 
-    <div class="middle">
+    <div class="middle" :style="{ width: middleWidth + 'px' }">
       <div class="header">
         <div class="header-div">
           <div class="search">
@@ -517,7 +579,10 @@ const clickCopyEvent = async function (event) {
       </div>
     </div>
 
-    <div class="right">
+    <!-- 垂直分割线 -->
+    <div class="vertical-resizer" @mousedown="startDragVertical"></div>
+
+    <div class="right" :style="{ width: 'calc(1400px - ' + (middleWidth + 70) + 'px)' }">
       <div class="header">
         <div class="header-left">{{ currentHeaderName }} <span class="clear-msg" v-show="selectIsAi()"
                                                                @click="clearAiMsg">点击此处清空当前对话</span>
@@ -538,7 +603,7 @@ const clickCopyEvent = async function (event) {
         </div>
 
       </div>
-      <div class="content">
+      <div class="content" :style="{ height: contentHeight + 'px' }">
         <div v-for="(item, i) in currentMsgContext" :key="i">
 
 
@@ -565,7 +630,11 @@ const clickCopyEvent = async function (event) {
         </div>
 
       </div>
-      <div class="bottom">
+      
+      <!-- 水平分割线 -->
+      <div class="horizontal-resizer" @mousedown="startDragHorizontal"></div>
+      
+      <div class="bottom" :style="{ height: 'calc(100% - ' + (contentHeight + 75) + 'px)' }">
         <div class="bottom-tool">
 
           <ul class="ul-left">
@@ -611,8 +680,35 @@ ul {
   height: 790px;
   width: 1400px;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* 垂直分割线样式 */
+.vertical-resizer {
+  width: 5px;
+  height: 100%;
+  background-color: #e7e7e7;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.vertical-resizer:hover {
+  background-color: #c0c0c0;
+}
+
+/* 水平分割线样式 */
+.horizontal-resizer {
+  width: 100%;
+  height: 5px;
+  background-color: #e7e7e7;
+  cursor: row-resize;
+  z-index: 10;
+}
+
+.horizontal-resizer:hover {
+  background-color: #c0c0c0;
 }
 
 .select-user-item {
@@ -623,6 +719,7 @@ ul {
   background-color: #2a2a2a;
   width: 70px;
   padding: 46px 10px 0 10px;
+  flex-shrink: 0;
 
   .icon {
     background-color: burlywood;
@@ -639,6 +736,7 @@ ul {
 .middle {
   background-color: #dadbdc;
   width: 380px;
+  flex-shrink: 0;
 
   .header {
     height: 75px;
@@ -648,13 +746,13 @@ ul {
     .header-div {
       background-color: #F7F7F7;
       height: 30px;
-      width: 338px;
+      width: 90%;
       margin: auto;
       display: flex;
       justify-content: space-between;
 
       .search {
-        width: 300px;
+        width: 85%;
         height: 100%;
         background-color: #E2E2E2;
         border-radius: 5px;
@@ -758,7 +856,9 @@ ul {
 
 .right {
   background-color: #f5f5f5;
-  width: 950px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 
   .header {
     height: 75px;
@@ -766,6 +866,7 @@ ul {
     border: 1px solid #e7e7e7;
     display: flex;
     justify-content: space-between;
+    flex-shrink: 0;
 
     .header-left {
       padding: 25px;
@@ -803,21 +904,24 @@ ul {
   .content {
     overflow-y: auto;
     /* 只启用垂直方向滚动条 */
-    height: 535px;
     padding: 20px 40px;
+    flex-grow: 1;
 
   }
 
   .bottom {
-    height: calc(100% - 610px);
     background: #f7f7f7;
     border-top: 1.5px solid #e7e7e7;
     padding: 15px 35px;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
 
     &-tool {
       display: flex;
       justify-content: space-between;
       height: 22px;
+      margin-bottom: 5px;
 
       .ul-left {
         display: flex;
@@ -853,7 +957,7 @@ ul {
 
     &-input {
       font-family: "Microsoft YaHei", sans-serif;
-      height: 70px;
+      flex-grow: 1;
       width: 100%;
       overflow-y: auto;
       padding: 10px 0;
@@ -862,6 +966,7 @@ ul {
       border: none;
       resize: none;
       outline: none;
+      min-height: 50px;
     }
 
     &-send {

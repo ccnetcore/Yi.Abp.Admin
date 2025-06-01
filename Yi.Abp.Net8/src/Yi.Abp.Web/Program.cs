@@ -4,15 +4,17 @@ using Yi.Abp.Web;
 
 //创建日志,可使用{SourceContext}记录
 Log.Logger = new LoggerConfiguration()
-.MinimumLevel.Debug()
-.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-.MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Error)
-.MinimumLevel.Override("Quartz", LogEventLevel.Warning)
-.Enrich.FromLogContext()
-.WriteTo.Async(c => c.File("logs/all/log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Debug))
-.WriteTo.Async(c => c.File("logs/error/errorlog-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Error))
-.WriteTo.Async(c => c.Console())
-.CreateLogger();
+    //由于后端处理请求中，前端请求已经结束，此类日志可不记录
+    .Filter.ByExcluding(log =>log.Exception?.GetType() == typeof(TaskCanceledException)||log.MessageTemplate.Text.Contains("\"message\": \"A task was canceled.\""))
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("Microsoft.AspNetCore.Hosting.Diagnostics", LogEventLevel.Error)
+    .MinimumLevel.Override("Quartz", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Async(c => c.File("logs/all/log-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Debug))
+    .WriteTo.Async(c => c.File("logs/error/errorlog-.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Error))
+    .WriteTo.Async(c => c.Console())
+    .CreateLogger();
 
 try
 {

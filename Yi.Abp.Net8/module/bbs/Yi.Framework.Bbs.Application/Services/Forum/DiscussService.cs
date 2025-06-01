@@ -40,10 +40,12 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         private ISqlSugarRepository<AgreeEntity> _agreeRepository;
         private BbsUserManager _bbsUserManager;
         private IDiscussLableRepository _discussLableRepository;
+
         public DiscussService(BbsUserManager bbsUserManager, ForumManager forumManager,
             ISqlSugarRepository<DiscussTopEntity> discussTopRepository,
             ISqlSugarRepository<PlateAggregateRoot> plateEntityRepository, ILocalEventBus localEventBus,
-            ISqlSugarRepository<AgreeEntity> agreeRepository, IDiscussLableRepository discussLableRepository) : base(forumManager._discussRepository)
+            ISqlSugarRepository<AgreeEntity> agreeRepository, IDiscussLableRepository discussLableRepository) : base(
+            forumManager._discussRepository)
         {
             _forumManager = forumManager;
             _plateEntityRepository = plateEntityRepository;
@@ -59,13 +61,13 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
 
 
         private ISqlSugarRepository<PlateAggregateRoot> _plateEntityRepository { get; set; }
-        
+
         /// <summary>
         /// 单查
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async override Task<DiscussGetOutputDto> GetAsync(Guid id)
+        public override async Task<DiscussGetOutputDto> GetAsync(Guid id)
         {
             //查询主题发布 浏览主题 事件，浏览数+1
             var output = await _forumManager._discussRepository._DbQueryable
@@ -98,7 +100,7 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 }, true)
                 .FirstAsync(discuss => discuss.Id == id);
 
-            if (output  is null)
+            if (output is null)
             {
                 throw new UserFriendlyException("该主题不存在", "404");
             }
@@ -107,34 +109,35 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             {
                 case DiscussTypeEnum.Article: break;
                 //查询的是悬赏主题
-                case DiscussTypeEnum.Reward: 
-                    var reward=  await _forumManager._discussRewardRepository.GetAsync(x=>x.DiscussId==output.Id);
+                case DiscussTypeEnum.Reward:
+                    var reward = await _forumManager._discussRewardRepository.GetAsync(x => x.DiscussId == output.Id);
                     output.RewardData = reward.Adapt<DiscussRewardGetOutputDto>();
                     break;
             }
-            
-            
+
+
             //组装点赞
             var agreeCreatorList =
-                (await _agreeRepository._DbQueryable.Where(x => x.DiscussId == output.Id).Select(x=>x.CreatorId).ToListAsync());
+                (await _agreeRepository._DbQueryable.Where(x => x.DiscussId == output.Id).Select(x => x.CreatorId)
+                    .ToListAsync());
             //已登录
             if (CurrentUser.Id is not null)
             {
                 output.IsAgree = agreeCreatorList.Contains(CurrentUser.Id);
             }
-      
+
             //组装标签
-            var lableDic=await _discussLableRepository.GetDiscussLableCacheMapAsync();
+            var lableDic = await _discussLableRepository.GetDiscussLableCacheMapAsync();
             foreach (var lableId in output.DiscussLableIds)
             {
-                if (lableDic.TryGetValue(lableId,out var item))
+                if (lableDic.TryGetValue(lableId, out var item))
                 {
                     output.Lables.Add(item.Adapt<DiscussLableGetOutputDto>());
                 }
             }
 
             //如果没有权限
-            if (!await _forumManager.VerifyDiscussPermissionAsync(output.Id,CurrentUser.Id, CurrentUser.Roles))
+            if (!await _forumManager.VerifyDiscussPermissionAsync(output.Id, CurrentUser.Id, CurrentUser.Roles))
             {
                 output.SetNoPermission();
             }
@@ -142,11 +145,12 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
             {
                 output.SetPassPermission();
             }
-            
+
             await _localEventBus.PublishAsync(new SeeDiscussEventArgs
                 { DiscussId = output.Id, OldSeeNum = output.SeeNum });
             return output;
         }
+
         /// <summary>
         /// 查询
         /// </summary>
@@ -170,7 +174,8 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 // .OrderByIF(input.Type == QueryDiscussTypeEnum.New, 
                 //    @"COALESCE(discuss.LastModificationTime, discuss.CreationTime) DESC")
                 //采用上方写法
-                .OrderByIF(input.Type == QueryDiscussTypeEnum.New,discuss=>SqlFunc.Coalesce(discuss.LastModificationTime,discuss.CreationTime),OrderByType.Desc)
+                .OrderByIF(input.Type == QueryDiscussTypeEnum.New, discuss => discuss.CreationTime, OrderByType.Desc)
+                // .OrderByIF(input.Type == QueryDiscussTypeEnum.New,discuss=>SqlFunc.Coalesce(discuss.LastModificationTime,discuss.CreationTime),OrderByType.Desc)
                 .OrderByIF(input.Type == QueryDiscussTypeEnum.Host, discuss => discuss.SeeNum, OrderByType.Desc)
                 .OrderByIF(input.Type == QueryDiscussTypeEnum.Suggest, discuss => discuss.AgreeNum, OrderByType.Desc)
                 .Select((discuss, user, info) => new DiscussGetListOutputDto
@@ -198,10 +203,10 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 (await _agreeRepository._DbQueryable.Where(x => discussId.Contains(x.DiscussId)).ToListAsync())
                 .GroupBy(x => x.DiscussId)
                 .ToDictionary(x => x.Key, y => y.Select(y => y.CreatorId).ToList());
-            
-            var levelCacheDic= await _bbsUserManager.GetLevelCacheMapAsync();
-            var lableDic=await _discussLableRepository.GetDiscussLableCacheMapAsync();
-            
+
+            var levelCacheDic = await _bbsUserManager.GetLevelCacheMapAsync();
+            var lableDic = await _discussLableRepository.GetDiscussLableCacheMapAsync();
+
             //组装等级、是否点赞赋值、标签
             items?.ForEach(x =>
             {
@@ -209,20 +214,19 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 if (CurrentUser.Id is not null)
                 {
                     //默认fasle
-                    if (agreeDic.TryGetValue(x.Id,out var userIds))
+                    if (agreeDic.TryGetValue(x.Id, out var userIds))
                     {
                         x.IsAgree = userIds.Contains(CurrentUser.Id);
                     }
                 }
-                
+
                 foreach (var lableId in x.DiscussLableIds)
                 {
-                    if (lableDic.TryGetValue(lableId,out var item))
+                    if (lableDic.TryGetValue(lableId, out var item))
                     {
                         x.Lables.Add(item.Adapt<DiscussLableGetOutputDto>());
                     }
                 }
-                
             });
             return new PagedResultDto<DiscussGetListOutputDto>(total, items);
         }
@@ -264,15 +268,15 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                     }
                 }, true)
                 .ToListAsync();
-            var levelCacheDic= await _bbsUserManager.GetLevelCacheMapAsync();
-            var lableDic=await _discussLableRepository.GetDiscussLableCacheMapAsync();
-            
+            var levelCacheDic = await _bbsUserManager.GetLevelCacheMapAsync();
+            var lableDic = await _discussLableRepository.GetDiscussLableCacheMapAsync();
+
             output?.ForEach(x =>
             {
-                x.User.LevelName = levelCacheDic[x.User.Level].Name;  
+                x.User.LevelName = levelCacheDic[x.User.Level].Name;
                 foreach (var lableId in x.DiscussLableIds)
                 {
-                    if (lableDic.TryGetValue(lableId,out var item))
+                    if (lableDic.TryGetValue(lableId, out var item))
                     {
                         x.Lables.Add(item.Adapt<DiscussLableGetOutputDto>());
                     }
@@ -311,7 +315,9 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
                 }
             }
 
-            var entity = await _forumManager.CreateDiscussAsync(await MapToEntityAsync(input),input.RewardData.Adapt<DiscussRewardAggregateRoot>());
+            await _bbsUserManager.VerifyUserLimitAsync(CurrentUser.GetId());
+            var entity = await _forumManager.CreateDiscussAsync(await MapToEntityAsync(input),
+                input.RewardData.Adapt<DiscussRewardAggregateRoot>());
             return await MapToGetOutputDtoAsync(entity);
         }
 
@@ -322,22 +328,17 @@ namespace Yi.Framework.Bbs.Application.Services.Forum
         /// <exception cref="UserFriendlyException"></exception>
         [HttpPut("discuss/reward/resolve/{discussId}")]
         [Authorize]
-        public async Task SetRewardResolvedAsync([FromRoute]Guid discussId)
+        public async Task SetRewardResolvedAsync([FromRoute] Guid discussId)
         {
-           var reward= await _forumManager._discussRewardRepository.GetFirstAsync(x=>x.DiscussId==discussId);
-           if (reward is null)
-           {
-               throw new UserFriendlyException("未找到该悬赏主题","404");
-           }
+            var reward = await _forumManager._discussRewardRepository.GetFirstAsync(x => x.DiscussId == discussId);
+            if (reward is null)
+            {
+                throw new UserFriendlyException("未找到该悬赏主题", "404");
+            }
 
-           //设置已解决
-           reward.SetResolved();
-           await _forumManager._discussRewardRepository.UpdateAsync(reward);
-        }
-
-        public override Task<DiscussGetOutputDto> UpdateAsync(Guid id, DiscussUpdateInput input)
-        {
-            return base.UpdateAsync(id, input);
+            //设置已解决
+            reward.SetResolved();
+            await _forumManager._discussRewardRepository.UpdateAsync(reward);
         }
     }
 }

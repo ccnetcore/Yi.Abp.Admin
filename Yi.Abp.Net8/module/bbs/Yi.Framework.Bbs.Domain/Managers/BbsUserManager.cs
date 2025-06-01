@@ -13,25 +13,49 @@ namespace Yi.Framework.Bbs.Domain.Managers
     public class BbsUserManager : DomainService
     {
         public ISqlSugarRepository<UserAggregateRoot> _userRepository;
-        public ISqlSugarRepository<BbsUserExtraInfoEntity> _bbsUserInfoRepository;
-        // public Dictionary<int, LevelCacheItem> _levelCacheDic;
-        private LevelManager _levelManager;
-
+        
+        private readonly LevelManager _levelManager;
         public BbsUserManager(ISqlSugarRepository<UserAggregateRoot> userRepository,
             ISqlSugarRepository<BbsUserExtraInfoEntity> bbsUserInfoRepository,
             LevelManager levelManager
         )
         {
             _userRepository = userRepository;
-            _bbsUserInfoRepository = bbsUserInfoRepository;
             _levelManager = levelManager;
         }
 
+        /// <summary>
+        /// 校验用户限制
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <exception cref="UserFriendlyException"></exception>
+        public async Task VerifyUserLimitAsync(Guid userId)
+        {
+            var userInfo = await GetBbsUserInfoAsync(userId);
+            if (userInfo.UserLimit == UserLimitEnum.Ban)
+            {
+                throw new UserFriendlyException("你已被禁用，如存疑虑，请联系管理员进行申诉");
+            }
+            if (userInfo.UserLimit == UserLimitEnum.Dangerous)
+            {
+                throw new UserFriendlyException("您的账号被标记为危险状态，请遵规守法，等待后续解除");
+            }
+        }
+        
+        /// <summary>
+        /// 获取等级关系
+        /// </summary>
+        /// <returns></returns>
         public async Task<Dictionary<int, LevelCacheItem>> GetLevelCacheMapAsync()
         {
             return await _levelManager.GetCacheMapAsync();
         }
 
+        /// <summary>
+        /// 获取bbs用户信息
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<BbsUserInfoDto?> GetBbsUserInfoAsync(Guid userId)
         {
             var userInfo = await _userRepository._DbQueryable
@@ -50,7 +74,7 @@ namespace Yi.Framework.Bbs.Domain.Managers
                 }, true)
                 .FirstAsync(user => user.Id == userId);
 
-          var levelCacheDic= await GetLevelCacheMapAsync();
+            var levelCacheDic = await GetLevelCacheMapAsync();
             userInfo.LevelName = levelCacheDic[userInfo.Level].Name;
             return userInfo;
         }
@@ -73,8 +97,8 @@ namespace Yi.Framework.Bbs.Domain.Managers
                     DiscussNumber = info.DiscussNumber
                 }, true)
                 .ToListAsync();
-            var levelCacheDic= await GetLevelCacheMapAsync();
-            userInfos?.ForEach(userInfo => userInfo.LevelName =levelCacheDic[userInfo.Level].Name);
+            var levelCacheDic = await GetLevelCacheMapAsync();
+            userInfos?.ForEach(userInfo => userInfo.LevelName = levelCacheDic[userInfo.Level].Name);
 
             return userInfos ?? new List<BbsUserInfoDto>();
         }
