@@ -103,7 +103,7 @@ export function usePost() {
       `确认要<strong>${
         row.state === false ? "停用" : "启用"
       }</strong><strong style='color:var(--el-color-primary)'>${
-        row.roleName
+        row.postName
       }</strong>吗?`,
       "系统提示",
       {
@@ -132,7 +132,7 @@ export function usePost() {
             loading: false
           }
         );
-        message(`已${row.state === false ? "停用" : "启用"}${row.roleName}`, {
+        message(`已${row.state === false ? "停用" : "启用"}${row.postName}`, {
           type: "success"
         });
       })
@@ -143,7 +143,7 @@ export function usePost() {
 
   async function handleDelete(row) {
     await delPost([row.id]);
-    message(`您删除了角色名称为${row.roleName}的这条数据`, { type: "success" });
+    message(`您删除了岗位名称为${row.postName}的这条数据`, { type: "success" });
     onSearch();
   }
 

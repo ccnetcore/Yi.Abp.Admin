@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Volo.Abp.AspNetCore.Mvc.ExceptionHandling;
+using Volo.Abp.AspNetCore.Mvc.Response;
 using Yi.Framework.AspNetCore.UnifyResult.Fiters;
 
 namespace Yi.Framework.AspNetCore.UnifyResult;
@@ -20,9 +21,10 @@ public static class UnifyResultExtensions
         services.AddTransient<FriendlyExceptionFilter>();
         services.AddMvc(options =>
         {
+            options.Filters.RemoveAll(x => (x as ServiceFilterAttribute)?.ServiceType == typeof(AbpExceptionFilter));
+            options.Filters.RemoveAll(x => (x as ServiceFilterAttribute)?.ServiceType == typeof(AbpNoContentActionFilter));
             options.Filters.AddService<SucceededUnifyResultFilter>(99);
             options.Filters.AddService<FriendlyExceptionFilter>(100);
-            options.Filters.RemoveAll(x => (x as ServiceFilterAttribute)?.ServiceType == typeof(AbpExceptionFilter));
         });
         return services;
     }

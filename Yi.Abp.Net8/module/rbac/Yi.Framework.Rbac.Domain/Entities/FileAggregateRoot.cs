@@ -34,8 +34,7 @@ namespace Yi.Framework.Rbac.Domain.Entities
             var type = GetFileType();
 
             var savePath = GetSaveFilePath();
-            var filePath = Path.Combine(savePath, this.FileName);
-            this.FilePath = filePath;
+            this.FilePath = savePath;
         }
 
         /// <summary>

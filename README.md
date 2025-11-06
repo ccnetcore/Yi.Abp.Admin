@@ -66,9 +66,9 @@ bbs前端：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/
 
 Yi社区官网网址（Bbs社区正式）：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
 
-Rbac后台演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
+Rbac后台演示地址：https://data.ccnetcore.com:1000  （用户cc、密码123456）
 
-Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456）
+Pure后台演示地址：https://data.ccnetcore.com:1001  （用户cc、密码123456）
 
 ##  🍏  支持:
 

@@ -39,6 +39,7 @@ using Yi.Framework.AspNetCore.Authentication.OAuth.Gitee;
 using Yi.Framework.AspNetCore.Authentication.OAuth.QQ;
 using Yi.Framework.AspNetCore.Microsoft.AspNetCore.Builder;
 using Yi.Framework.AspNetCore.Microsoft.Extensions.DependencyInjection;
+using Yi.Framework.AspNetCore.UnifyResult;
 using Yi.Framework.BackgroundWorkers.Hangfire;
 using Yi.Framework.Bbs.Application;
 using Yi.Framework.Bbs.Application.Extensions;
@@ -130,6 +131,7 @@ namespace Yi.Abp.Web
             });
 
             //采用furion格式的规范化api，默认不开启，使用abp优雅的方式
+            //前置：需要将管道工作单元前加上app.Properties.Add("_AbpExceptionHandlingMiddleware_Added",false);
             //你没看错。。。
             //service.AddFurionUnifyResultApi();
 
@@ -393,8 +395,7 @@ namespace Yi.Abp.Web
             app.UseDefaultFiles();
             app.UseDirectoryBrowser("/api/app/wwwroot");
 
-
-            // app.Properties.Add("_AbpExceptionHandlingMiddleware_Added",false);
+            //app.Properties.Add("_AbpExceptionHandlingMiddleware_Added",false);
             //工作单元
             app.UseUnitOfWork();
 

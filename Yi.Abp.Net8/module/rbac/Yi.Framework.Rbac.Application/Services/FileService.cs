@@ -43,8 +43,9 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 return new NotFoundResult();
             }
-            var steam = await File.ReadAllBytesAsync(path);
-            return new FileContentResult(steam, file.GetMimeMapping());
+            
+            var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return new FileStreamResult(stream, file!.GetMimeMapping());
         }
         
         /// <summary>
