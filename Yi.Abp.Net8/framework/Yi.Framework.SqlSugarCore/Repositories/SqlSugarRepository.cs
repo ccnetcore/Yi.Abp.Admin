@@ -264,6 +264,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
                 var entity = await GetByIdAsync(id);
+                if (entity == null) return false;
                 //反射赋值
                 ReflexHelper.SetModelValue(nameof(ISoftDelete.IsDeleted), true, entity);
                 return await UpdateAsync(entity);
