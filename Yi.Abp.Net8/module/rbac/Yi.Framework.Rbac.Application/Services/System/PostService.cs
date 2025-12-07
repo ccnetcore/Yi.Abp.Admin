@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using Volo.Abp.Application.Dtos;
 using Yi.Framework.Ddd.Application;
@@ -53,6 +54,26 @@ namespace Yi.Framework.Rbac.Application.Services.System
             {
                 throw new UserFriendlyException(RoleConst.Exist);
             }
+        }
+
+        /// <summary>
+        /// 更新状态
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        [Route("post/{id}/{state}")]
+        public async Task<PostGetOutputDto> UpdateStateAsync([FromRoute] Guid id, [FromRoute] bool state)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity is null)
+            {
+                throw new ApplicationException("岗位未存在");
+            }
+
+            entity.State = state;
+            await _repository.UpdateAsync(entity);
+            return await MapToGetOutputDtoAsync(entity);
         }
     }
 }

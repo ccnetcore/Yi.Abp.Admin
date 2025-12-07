@@ -7,6 +7,12 @@
 [![fork](https://gitee.com/ccnetcore/yi/badge/fork.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)
 [![license](https://img.shields.io/badge/license-MIT-yellow)](https://gitee.com/ccnetcore/Yi)
 
+本项目 CDN 加速及安全防护由 Tencent EdgeOne 赞助
+
+[亚洲最佳CDN、边缘和安全解决方案 - Tencent EdgeOne](https://edgeone.ai/zh?from=github)
+
+<img src="readme/edgeone.png"/>
+
 [English](README-en.md) | 简体中文
 ****
 ##  🍍  简介:
@@ -60,9 +66,9 @@ bbs前端：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/
 
 Yi社区官网网址（Bbs社区正式）：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
 
-Rbac后台演示地址：https://ccnetcore.com:1000  （用户cc、密码123456）
+Rbac后台演示地址：https://data.ccnetcore.com:1000  （用户cc、密码123456）
 
-Pure后台演示地址：https://ccnetcore.com:1001  （用户cc、密码123456）
+Pure后台演示地址：https://data.ccnetcore.com:1001  （用户cc、密码123456）
 
 ##  🍏  支持:
 

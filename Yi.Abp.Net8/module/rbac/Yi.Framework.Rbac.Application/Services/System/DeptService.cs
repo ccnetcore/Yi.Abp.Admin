@@ -51,7 +51,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
                 .WhereIF(!string.IsNullOrEmpty(input.DeptName), u => u.DeptName.Contains(input.DeptName!))
                 .WhereIF(input.State is not null, u => u.State == input.State)
                 .OrderBy(u => u.OrderNum, OrderByType.Asc)
-                .ToPageListAsync(input.SkipCount, input.MaxResultCount, total);
+                .ToListAsync();
             return new PagedResultDto<DeptGetListOutputDto>
             {
                 Items = await MapToGetListOutputDtosAsync(entities),

@@ -1,12 +1,9 @@
-﻿using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using System.Linq.Expressions;
+using Microsoft.Extensions.Options;
 using Nito.AsyncEx;
 using SqlSugar;
-using Volo.Abp;
-using Volo.Abp.Auditing;
 using Volo.Abp.Data;
+using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Linq;
@@ -17,12 +14,17 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 {
     public class SqlSugarRepository<TEntity> : ISqlSugarRepository<TEntity>, IRepository<TEntity> where TEntity : class, IEntity, new()
     {
+        [Obsolete("使用GetDbContextAsync()")]
         public ISqlSugarClient _Db => AsyncContext.Run(async () => await GetDbContextAsync());
 
+        [Obsolete("使用AsQueryable()")]
         public ISugarQueryable<TEntity> _DbQueryable => _Db.Queryable<TEntity>();
 
         private readonly ISugarDbContextProvider<ISqlSugarDbContext> _dbContextProvider;
         
+        public IAbpLazyServiceProvider LazyServiceProvider { get; set; }
+        
+        protected DbConnOptions? Options => LazyServiceProvider?.LazyGetService<IOptions<DbConnOptions>>().Value;
         /// <summary>
         /// 异步查询执行器
         /// </summary>
@@ -264,6 +266,7 @@ namespace Yi.Framework.SqlSugarCore.Repositories
             if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
             {
                 var entity = await GetByIdAsync(id);
+                if (entity == null) return false;
                 //反射赋值
                 ReflexHelper.SetModelValue(nameof(ISoftDelete.IsDeleted), true, entity);
                 return await UpdateAsync(entity);
@@ -319,12 +322,12 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         public virtual async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize)
         {
-            return await (await GetDbSimpleClientAsync()).GetPageListAsync(whereExpression, new PageModel() { PageIndex = pageNum, PageSize = pageSize });
+            return await (await AsQueryable()).Where(whereExpression).ToPageListAsync(pageNum, pageSize);
         }
 
         public virtual async Task<List<TEntity>> GetPageListAsync(Expression<Func<TEntity, bool>> whereExpression, int pageNum, int pageSize, Expression<Func<TEntity, object>>? orderByExpression = null, OrderByType orderByType = OrderByType.Asc)
         {
-            return await (await GetDbSimpleClientAsync()).GetPageListAsync(whereExpression, new PageModel { PageIndex = pageNum, PageSize = pageSize }, orderByExpression, orderByType);
+            return await (await AsQueryable()).Where(whereExpression) .OrderBy( orderByExpression,orderByType).ToPageListAsync(pageNum, pageSize);
         }
 
         public virtual async Task<TEntity> GetSingleAsync(Expression<Func<TEntity, bool>> whereExpression)
@@ -379,20 +382,24 @@ namespace Yi.Framework.SqlSugarCore.Repositories
 
         public virtual async Task<bool> UpdateAsync(TEntity updateObj)
         {
-            if (typeof(TEntity).IsAssignableTo<IHasConcurrencyStamp>())//带版本号乐观锁更新
+            if (Options is not null && Options.EnabledConcurrencyException)
             {
-                try
+                if (typeof(TEntity).IsAssignableTo<IHasConcurrencyStamp>()) //带版本号乐观锁更新
                 {
-                    int num =  await (await GetDbSimpleClientAsync())
-                        .Context.Updateable(updateObj).ExecuteCommandWithOptLockAsync(true);
-                    return num>0;
-                }
-                catch (VersionExceptions ex)
-                {
- 
-                    throw new AbpDbConcurrencyException($"{ex.Message}[更新失败：ConcurrencyStamp不是最新版本],entityInfo：{updateObj}", ex);
+                    try
+                    {
+                        int num = await (await GetDbSimpleClientAsync())
+                            .Context.Updateable(updateObj).ExecuteCommandWithOptLockAsync(true);
+                        return num > 0;
+                    }
+                    catch (VersionExceptions ex)
+                    {
+                        throw new AbpDbConcurrencyException(
+                            $"{ex.Message}[更新失败：ConcurrencyStamp不是最新版本],entityInfo：{updateObj}", ex);
+                    }
                 }
             }
+
             return await (await GetDbSimpleClientAsync()).UpdateAsync(updateObj);
         }
 

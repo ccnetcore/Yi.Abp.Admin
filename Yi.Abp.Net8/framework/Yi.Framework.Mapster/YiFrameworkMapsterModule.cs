@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
 using Volo.Abp.ObjectMapping;
 using Yi.Framework.Core;
+using Mapster;
 
 namespace Yi.Framework.Mapster
 {
@@ -22,7 +23,8 @@ namespace Yi.Framework.Mapster
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             var services = context.Services;
-
+            // 扫描并注册所有映射配置 
+            TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
             // 注册Mapster相关服务
             services.AddTransient<IAutoObjectMappingProvider, MapsterAutoObjectMappingProvider>();
             services.AddTransient<IObjectMapper, MapsterObjectMapper>();

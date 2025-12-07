@@ -58,5 +58,10 @@ namespace Yi.Framework.SqlSugarCore.Abstractions
         /// 是否启用SaaS多租户
         /// </summary>
         public bool EnabledSaasMultiTenancy { get; set; } = false;
+
+        /// <summary>
+        /// 是否开启更新并发乐观锁
+        /// </summary>
+        public bool EnabledConcurrencyException { get;set; } = false;
     }
 }
