@@ -7,5 +7,6 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.OperLog
     {
         public OperEnum? OperType { get; set; }
         public string? OperUser { get; set; }
+        public string? Title { get; set; }
     }
 }

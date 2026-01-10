@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -60,6 +61,19 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 throw new UserFriendlyException(ConfigConst.Exist);
             }
+        }
+        
+        /// <summary>
+        /// 根据key查配置
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        ///
+        [Route("config/config-key/{configKey}")]
+        public async Task<string> GetConfigKeyAsync(string configKey)
+        {
+            var entity = await _repository.GetAsync(x => x.ConfigKey == configKey);
+            return entity.ConfigValue;
         }
     }
 }

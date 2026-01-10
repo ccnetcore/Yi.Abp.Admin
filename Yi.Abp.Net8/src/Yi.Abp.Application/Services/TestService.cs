@@ -1,17 +1,14 @@
-﻿using System.Xml.Linq;
-using Mapster;
+﻿using Mapster;
 using Medallion.Threading;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 using Volo.Abp.Application.Services;
 using Volo.Abp.DistributedLocking;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
 using Volo.Abp.Uow;
-using Yi.Framework.Bbs.Application.Contracts.Dtos.Banner;
-using Yi.Framework.Bbs.Domain.Entities.Forum;
 using Yi.Framework.Rbac.Domain.Authorization;
+using Yi.Framework.Rbac.Domain.Entities;
 using Yi.Framework.Rbac.Domain.Extensions;
 using Yi.Framework.SettingManagement.Domain;
 using Yi.Framework.SqlSugarCore.Abstractions;
@@ -23,11 +20,11 @@ namespace Yi.Abp.Application.Services
     /// </summary>
     public class TestService : ApplicationService
     {
-        /// <summary>
-        /// 属性注入
-        /// 不推荐，坑太多，容易把自己玩死，简单的东西可以用一用
-        /// </summary>
-        public ISqlSugarRepository<BannerAggregateRoot> sqlSugarRepository { get; set; }
+        // /// <summary>
+        // /// 属性注入
+        // /// 不推荐，坑太多，容易把自己玩死，简单的东西可以用一用
+        // /// </summary>
+        public ISqlSugarRepository<ConfigAggregateRoot> sqlSugarRepository { get; set; }
 
         /// <summary>
         /// </summary>
@@ -86,11 +83,11 @@ namespace Yi.Abp.Application.Services
                     //await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入2" });
                     using (var uow = UnitOfWorkManager.Begin(requiresNew: true, isTransactional: true))
                     {
-                        await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入1" });
+                        await sqlSugarRepository.InsertAsync(new ConfigAggregateRoot { ConfigKey = "插入1" });
                         await uow.CompleteAsync();
                     }
                 }));
-                await sqlSugarRepository.InsertAsync(new BannerAggregateRoot { Name = "插入3" });
+                await sqlSugarRepository.InsertAsync(new ConfigAggregateRoot { ConfigKey = "插入3" });
                 i--;
             }
 
@@ -136,8 +133,8 @@ namespace Yi.Abp.Application.Services
         public void GetMapper()
         {
             //直接无脑Adapt，无需配置
-            var entity = new BannerAggregateRoot();
-            var dto = entity.Adapt<BannerGetListOutputDto>();
+            var entity = new ConfigAggregateRoot();
+            var dto = entity.Adapt<ConfigAggregateRoot>();
         }
 
         private static int RequestNumber { get; set; } = 0;
@@ -218,7 +215,7 @@ namespace Yi.Abp.Application.Services
         }
 
         public ICurrentTenant CurrentTenant { get; set; }
-        public IRepository<BannerAggregateRoot> repository { get; set; }
+        public IRepository<ConfigAggregateRoot> repository { get; set; }
         /// <summary>
         /// 多租户
         /// </summary>
@@ -232,31 +229,31 @@ namespace Yi.Abp.Application.Services
                 using (CurrentTenant.Change(null,"Default"))
                 {
                     var defautTenantData2= await repository.GetListAsync();
-                    await repository.InsertAsync(new BannerAggregateRoot
+                    await repository.InsertAsync(new ConfigAggregateRoot
                     {
-                        Name = "default",
+                        ConfigKey = "default",
                     });
-                    var defautTenantData3= await repository.GetListAsync(x=>x.Name=="default");
+                    var defautTenantData3= await repository.GetListAsync(x=>x.ConfigKey=="default");
                 }
                 //此处会实例化一个新的db连接MES
                 using (CurrentTenant.Change(null,"Mes"))
                 {
                     var otherTenantData1= await repository.GetListAsync();
-                    await repository.InsertAsync(new BannerAggregateRoot
+                    await repository.InsertAsync(new ConfigAggregateRoot
                     {
-                        Name = "Mes1",
+                        ConfigKey = "Mes1",
                     });
-                    var otherTenantData2= await repository.GetListAsync(x=>x.Name=="Mes1");
+                    var otherTenantData2= await repository.GetListAsync(x=>x.ConfigKey=="Mes1");
                 }
                 //此处会复用Mesdb，不会实例化新的db
                 using (CurrentTenant.Change(Guid.Parse("33333333-3d72-4339-9adc-845151f8ada0")))
                 {
                     var otherTenantData1= await repository.GetListAsync();
-                    await repository.InsertAsync(new BannerAggregateRoot
+                    await repository.InsertAsync(new ConfigAggregateRoot
                     {
-                        Name = "Mes2",
+                        ConfigKey = "Mes2",
                     });
-                    var otherTenantData2= await repository.GetListAsync(x=>x.Name=="Mes2");
+                    var otherTenantData2= await repository.GetListAsync(x=>x.ConfigKey=="Mes2");
                 }
                 //此处会将多库进行一起提交，前面的操作有报错，全部回滚
                 await uow.CompleteAsync();

@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\common.props" />
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\rbac\Yi.Framework.Rbac.Domain\Yi.Framework.Rbac.Domain.csproj" />
-    <ProjectReference Include="..\Yi.Framework.Bbs.Domain.Shared\Yi.Framework.Bbs.Domain.Shared.csproj" />
-  </ItemGroup>
-
-</Project>

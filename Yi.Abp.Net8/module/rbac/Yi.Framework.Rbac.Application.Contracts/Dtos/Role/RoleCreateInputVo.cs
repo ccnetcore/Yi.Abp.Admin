@@ -15,8 +15,8 @@ namespace Yi.Framework.Rbac.Application.Contracts.Dtos.Role
 
         public int OrderNum { get; set; }
 
-        public List<Guid> DeptIds { get; set; }
+        public List<Guid>? DeptIds { get; set; }
 
-        public List<Guid> MenuIds { get; set; }
+        public List<Guid>? MenuIds { get; set; }
     }
 }

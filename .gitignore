@@ -154,6 +154,10 @@ PublishScripts/
 *.nupkg
 # The packages folder can be ignored because of Package Restore
 **/packages/*
+
+# 把 Yi.Vben5.Vue3 下的 packages 目录重新放出来
+!**/Yi.Vben5.Vue3/packages/
+!**/Yi.Vben5.Vue3/packages/**
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
 # Uncomment if necessary however generally it will be regenerated when needed

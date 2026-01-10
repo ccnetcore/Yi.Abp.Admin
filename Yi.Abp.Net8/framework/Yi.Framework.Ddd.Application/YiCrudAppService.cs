@@ -185,15 +185,13 @@ namespace Yi.Framework.Ddd.Application
         /// </summary>
         /// <param name="keywords">查询关键字</param>
         /// <returns></returns>
-        public virtual async Task<PagedResultDto<TGetListOutputDto>> GetSelectDataListAsync(string? keywords = null)
+        public virtual async Task<List<TGetListOutputDto>> GetSelectDataListAsync(string? keywords = null)
         {
             List<TEntity> entities = await Repository.GetListAsync();
-
             // 获取总数并映射结果
-            var totalCount = entities.Count;
             var dtos = await MapToGetListOutputDtosAsync(entities);
 
-            return new PagedResultDto<TGetListOutputDto>(totalCount, dtos);
+            return dtos;
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 <h1 align="center"><img align="left" height="150px" src="https://ccnetcore.com/prod-api/wwwroot/logo.png"> Yi框架</h1>
 <h4 align="center">一套以用户体验出发的.Net8 Web开源框架</h4>
-<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端接入Ruoyi/Pure Vue</h5>
+<h5 align="center">支持Abp.vNext 版本原生版本、Furion版本，前端接入Vben/Ruoyi/Pure Vue</h5>
 <h2 align="center">集大成者，终究轮子</h2>
 
 [![star](https://gitee.com/ccnetcore/yi/badge/star.svg?theme=dark)](https://gitee.com/ccnetcore/Yi)
@@ -39,13 +39,16 @@ Yi框架-一套与SqlSugar一样爽的.Net8开源框架。
 
 **分支目录：**
 
-- 分支**Abp**: 基于Abp.vNext分支，DDD领域驱动设计,回归开发本质，极度简单，一个后台支持以下多个前端
+- 分支**main**: 基于Abp.vNext分支，默认分支，只使用Rbac权限管理后台
+- 分支**abp**: 基于Abp.vNext分支，完整分支，具备超多内置模块
+
 
 - Yi.Abp.Net8：后端
-- Yi.Bbs.Vue3：Bbs社区 前端
 - Yi.Doc.Md: 开源文档教程
+- Yi.Vben5.Vue3：Vben ts后台前端
 - Yi.Pure.Vue3：Pure ts后台前端
 - Yi.RuoYi.Vue3：RuoYi js后台前端
+
 
 ****
 ## 🍉 docker 一键启动
@@ -56,7 +59,7 @@ Yi框架-一套与SqlSugar一样爽的.Net8开源框架。
 
 bbs前端：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/yi-bbs.conf:/etc/nginx/conf.d/yi-bbs.conf jiftcc/yi.bbs:last`
 
-> 另外我们提供docker的build操作，我们更希望你能通过此种方式二开构建属于自己的镜像
+> 另外我们提供docker的build操作，我们更希望你能通过此种方式二开构建属于自己的镜像，因为上面镜像更新不及时
 
 ****
 
@@ -64,11 +67,24 @@ bbs前端：`docker run -d --name yi.bbs -p 18001:18001 -v /home/Yi/Yi.Bbs.Vue3/
 
 废话少说直接上地址
 
-Yi社区官网网址（Bbs社区正式）：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
+- Yi社区官网网址（Bbs社区正式）：[ccnetcore.com](https://ccnetcore.com)  (已上线，欢迎加入)
 
-Rbac后台演示地址：https://data.ccnetcore.com:1000  （用户cc、密码123456）
+DotNet后端主要由：SharpDance 意框架官方团队 及 数百名 开源用户 共同维护
 
-Pure后台演示地址：https://data.ccnetcore.com:1001  （用户cc、密码123456）
+
+- Vben后台演示地址：https://data.ccnetcore.com:2000  （用户cc、密码123456）
+
+Vben前端主要由：【https://gitee.com/vichen2021】贡献维护
+
+
+- Ruoyi后台演示地址：https://data.ccnetcore.com:1000  （用户cc、密码123456）
+
+Ruoyi前端主要由：30多名开源用户共同贡献维护
+
+
+- Pure后台演示地址：https://data.ccnetcore.com:1001  （用户cc、密码123456）
+
+Pure前端主要由：3名开源用户共同贡献维护
 
 ##  🍏  支持:
 
@@ -118,8 +134,13 @@ Pure后台演示地址：https://data.ccnetcore.com:1001  （用户cc、密码12
 - [SqlSugar官网](https://www.donet5.com/home/doc)
 
 ##  🍅  内置模块简介
-- Rbac权限管理系统（已上线）（支持pure、ruoyi前端）
-- Bbs论坛社区系统（已上线）
+
+- rbac 权限管理系统（已上线）（支持vben、pure、ruoyi前端）
+- bbs 论坛社区系统（已上线）
+- ai-stock Ai模拟炒股系统（已上线）
+- chat-hub Ai在线聊天室系统（已上线）
+- code-gen 代码生成器工具系统（已上线）
+- digital-collectibles 数字藏品小程序系统（已上线）
 
 > 重复的东西，无需再写一遍，这也是优雅的体现之一
 
@@ -140,14 +161,6 @@ C# Asp.NetCore 8.0
 - [x] 分布式缓存：Abp.vNext
 - [x] 事件总线：Abp.vNext
 
-#### 前端
-js Vue3
-- [x] 异步请求：axios
-- [x] 图表：echarts
-- [x] ui：element-plus
-- [x] 存储：pinia
-- [x] 路由：vue-router
-- [x] 打包：vite
 
 #### 运维
 - [x] 部署：nginx
@@ -174,24 +187,16 @@ js Vue3
 - 缓存列表
 - 服务监控
 
-#### 🍐 BBS社区论坛系统（持续更新）
-（采用vue3前端）
-- 文章功能
-- 板块功能
-- 主题功能
-- 个人中心
-- 授权中心
-- 权限管理
 
 ####  🍉 演示截图： 
  <table>
     <tr>
-        <td><img src="readme/101.png"/></td>
-        <td><img src="readme/102.png"/></td>
+        <td><img src="readme/303.png"/></td>
+        <td><img src="readme/304.png"/></td>
     </tr>
     <tr>
-        <td><img src="readme/103.png"/></td>
-        <td><img src="readme/104.png"/></td>
+        <td><img src="readme/301.png"/></td>
+        <td><img src="readme/302.png"/></td>
     </tr>
 </table>
 
@@ -262,6 +267,8 @@ js Vue3
 
 [Furion百小僧]https://furion.baiqian.ltd/
 
+[du白]https://gitee.com/vichen2021
+
 ****
 ##  🌽 联系我们：
 
@@ -269,7 +276,7 @@ js Vue3
 
 QQ交流群：官方一群（已满）、官方二群（已满）、官方三群：`786308927`（已满）、官方四群:`498310311`（已满）、官方五群:`981136525`
 
-微信交流群：官方微信一群（已满）、官方微信二群(已满)、官方微信三群
+微信交流群：官方微信一群（已满）、官方微信二群(已满)、官方微信三群(已满)、官方微信四群(即满)
 
 微信交流群：加作者微信 chengzilaoge520 （橙子老哥520），备注拉群
 
@@ -280,6 +287,12 @@ QQ交流群：官方一群（已满）、官方二群（已满）、官方三群
 ****
 ##  🍄 FQA:
 
-前往官网查看留言区
+如何修改仓库代码：请直接pr即可，官方团队会第一时间处理，目前前端都是pr来的
+
+gitee仓库官方地址：https://gitee.com/ccnetcore/Yi 
+
+github仓库官方地址：https://github.com/ccnetcore/Yi.Abp.Admin
+
+前往官网查看留言区：
 
 [留言区](https://ccnetcore.com/discuss/1641030787056930818)

@@ -12,6 +12,7 @@
 	</PropertyGroup>
 	
   <PropertyGroup>
+      <SatelliteResourceLanguages>en;zh-CN</SatelliteResourceLanguages>
     <LangVersion>latest</LangVersion>
     <Version>1.0.0</Version>
     <NoWarn>$(NoWarn);CS1591;CS8618;CS1998;CS8604;CS8620;CS8600;CS8602</NoWarn>

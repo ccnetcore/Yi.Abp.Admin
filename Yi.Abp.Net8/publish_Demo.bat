@@ -1,7 +1,7 @@
 @echo on
 
 set SERVER_USER=root
-set SERVER_IP=ccnetcore.com
+set SERVER_IP=data.ccnetcore.com
 set FILE_PATH=publish_demo_02.zip
 set REMOTE_PATH=/home/yi/build/publish_demo_02.zip
 set REMOTE_COMMAND="cd /home/yi/demo-net8&&pwd&&unzip -o /home/yi/build/publish_demo_02.zip  -d ./&&./start.sh"

@@ -32,7 +32,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "性别男",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "default"
 
             };
             entities.Add(dictInfo1);
@@ -46,7 +47,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 99,
                 Remark = "性别女",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "default"
             };
             entities.Add(dictInfo2);
 
@@ -59,7 +61,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 98,
                 Remark = "性别未知",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "default"
             };
             entities.Add(dictInfo3);
 
@@ -74,7 +77,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "显示菜单",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo4);
 
@@ -87,7 +91,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 99,
                 Remark = "隐藏菜单",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "info"
             };
             entities.Add(dictInfo5);
 
@@ -102,7 +107,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "正常状态",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo6);
             DictionaryEntity dictInfo7 = new DictionaryEntity()
@@ -130,7 +136,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "正常状态",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo8);
             DictionaryEntity dictInfo9 = new DictionaryEntity()
@@ -159,7 +166,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "默认分组",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "default"
             };
             entities.Add(dictInfo10);
             DictionaryEntity dictInfo11 = new DictionaryEntity()
@@ -171,7 +179,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 99,
                 Remark = "系统分组",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "primary"
             };
             entities.Add(dictInfo11);
 
@@ -186,7 +195,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "系统默认是",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo12);
             DictionaryEntity dictInfo13 = new DictionaryEntity()
@@ -214,7 +224,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "通知",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "info"
             };
             entities.Add(dictInfo14);
             DictionaryEntity dictInfo15 = new DictionaryEntity()
@@ -226,9 +237,36 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 99,
                 Remark = "公告",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "primary"
             };
             entities.Add(dictInfo15);
+            DictionaryEntity dictInfo14_2 = new DictionaryEntity()
+            {
+
+                DictLabel = "通知",
+                DictValue = "MerryGoRound",
+                DictType = "sys_notice_type_vben5",
+                OrderNum = 100,
+                Remark = "通知",
+                IsDeleted = false,
+                State = true,
+                ListClass = "info"
+            };
+            entities.Add(dictInfo14_2);
+            DictionaryEntity dictInfo15_2 = new DictionaryEntity()
+            {
+
+                DictLabel = "公告",
+                DictValue = "Popup",
+                DictType = "sys_notice_type_vben5",
+                OrderNum = 99,
+                Remark = "公告",
+                IsDeleted = false,
+                State = true,
+                ListClass = "primary"
+            };
+            entities.Add(dictInfo15_2);
 
             DictionaryEntity dictInfo16 = new DictionaryEntity()
             {
@@ -239,7 +277,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "正常状态",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo16);
             DictionaryEntity dictInfo17 = new DictionaryEntity()
@@ -265,7 +304,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "新增操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo18);
             DictionaryEntity dictInfo19 = new DictionaryEntity()
@@ -277,7 +317,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 99,
                 Remark = "修改操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "warning"
             };
             entities.Add(dictInfo19);
             DictionaryEntity dictInfo22 = new DictionaryEntity()
@@ -302,7 +343,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 97,
                 Remark = "授权操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "primary"
             };
             entities.Add(dictInfo23);
             DictionaryEntity dictInfo24 = new DictionaryEntity()
@@ -314,7 +356,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 96,
                 Remark = "导出操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "info"
             };
             entities.Add(dictInfo24);
             DictionaryEntity dictInfo25 = new DictionaryEntity()
@@ -326,7 +369,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 95,
                 Remark = "导入操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "info"
             };
             entities.Add(dictInfo25);
             DictionaryEntity dictInfo26 = new DictionaryEntity()
@@ -338,7 +382,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 94,
                 Remark = "强退操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "warning"
             };
             entities.Add(dictInfo26);
             DictionaryEntity dictInfo27 = new DictionaryEntity()
@@ -350,7 +395,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 93,
                 Remark = "生成代码操作",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "primary"
             };
             entities.Add(dictInfo27);
             DictionaryEntity dictInfo28 = new DictionaryEntity()
@@ -378,7 +424,8 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 OrderNum = 100,
                 Remark = "正常状态",
                 IsDeleted = false,
-                State = true
+                State = true,
+                ListClass = "success"
             };
             entities.Add(dictInfo20);
             DictionaryEntity dictInfo21 = new DictionaryEntity()

@@ -3,5 +3,6 @@
 public enum MenuSourceEnum
 {
     Ruoyi=0,
-    Pure=1
+    Pure=1,
+    Vben5=2
 }

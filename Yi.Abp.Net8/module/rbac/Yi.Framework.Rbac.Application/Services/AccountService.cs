@@ -5,11 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SqlSugar;
-using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Authorization;
 using Volo.Abp.Caching;
@@ -17,8 +13,6 @@ using Volo.Abp.EventBus.Local;
 using Volo.Abp.Guids;
 using Volo.Abp.Uow;
 using Volo.Abp.Users;
-using Yi.Framework.Bbs.Domain.Shared.Enums;
-using Yi.Framework.Bbs.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.Account;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Entities;
@@ -423,13 +417,19 @@ namespace Yi.Framework.Rbac.Application.Services
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
-                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Ruoyi).ToList()).Vue3RuoYiRouterBuild();
+                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Ruoyi).ToList()).Vue3RuoYiRouterBuild(MenuSourceEnum.Ruoyi);
             }
             else if (routerType == "pure")
             {
                 //将后端菜单转换成前端路由，组件级别需要过滤
                 output =
                     ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Pure).ToList()).Vue3PureRouterBuild();
+            }
+            else if ( routerType == "vben5")
+            {
+                //将后端菜单转换成前端路由，组件级别需要过滤
+                output =
+                    ObjectMapper.Map<List<MenuDto>, List<MenuAggregateRoot>>(menus.Where(x=>x.MenuSource==MenuSourceEnum.Vben5).ToList()).Vue3RuoYiRouterBuild(MenuSourceEnum.Vben5);
             }
 
             return output;
@@ -513,9 +513,9 @@ namespace Yi.Framework.Rbac.Application.Services
             entity.Icon = input.Icon;
             await _userRepository.UpdateAsync(entity);
 
-            //发布更新头像任务事件
-            await this.LocalEventBus.PublishAsync(
-                new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateIcon, userId), false);
+            // //发布更新头像任务事件
+            // await this.LocalEventBus.PublishAsync(
+            //     new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateIcon, userId), false);
             return true;
         }
     }

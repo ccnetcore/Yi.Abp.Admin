@@ -26,10 +26,12 @@ namespace Yi.Framework.Rbac.Application.Services.System
     {
         public RoleService(RoleManager roleManager, ISqlSugarRepository<RoleDeptEntity> roleDeptRepository,
             ISqlSugarRepository<UserRoleEntity> userRoleRepository,
-            ISqlSugarRepository<RoleAggregateRoot, Guid> repository) : base(repository)
+            ISqlSugarRepository<RoleAggregateRoot, Guid> repository,
+            ISqlSugarRepository<MenuAggregateRoot, Guid> menuRepository,
+            ISqlSugarRepository<DeptAggregateRoot, Guid> deptRepository) : base(repository)
         {
-            (_roleManager, _roleDeptRepository, _userRoleRepository, _repository) =
-                (roleManager, roleDeptRepository, userRoleRepository, repository);
+            (_roleManager, _roleDeptRepository, _userRoleRepository, _repository, _menuRepository, _deptRepository) =
+                (roleManager, roleDeptRepository, userRoleRepository, repository, menuRepository, deptRepository);
         }
 
         private ISqlSugarRepository<RoleAggregateRoot, Guid> _repository;
@@ -38,6 +40,10 @@ namespace Yi.Framework.Rbac.Application.Services.System
         private ISqlSugarRepository<RoleDeptEntity> _roleDeptRepository;
 
         private ISqlSugarRepository<UserRoleEntity> _userRoleRepository;
+        
+        private ISqlSugarRepository<MenuAggregateRoot, Guid> _menuRepository;
+
+        private ISqlSugarRepository<DeptAggregateRoot, Guid> _deptRepository;
 
         public async Task UpdateDataScopeAsync(UpdateDataScopeInput input)
         {
@@ -214,6 +220,46 @@ namespace Yi.Framework.Rbac.Application.Services.System
                 .Where(x => input.UserIds.Contains(x.UserId))
                 .ExecuteCommandAsync();
             ;
+        }
+        
+        /// <summary>
+        /// 获取角色菜单树
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetMenuTreeAsync(Guid roleId)
+        {
+            var checkedKeys = await _menuRepository._DbQueryable
+                .Where(m => SqlFunc.Subqueryable<RoleMenuEntity>().Where(rm => rm.RoleId == roleId && rm.MenuId == m.Id).Any())
+                .Select(x => x.Id).ToListAsync();
+            var menus = await _menuRepository._DbQueryable.ToListAsync();
+            var menuTrees = menus.TreeDtoBuild();
+            return new JsonResult(new
+            {
+                checkedKeys,
+                menus = menuTrees
+            });
+        }
+
+        /// <summary>
+        /// 获取角色部门树
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetDeptTreeAsync(Guid roleId)
+        {
+            var checkedKeys = await _deptRepository._DbQueryable
+                .Where(d => SqlFunc.Subqueryable<RoleDeptEntity>().Where(rd => rd.RoleId == roleId && rd.DeptId == d.Id).Any())
+                .Select(x => x.Id).ToListAsync();
+            var deptList = await _deptRepository._DbQueryable
+                .Where(x => x.State == true)
+                .OrderBy(x => x.OrderNum, OrderByType.Asc)
+                .ToListAsync();
+            return new JsonResult(new
+            {
+                checkedKeys,
+                depts = deptList.DeptTreeBuild()
+            });
         }
     }
 }

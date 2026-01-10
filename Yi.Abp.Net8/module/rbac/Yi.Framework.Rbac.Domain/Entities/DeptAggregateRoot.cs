@@ -3,6 +3,8 @@ using Volo.Abp;
 using Volo.Abp.Auditing;
 using Volo.Abp.Domain.Entities;
 using Yi.Framework.Core.Data;
+using Yi.Framework.Core.Helper;
+using Yi.Framework.Rbac.Domain.Shared.Dtos;
 
 namespace Yi.Framework.Rbac.Domain.Entities
 {
@@ -86,5 +88,41 @@ namespace Yi.Framework.Rbac.Domain.Entities
         [SugarColumn(ColumnName = "Remark")]
         public string? Remark { get; set; }
 
+    }
+    
+    /// <summary>
+    /// 部门实体扩展
+    /// </summary>
+    public static class DeptEntityExtensions
+    {
+        /// <summary>
+        /// 构建部门树形列表
+        /// </summary>
+        /// <param name="depts">部门列表</param>
+        /// <returns>树形结构的部门列表</returns>
+        public static List<DeptTreeDto> DeptTreeBuild(this List<DeptAggregateRoot> depts)
+        {
+            // 过滤启用的部门
+            var filteredDepts = depts
+                .Where(d => d.State == true)
+                .ToList();
+
+            List<DeptTreeDto> deptTrees = new();
+            foreach (var dept in filteredDepts)
+            {
+                var deptTree = new DeptTreeDto
+                {
+                    Id = dept.Id,
+                    OrderNum = dept.OrderNum,
+                    DeptName = dept.DeptName,
+                    State = dept.State,
+                    ParentId = dept.ParentId,
+                };
+
+                deptTrees.Add(deptTree);
+            }
+            
+            return TreeHelper.SetTree(deptTrees);
+        }
     }
 }

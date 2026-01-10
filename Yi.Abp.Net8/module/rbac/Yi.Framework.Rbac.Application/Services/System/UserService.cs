@@ -1,23 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using SqlSugar;
-using TencentCloud.Tcr.V20190924.Models;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Caching;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Users;
-using Yi.Framework.Bbs.Domain.Shared.Enums;
-using Yi.Framework.Bbs.Domain.Shared.Etos;
 using Yi.Framework.Ddd.Application;
 using Yi.Framework.Rbac.Application.Contracts.Dtos.User;
 using Yi.Framework.Rbac.Application.Contracts.IServices;
 using Yi.Framework.Rbac.Domain.Authorization;
 using Yi.Framework.Rbac.Domain.Entities;
+using Yi.Framework.Rbac.Domain.Entities.ValueObjects;
 using Yi.Framework.Rbac.Domain.Managers;
 using Yi.Framework.Rbac.Domain.Repositories;
 using Yi.Framework.Rbac.Domain.Shared.Caches;
 using Yi.Framework.Rbac.Domain.Shared.Consts;
-using Yi.Framework.Rbac.Domain.Shared.Etos;
 using Yi.Framework.Rbac.Domain.Shared.OperLog;
 using Yi.Framework.SqlSugarCore.Abstractions;
 
@@ -92,7 +88,7 @@ namespace Yi.Framework.Rbac.Application.Services.System
         protected override UserAggregateRoot MapToEntity(UserCreateInputVo createInput)
         {
             var output = base.MapToEntity(createInput);
-            output.EncryPassword = new Domain.Entities.ValueObjects.EncryPasswordValueObject(createInput.Password);
+            output.EncryPassword = new EncryPasswordValueObject(createInput.Password);
             return output;
         }
 
@@ -187,12 +183,12 @@ namespace Yi.Framework.Rbac.Application.Services.System
             await _repository.UpdateAsync(entity);
             var dto = await MapToGetOutputDtoAsync(entity);
             //发布更新昵称任务事件
-            if (input.Nick != entity.Icon)
-            {
-                await this.LocalEventBus.PublishAsync(
-                    new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateNick, _currentUser.GetId(), input.Nick),
-                    false);
-            }
+            // if (input.Nick != entity.Icon)
+            // {
+            //     await this.LocalEventBus.PublishAsync(
+            //         new AssignmentEventArgs(AssignmentRequirementTypeEnum.UpdateNick, _currentUser.GetId(), input.Nick),
+            //         false);
+            // }
 
             return dto;
         }
@@ -236,6 +232,36 @@ namespace Yi.Framework.Rbac.Application.Services.System
         public override Task PostImportExcelAsync(List<UserCreateInputVo> input)
         {
             return base.PostImportExcelAsync(input);
+        }
+        
+        /// <summary>
+        /// 获取指定部门及其所有子部门下的用户列表
+        /// </summary>
+        /// <param name="deptId">部门ID</param>
+        /// <returns>用户列表</returns>
+        [HttpGet]
+        [Route("user/dept/{deptId}")]
+        [Permission("system:user:list")]
+        public async Task<List<UserGetListOutputDto>> GetUsersByDeptAsync(Guid deptId)
+        {
+            // 获取当前部门及其所有子部门的ID列表
+            var deptIds = await _deptService.GetChildListAsync(deptId);
+            
+            // 将当前部门ID也加入列表
+            if (!deptIds.Contains(deptId))
+            {
+                deptIds.Add(deptId);
+            }
+
+            // 查询所有这些部门下的用户
+            var users = await _repository._DbQueryable
+                .Where(u => deptIds.Contains(u.DeptId ?? Guid.Empty))
+                .LeftJoin<DeptAggregateRoot>((user, dept) => user.DeptId == dept.Id)
+                .OrderByDescending(user => user.CreationTime)
+                .Select((user, dept) => new UserGetListOutputDto(), true)
+                .ToListAsync();
+
+            return users;
         }
     }
 }

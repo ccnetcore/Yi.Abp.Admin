@@ -20,12 +20,12 @@ namespace Yi.Framework.AspNetCore.Microsoft.AspNetCore.Middlewares
         /// <returns>异步任务</returns>
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            // 在响应开始时处理文件下载相关的响应头
-            context.Response.OnStarting(() =>
-            {
-                HandleFileDownloadResponse(context);
-                return Task.CompletedTask;
-            });
+            // // 在响应开始时处理文件下载相关的响应头
+            // context.Response.OnStarting(() =>
+            // {
+            //     HandleFileDownloadResponse(context);
+            //     return Task.CompletedTask;
+            // });
 
             // 继续处理管道中的下一个中间件
             await next(context);

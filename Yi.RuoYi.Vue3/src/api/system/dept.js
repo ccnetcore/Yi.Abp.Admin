@@ -50,7 +50,7 @@ export function delDept(deptId) {
   return request({
     url: `/dept`,
     method: 'delete',
-    params:{id:deptId}
+    params:{ids:deptId}
   })
 }
 

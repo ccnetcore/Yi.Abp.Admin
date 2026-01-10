@@ -105,6 +105,16 @@ namespace Yi.Framework.Rbac.SqlSugarCore.DataSeeds
                 IsDeleted = false,
                 State = true
             };
+            DictionaryTypeAggregateRoot dict7_2 = new DictionaryTypeAggregateRoot()
+            {
+
+                DictName = "Vben5通知类型",
+                DictType = "sys_notice_type_vben5",
+                OrderNum = 100,
+                Remark = "通知类型列表",
+                IsDeleted = false,
+                State = true
+            };
             entities.Add(dict7);
             DictionaryTypeAggregateRoot dict8 = new DictionaryTypeAggregateRoot()
             {
